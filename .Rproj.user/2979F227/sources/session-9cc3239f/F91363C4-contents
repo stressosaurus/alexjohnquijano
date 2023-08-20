@@ -2,7 +2,13 @@ name: "alexjohnquijano.com"
 theme: "css/alexjohnquijano.css"
 title: "AQ"
 output_dir: "docs"
+description: |
+  This is Alex John Quijano's personal website.
+base_url: https://www.alexjohnquijano.com
+repository_url: https://github.com/stressosaurus/alexjohnquijano
+google_analytics: "G-DBZRMY7125"
 navbar:
+  search: true
   left:
     - icon: fa-home fa-lg
       href: index.html

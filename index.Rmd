@@ -2,16 +2,16 @@
 title: "Alex John Quijano, PhD"
 image: "images/aq-portrait-1.jpg"
 links:
-    - label: "CV"
-      url: https://drive.google.com/file/d/1EdgKNWkFlHiBBEBRDDoaNq1Nw4S4IjmR/view?usp=sharing
-    - label: '<i class="fab fa-twitter fa-lg"></i>'
-      url: "https://twitter.com/ajavq23"
-    - label: '<i class="fab fa-github fa-lg"></i>'
-      url: http://github.com/stressosaurus
-    - label: '<i class="fab fa-linkedin fa-lg"></i>'
-      url: https://www.linkedin.com/in/alexjohnquijano/
-    - label: '<i class="ai ai-google-scholar fa-lg"></i>'
-      url: https://scholar.google.com/citations?user=IPlFTXgAAAAJ&hl=en
+  - label: "CV"
+    url: https://drive.google.com/file/d/1EdgKNWkFlHiBBEBRDDoaNq1Nw4S4IjmR/view?usp=sharing
+  - label: '<i class="fab fa-twitter fa-lg"></i>'
+    url: "https://twitter.com/ajavq23"
+  - label: '<i class="fab fa-github fa-lg"></i>'
+    url: http://github.com/stressosaurus
+  - label: '<i class="fab fa-linkedin fa-lg"></i>'
+    url: https://www.linkedin.com/in/alexjohnquijano/
+  - label: '<i class="ai ai-google-scholar fa-lg"></i>'
+    url: https://scholar.google.com/citations?user=IPlFTXgAAAAJ&hl=en
 base_url: https://www.alexjohnquijano.com
 site: distill::distill_website
 output:
