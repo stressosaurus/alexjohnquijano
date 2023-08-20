@@ -1,0 +1,35 @@
+---
+title: "Alex John Quijano, PhD"
+image: "images/aq-portrait-1.jpg"
+links:
+    - label: "CV"
+      url: https://drive.google.com/file/d/1EdgKNWkFlHiBBEBRDDoaNq1Nw4S4IjmR/view?usp=sharing
+    - label: '<i class="fab fa-twitter fa-lg"></i>'
+      url: "https://twitter.com/ajavq23"
+    - label: '<i class="fab fa-github fa-lg"></i>'
+      url: http://github.com/stressosaurus
+    - label: '<i class="fab fa-linkedin fa-lg"></i>'
+      url: https://www.linkedin.com/in/alexjohnquijano/
+    - label: '<i class="ai ai-google-scholar fa-lg"></i>'
+      url: https://scholar.google.com/citations?user=IPlFTXgAAAAJ&hl=en
+base_url: https://www.alexjohnquijano.com
+site: distill::distill_website
+output:
+  postcards::trestles
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+source(file.path("R", "functions.R"))
+
+# Fist build the footer to capture today's date
+create_footer()
+```
+
+# Welcome!
+
+I'm an applied mathematician and data scientist with a Ph.D. in Applied Mathematics from University of California Merced. I'm excited about using mathematics and statistics to solve problems. I'm also passionate about teaching mathematics and statistics because I think that everyone should have the opportunity to learn these essential skills for solving problems.
+
+[Read More...](about.html)
+
+**Sanaol!**
