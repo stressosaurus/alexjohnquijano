@@ -1,7 +1,7 @@
 name: "alexjohnquijano.com"
 theme: "css/alexjohnquijano.css"
 title: "AQ"
-output_dir: "_site"
+output_dir: "docs"
 navbar:
   left:
     - icon: fa-home fa-lg
