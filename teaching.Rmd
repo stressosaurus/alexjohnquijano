@@ -18,14 +18,14 @@ If you are here for the **Fall 2023** course materials of **Calculus I** or **Or
 ```{r, echo=FALSE}
 icon_link(
     text = "MTH-201 (Calculus I)",
-    url  = "tba.html"
+    url  = "https://upmathematics.github.io/mth-201e-fa23/"
 )
 ```
 
 ```{r, echo=FALSE}
 icon_link(
-    text = "MTH-321 (Ordinary Differential Equations)",
-    url  = "tba.html"
+    text = "MTH-321 (Ordinary Differential Equation)",
+    url  = "https://upmathematics.github.io/mth-321b-fa23/"
 )
 ```
 :::
@@ -39,7 +39,7 @@ icon_link(
 
   - **MTH-201 (Calculus I)**
   
-    *Semesters Taught:* [Fall 2023](tba.html){target="_blank"}
+    *Semesters Taught:* [Fall 2023](https://upmathematics.github.io/mth-201e-fa23/){target="_blank"}
   
   - **MTH-202 (Calculus II)**
   
@@ -47,7 +47,7 @@ icon_link(
   
   - **MTH-321 (Ordinary Differential Equations)**
   
-    *Semesters Taught:* [Fall 2023](tba.html){target="_blank"}
+    *Semesters Taught:* [Fall 2023](https://upmathematics.github.io/mth-321b-fa23/){target="_blank"}
   
   - **MTH-461 (Probability & Statistics)**
   

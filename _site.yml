@@ -32,7 +32,6 @@ navbar:
 output: 
   distill::distill_article:
     toc: true
-    urlcolor: red
     link-citations: true
 bibliography: references.bib
 csl: apa.csl

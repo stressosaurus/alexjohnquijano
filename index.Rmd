@@ -12,7 +12,6 @@ links:
     url: https://www.linkedin.com/in/alexjohnquijano/
   - label: '<i class="ai ai-google-scholar fa-lg"></i>'
     url: https://scholar.google.com/citations?user=IPlFTXgAAAAJ&hl=en
-base_url: https://www.alexjohnquijano.com
 site: distill::distill_website
 output:
   postcards::trestles
