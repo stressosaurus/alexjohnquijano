@@ -13,25 +13,13 @@ source(file.path("R", "functions.R"))
 ::: {.center data-latex=""}
 **Attention University of Portland Students!**
 
-If you are here for the **Fall 2023** course materials of **Calculus I** or **Ordinary Differential Equations**, please visit the following links.
-
-```{r, echo=FALSE}
-icon_link(
-    text = "MTH-201 (Calculus I)",
-    url  = "https://upmathematics.github.io/mth-201e-fa23/"
-)
-```
-
-```{r, echo=FALSE}
-icon_link(
-    text = "MTH-321 (Ordinary Differential Equation)",
-    url  = "https://upmathematics.github.io/mth-321b-fa23/"
-)
-```
+If you are here for the **Spring 2024** course materials of **Ordinary Differential Equations** or **Applied Linear Algebra**, course websites will be available in January 2024.
 :::
 :::
 
 ## Courses
+
+*Note: Every semester is unique. All course content is subject to change.*
 
 ### University of Portland
 
