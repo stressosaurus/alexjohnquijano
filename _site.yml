@@ -21,14 +21,14 @@ navbar:
   right:
     - text: "CV"
       href: https://drive.google.com/file/d/1EdgKNWkFlHiBBEBRDDoaNq1Nw4S4IjmR/view?usp=sharing
-    - icon: fa-twitter fa-lg
-      href: "https://twitter.com/ajavq23"
-    - icon: fa-github fa-lg
-      href: http://github.com/stressosaurus
     - icon: fa-linkedin fa-lg
       href: https://www.linkedin.com/in/alexjohnquijano/
+    - icon: fa-github fa-lg
+      href: http://github.com/stressosaurus
     - icon: ai ai-google-scholar fa-lg
       href: https://scholar.google.com/citations?user=IPlFTXgAAAAJ&hl=en
+    - icon: fa-twitter fa-lg
+      href: "https://twitter.com/alexjohnquijano"
 output: 
   distill::distill_article:
     toc: true

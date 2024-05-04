@@ -68,7 +68,7 @@ icon_link(
   
     *Semesters Taught:* Fall 2021
     
-  - **MATH-241 Data Science**
+  - **MATH-241 (Data Science)**
   
     *Semesters Taught:* Spring 2022
 
