@@ -24,7 +24,7 @@ the language data.
 
   - [A Statistical Model of Word Rank Evolution](https://arxiv.org/abs/2107.09948){target="_blank"}
 
-### Examining and Modeling Crime Rates and Police Response
+### Examining and Modeling Police Response and Crime Reporting
 
 *Collaborators:* Ben Yarrish, Laurel Ponce, and Sajid Bin Mahammud. ^[These collaborators where undergraduate students during the time of the project.]
 
