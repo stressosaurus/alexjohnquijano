@@ -13,16 +13,16 @@ source(file.path("R", "functions.R"))
 ::: {.center data-latex=""}
 **Attention University of Portland Students!**
 
-If you are here for the **Spring 2024** course materials of **Ordinary Differential Equations** or **Applied Linear Algebra**, visit the following course websites.
+If you are here for the **Fall 2024** course materials of **Ordinary Differential Equations** or **Probability & Statistics I**, the following **course websites are in progress**.
 
 ```{r, echo=FALSE}
 icon_link(
     text = "Ordinary Differential Equation",
-    url  = "https://upmathematics.github.io/mth-321bc-sp24/"
+    url  = ""
 )
 icon_link(
-    text = "Applied Linear Algebra",
-    url  = "https://upmathematics.github.io/mth-342a-sp24/"
+    text = "Probability & Statistics I",
+    url  = ""
 )
 ```
 :::
@@ -46,7 +46,7 @@ icon_link(
   
   - **MTH-321 (Ordinary Differential Equations)**
   
-    *Semesters Taught:* Fall 2023, Spring 2024
+    *Semesters Taught:* Fall 2023, Spring 2024, Fall 2024
     
   - **MTH-342 (Applied Linear Algebra)**
   
@@ -58,7 +58,7 @@ icon_link(
   
   - **MTH-461 (Probability & Statistics)**
   
-    *Semesters Taught:* Fall 2022
+    *Semesters Taught:* Fall 2022, Fall 2024
 
 ### Reed College
 
