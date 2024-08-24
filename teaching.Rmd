@@ -18,7 +18,7 @@ If you are here for the **Fall 2024** course materials of **Ordinary Differentia
 ```{r, echo=FALSE}
 icon_link(
     text = "Ordinary Differential Equation",
-    url  = ""
+    url  = "https://upmathematics.github.io/mth-321ab-fa24/"
 )
 icon_link(
     text = "Probability & Statistics I",
