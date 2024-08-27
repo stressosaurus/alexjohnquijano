@@ -13,7 +13,7 @@ source(file.path("R", "functions.R"))
 ::: {.center data-latex=""}
 **Attention University of Portland Students!**
 
-If you are here for the **Fall 2024** course materials of **Ordinary Differential Equations** or **Probability & Statistics I**, the following **course websites are in progress**.
+If you are here for the **Fall 2024** course materials of **Ordinary Differential Equations** or **Probability & Statistics I**, the visit following **course websites**.
 
 ```{r, echo=FALSE}
 icon_link(
@@ -22,7 +22,7 @@ icon_link(
 )
 icon_link(
     text = "Probability & Statistics I",
-    url  = ""
+    url  = "https://upmathematics.github.io/mth-461a-fa24/"
 )
 ```
 :::
