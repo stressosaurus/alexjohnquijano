@@ -28,6 +28,14 @@ icon_link(
 :::
 :::
 
+## Teaching Tools
+
+### Shiny Apps
+
+*These tools are developed for teaching purposes.*
+
+- [Phase Portrait Visualizer for 1st-Order Homogeneous Linear System](https://pcnkto-alex0john-quijano.shinyapps.io/ode-visualize/){target="_blank"}
+
 ## Courses
 
 *Note: Every semester is unique. All course content is subject to change.*
