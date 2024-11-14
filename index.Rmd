@@ -10,8 +10,6 @@ links:
     url: http://github.com/stressosaurus
   - label: '<i class="ai ai-google-scholar fa-lg"></i>'
     url: https://scholar.google.com/citations?user=IPlFTXgAAAAJ&hl=en
-  - label: '<i class="fab fa-twitter fa-lg"></i>'
-    url: "https://twitter.com/alexjohnquijano"
 site: distill::distill_website
 output:
   postcards::trestles
