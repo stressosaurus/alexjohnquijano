@@ -1,7 +1,7 @@
 ---
 title: "About"
 description: | 
-  Hi, I'm Alex. I was born and raised in the Philippines. I lived there until I was 15 when I migrated to the United States with my mother and sister as permanent residents. I became a U.S. citizen in 2017. I am an amateur artist, and my hobbies include painting, drawing, and playing video games. I also like cooking, eating, and traveling.
+  Hi, I'm Alex. I was born and raised in the Philippines. I lived there until I was 15 when I migrated to the United States with my mother and sister. I am an amateur artist, and my hobbies include painting, drawing, and playing video games. I also like cooking, eating, and traveling.
 site: distill::distill_website
 ---
 

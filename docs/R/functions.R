@@ -13,7 +13,7 @@ create_footer <- function() {
   height <- '14px'
   
   footer <- HTML(paste0(
-    '© 2023 Alex John Quijano [CC BY](https://creativecommons.org/licenses/by/4.0/)\n',
+    '© 2023 Alex John Quijano [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)\n',
     br(),
     ' Made with ','[R](https://cran.r-project.org/) ', ' and ',
     '[Distill for R Markdown](https://rstudio.github.io/distill/) \n',
