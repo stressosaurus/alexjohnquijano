@@ -13,16 +13,20 @@ source(file.path("R", "functions.R"))
 ::: {.center data-latex=""}
 **Attention University of Portland Students!**
 
-If you are here for the **Fall 2024** course materials of **Ordinary Differential Equations** or **Probability & Statistics I**, the visit following **course websites**.
+If you are here for the **Spring 2025** course materials of **Elementary Statistics**, **Applied Statistics**, or **Fundamentals of Data Science**, then visit following **course websites**.
 
 ```{r, echo=FALSE}
 icon_link(
-    text = "Ordinary Differential Equation",
-    url  = "https://upmathematics.github.io/mth-321ab-fa24/"
+    text = "Elementary Statistics",
+    url  = "https://upmathematics.github.io/mth-161d-sp25/"
 )
 icon_link(
-    text = "Probability & Statistics I",
-    url  = "https://upmathematics.github.io/mth-461a-fa24/"
+    text = "Applied Statistics",
+    url  = "https://upmathematics.github.io/mth-361a-sp25/"
+)
+icon_link(
+    text = "Fundamentals of Data Science",
+    url  = "https://upmathematics.github.io/mth-391a-sp25/"
 )
 ```
 :::
@@ -44,6 +48,10 @@ icon_link(
 
 *These are subjects I taught as instructor.*
 
+  - **MTH-161 (Elementary Statistics)
+  
+    *Semesters Taught:* Spring 2025
+
   - **MTH-201 (Calculus I)**
   
     *Semesters Taught:* Fall 2023
@@ -62,7 +70,7 @@ icon_link(
     
   - **MTH-361 (Applied Statistics)**
   
-    *Semesters Taught:* Spring 2023
+    *Semesters Taught:* Spring 2023, Spring 2025
   
   - **MTH-461 (Probability & Statistics)**
   
