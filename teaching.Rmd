@@ -13,20 +13,16 @@ source(file.path("R", "functions.R"))
 ::: {.center data-latex=""}
 **Attention University of Portland Students!**
 
-If you are here for the **Spring 2025** course materials of **Elementary Statistics**, **Applied Statistics**, or **Fundamentals of Data Science**, then visit following **course websites**.
+If you are here for the **Fall 2025** course materials of **Ordinary Differential Equation** or **Introduction to Linear Algebra**, then visit following **course websites**.
 
 ```{r, echo=FALSE}
 icon_link(
-    text = "Elementary Statistics",
-    url  = "https://upmathematics.github.io/mth-161d-sp25/"
+    text = "Ordinary Differential Equation",
+    url  = "https://upmathematics.github.io/mth-321ab-fa25/"
 )
 icon_link(
-    text = "Applied Statistics",
-    url  = "https://upmathematics.github.io/mth-361a-sp25/"
-)
-icon_link(
-    text = "Fundamentals of Data Science",
-    url  = "https://upmathematics.github.io/mth-391a-sp25-otco/"
+    text = "Introduction to Linear Algebra",
+    url  = "https://upmathematics.github.io/mth-341a-fa25/"
 )
 ```
 :::
@@ -48,7 +44,7 @@ icon_link(
 
 *These are subjects I taught as instructor.*
 
-  - **MTH-161 (Elementary Statistics)
+  - **MTH-161 (Elementary Statistics)**
   
     *Semesters Taught:* Spring 2025
 
@@ -62,7 +58,11 @@ icon_link(
   
   - **MTH-321 (Ordinary Differential Equations)**
   
-    *Semesters Taught:* Fall 2023, Spring 2024, Fall 2024
+    *Semesters Taught:* Fall 2023, Spring 2024, Fall 2024, Spring 2025
+  
+  - **MTH-341 (Introduction to Linear Algebra)**
+  
+    *Semesters Taught:* Spring 2025
     
   - **MTH-342 (Applied Linear Algebra)**
   
@@ -71,6 +71,10 @@ icon_link(
   - **MTH-361 (Applied Statistics)**
   
     *Semesters Taught:* Spring 2023, Spring 2025
+    
+  - **MTH-391 (Fundamentals of Data Science)**
+  
+    *Semesters Taught:* Spring 2025
   
   - **MTH-461 (Probability & Statistics)**
   
