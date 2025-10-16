@@ -10,6 +10,17 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Recent Projects
 
+### Examining and Modeling Police Response and Crime Reporting
+
+*Collaborators:* Nanami Taono, Ben Yarrish, Laurel Ponce, and Sajid Bin Mahammud. ^[These collaborators where undergraduate students.]
+
+This project investigates the relationship between crime rates and policing in the United States. We are using mathematical and statistical modeling, data science methods, and city-wide data to answer key questions, such as: How does law enforcement response vary with changes in crime rates? How do community perceptions of law enforcement change based on their presence? What are the effects of police presence on marginalized communities? The project's findings will inform public policy and enhance community-police relations.
+
+**Posters:**
+
+  - [A Data-Driven Model of Portland Policing](https://drive.google.com/file/d/1jWw1Fgi-mO2xMuo23TSDezO-82lAwoUV/view?usp=sharing){target="_blank"}
+  - [Ridge Regression Model to Analyze Portland Police Dispatch Calls](https://drive.google.com/file/d/1OayCFTF0AQLoutCYAdtvRE9ASJQd0yR4/view?usp=sharing){target="_blank"}
+  
 ### Statistical Modeling of Word Rank Evolution
 
 *Collaborators:* [Rick Dale](https://co-mind.org/rick/){target="_blank"} & [Suzanne Sindi](https://www.sindilab.com/){target="_blank"}
@@ -23,17 +34,6 @@ the language data.
 **Preprint:**
 
   - [A Statistical Model of Word Rank Evolution](https://arxiv.org/abs/2107.09948){target="_blank"}
-
-### Examining and Modeling Police Response and Crime Reporting
-
-*Past Collaborators:* Nanami Taono, Ben Yarrish, Laurel Ponce, and Sajid Bin Mahammud. ^[These collaborators where undergraduate students.]
-
-This project investigates the relationship between crime rates and policing in the United States. We are using mathematical and statistical modeling, data science methods, and city-wide data to answer key questions, such as: How does law enforcement response vary with changes in crime rates? How do community perceptions of law enforcement change based on their presence? What are the effects of police presence on marginalized communities? The project's findings will inform public policy and enhance community-police relations.
-
-**Posters:**
-
-  - [A Data-Driven Model of Portland Policing](https://drive.google.com/file/d/1jWw1Fgi-mO2xMuo23TSDezO-82lAwoUV/view?usp=sharing){target="_blank"}
-  - [Ridge Regression Model to Analyze Portland Police Dispatch Calls](https://drive.google.com/file/d/1OayCFTF0AQLoutCYAdtvRE9ASJQd0yR4/view?usp=sharing){target="_blank"}
 
 ## Past Projects
 
