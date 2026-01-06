@@ -1,7 +1,7 @@
 ---
 title: "Research"
 description: | 
-  I apply my data science and mathematical skills to interdisciplinary research problems in evolution of language, biology, and social behavior dynamics.
+  I apply my data science and mathematical skills to interdisciplinary research problems in social sciences and biology.
 ---
 
 ```{r setup, include=FALSE}
