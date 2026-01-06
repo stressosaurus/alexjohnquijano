@@ -39,7 +39,7 @@ icon_link(
 
 ## Research
 
-I am interested in the mathematical applications of data science in interdisciplinary research, particularly the mathematical modeling of natural languages, social and biological systems. I am also interested in generating insights from data to inform researchers in evolutionary linguistics, sociology, mathematical biology, and decision-makers in social justice initiatives.
+I am interested in interdisciplinary research at the intersection of mathematics and data science, particularly in mathematical modeling of natural languages, social and biological systems, and in using statistical and data-driven approaches to inform and advance knowledge in social sciences and biology.
 
 [Read More...](Research.html)
 
