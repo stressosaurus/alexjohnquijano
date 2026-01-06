@@ -13,16 +13,16 @@ source(file.path("R", "functions.R"))
 ::: {.center data-latex=""}
 **Attention University of Portland Students!**
 
-If you are here for the **Fall 2025** course materials of **Ordinary Differential Equation** or **Introduction to Linear Algebra**, then visit following **course websites**.
+If you are here for the **Spring 2026** course materials of **Ordinary Differential Equation** or **Applied Statistics I**, then visit following **course websites**.
 
 ```{r, echo=FALSE}
 icon_link(
     text = "Ordinary Differential Equation",
-    url  = "https://upmathematics.github.io/mth-321ab-fa25/"
+    url  = "tba.html"
 )
 icon_link(
-    text = "Introduction to Linear Algebra",
-    url  = "https://upmathematics.github.io/mth-341a-fa25/"
+    text = "Applied Statistics",
+    url  = "tba.html"
 )
 ```
 :::
@@ -58,7 +58,7 @@ icon_link(
   
   - **MTH-321 (Ordinary Differential Equations)**
   
-    *Semesters Taught:* Fall 2023, Spring 2024, Fall 2024, Spring 2025
+    *Semesters Taught:* Fall 2023, Spring 2024, Fall 2024, Fall 2025, Spring 2026
   
   - **MTH-341 (Introduction to Linear Algebra)**
   
@@ -70,7 +70,7 @@ icon_link(
     
   - **MTH-361 (Applied Statistics)**
   
-    *Semesters Taught:* Spring 2023, Spring 2025
+    *Semesters Taught:* Spring 2023, Spring 2025, Spring 2026
     
   - **MTH-391 (Fundamentals of Data Science)**
   
