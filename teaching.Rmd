@@ -17,12 +17,12 @@ If you are here for the **Spring 2026** course materials of **Ordinary Different
 
 ```{r, echo=FALSE}
 icon_link(
-    text = "Ordinary Differential Equation",
-    url  = "tba.html"
+    text = "Ordinary Differential Equations",
+    url  = "https://upmathematics.github.io/mth-321ab-sp26/"
 )
 icon_link(
     text = "Applied Statistics",
-    url  = "tba.html"
+    url  = "https://upmathematics.github.io/mth-361a-sp26/"
 )
 ```
 :::
