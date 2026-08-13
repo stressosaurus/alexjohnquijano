@@ -13,16 +13,16 @@ source(file.path("R", "functions.R"))
 ::: {.center data-latex=""}
 **Attention University of Portland Students!**
 
-If you are here for the **Spring 2026** course materials of **Ordinary Differential Equation** or **Applied Statistics I**, then visit following **course websites**.
+If you are here for the **Fall 2026** course materials of **Ordinary Differential Equation** or **Probability and Statistics I**, it will be posted soon.
 
 ```{r, echo=FALSE}
 icon_link(
     text = "Ordinary Differential Equations",
-    url  = "https://upmathematics.github.io/mth-321ab-sp26/"
+    url  = ""
 )
 icon_link(
-    text = "Applied Statistics",
-    url  = "https://upmathematics.github.io/mth-361a-sp26/"
+    text = "Probability and Statistics I",
+    url  = ""
 )
 ```
 :::
