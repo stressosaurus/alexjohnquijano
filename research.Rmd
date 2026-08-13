@@ -16,6 +16,10 @@ knitr::opts_chunk$set(echo = FALSE)
 
 This project investigates the relationship between crime rates and policing in the United States. We are using mathematical and statistical modeling, data science methods, and city-wide data to answer key questions, such as: How does law enforcement response vary with changes in crime rates? How do community perceptions of law enforcement change based on their presence? What are the effects of police presence on marginalized communities? The project's findings will inform public policy and enhance community-police relations.
 
+**Online Articles:**
+
+  - [Data-driven Model Puts Portland Policing Dynamics in Historical Context](https://www.siam.org/publications/siam-news/articles/data-driven-model-puts-portland-policing-dynamics-in-historical-context/){target="_blank"}
+
 **Posters:**
 
   - [A Data-Driven Model of Portland Policing](https://drive.google.com/file/d/1jWw1Fgi-mO2xMuo23TSDezO-82lAwoUV/view?usp=sharing){target="_blank"}
