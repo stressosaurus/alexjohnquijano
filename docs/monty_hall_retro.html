@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Switch or Stay?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream-50:#fbf7ee;
+    --cream-100:#f3ecd9;
+    --cream-200:#e6dcbf;
+    --ink-900:#17241a;
+    --ink-700:#3c4a3d;
+    --forest-800:#1e4a2d;
+    --forest-700:#276139;
+    --forest-600:#337a46;
+    --forest-500:#4a9a5c;
+    --rust-600:#c15f2c;
+    --rust-500:#d97a44;
+    --rust-300:#f0b98a;
+    --wood-700:#4fa864;
+    --wood-500:#7dc08d;
+    --wood-300:#a8dab5;
+    --win-600:#4a9a5c;
+    --loss-600:#c15f2c;
+    --line:#e6dcbf;
+    --line-dark:rgba(255,255,255,.16);
+    --pixel:'VT323', monospace;
+    --pixel-display:'Press Start 2P', monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream-50);
+    color:var(--ink-900);
+    font-family:var(--pixel);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:40px 20px 60px;
+  }
+
+  .wrap{ width:100%; max-width:880px; }
+
+  header{ text-align:center; margin-bottom:36px; }
+  h1{
+    font-family:var(--pixel-display);
+    font-size:clamp(1.15rem, 5vw, 2rem);
+    line-height:1.5;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    margin:0 0 14px;
+    color:var(--forest-800);
+    text-shadow:3px 3px 0 var(--rust-300);
+  }
+  .subtitle{
+    font-family:var(--pixel);
+    font-weight:400;
+    font-size:1.4rem;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    text-align:center;
+    color:var(--rust-600);
+    max-width:none;
+    width:100%;
+    margin:0 auto 18px;
+  }
+  header p{
+    font-family:var(--pixel);
+    font-size:1.18rem;
+    line-height:1.5;
+    color:var(--ink-700);
+    max-width:560px;
+    margin:0 auto;
+  }
+
+  .stage{
+    background-color:var(--forest-800);
+    background-image:repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 2px, transparent 2px 5px);
+    border:4px solid var(--ink-900);
+    border-radius:8px;
+    padding:32px 24px 28px;
+    box-shadow:8px 8px 0 var(--ink-900);
+  }
+
+  .message{
+    text-align:center;
+    min-height:52px;
+    font-family:var(--pixel);
+    font-size:1.35rem;
+    line-height:1.4;
+    color:var(--cream-50);
+    margin-bottom:24px;
+    padding:0 10px;
+  }
+  .message strong{ color:var(--rust-300); }
+
+  .doors{
+    display:flex;
+    justify-content:center;
+    gap:clamp(14px, 3vw, 30px);
+    flex-wrap:wrap;
+    margin-bottom:48px;
+  }
+
+  .doors-hint{
+    text-align:center;
+    font-family:var(--pixel);
+    font-size:1.05rem;
+    color:var(--cream-100);
+    opacity:.85;
+    margin:0 0 22px;
+  }
+
+  .door{
+    --w: clamp(96px, 22vw, 150px);
+    width:var(--w);
+    height:calc(var(--w) * 1.55);
+    position:relative;
+    cursor:pointer;
+    background:none;
+    border:none;
+    padding:0;
+    font:inherit;
+    color:inherit;
+  }
+  .door[disabled]{ cursor:default; }
+
+  .door-face{
+    position:absolute; inset:0;
+    z-index:1;
+    border-radius:4px;
+    background:var(--wood-500);
+    border:4px solid var(--ink-900);
+    box-shadow:4px 4px 0 rgba(0,0,0,.4);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    padding-bottom:14px;
+    transform-origin:left center;
+    transition: transform .3s steps(6,end), background-color .1s ease;
+    backface-visibility:hidden;
+  }
+  .door:not([disabled]):hover .door-face{
+    background:var(--wood-300);
+    transform:translate(-2px,-2px);
+    box-shadow:6px 6px 0 rgba(0,0,0,.4);
+  }
+  .door.open .door-face{
+    transform: scaleX(.05);
+  }
+  .door.revealed-goat .door-face{ transform: scaleX(.05); }
+
+  .door-number{
+    position:absolute;
+    top:12px; left:50%;
+    transform:translateX(-50%);
+    width:28px; height:28px;
+    border-radius:4px;
+    background:var(--rust-600);
+    color:var(--cream-50);
+    border:2px solid var(--ink-900);
+    font-family:var(--pixel-display);
+    font-size:.7rem;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:2px 2px 0 rgba(0,0,0,.4);
+    z-index:2;
+    transition: background .15s ease, opacity .25s ease;
+  }
+  .door:not([disabled]):hover .door-number{
+    background:var(--rust-500);
+  }
+  .door.open .door-number,
+  .door.revealed-goat .door-number{
+    opacity:0;
+  }
+  .door-knob{
+    position:absolute;
+    right:12px; top:52%;
+    width:9px; height:9px;
+    border-radius:2px;
+    background:var(--rust-300);
+    border:1px solid var(--ink-900);
+  }
+
+  .door-panel-inset{
+    width:68%; height:56%;
+    margin-bottom:auto; margin-top:20px;
+    border:2px solid var(--ink-900);
+    border-radius:2px;
+    background:var(--wood-300);
+  }
+
+  .door-interior{
+    position:absolute; inset:0;
+    border-radius:2px;
+    background:var(--wood-300);
+    display:flex; align-items:center; justify-content:center;
+    font-size:clamp(2.2rem, 8vw, 3.4rem);
+    z-index:0;
+  }
+
+  .door-tag{
+    position:absolute;
+    bottom:-26px; left:0; right:0;
+    text-align:center;
+    font-family:var(--pixel);
+    font-size:1rem;
+    letter-spacing:.5px;
+    opacity:0;
+    transition:opacity .25s ease;
+  }
+  .door-tag.tag-pick{ opacity:1; color:var(--rust-300); }
+  .door-tag.tag-switch{ opacity:1; color:var(--wood-300); }
+
+  .door.chosen .door-face{ box-shadow:4px 4px 0 rgba(0,0,0,.4), 0 0 0 3px var(--rust-600); }
+  .door.chosen:not([disabled]):hover .door-face{ box-shadow:6px 6px 0 rgba(0,0,0,.4), 0 0 0 3px var(--rust-600); }
+
+  .actions{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:8px;
+  }
+  button.cta{
+    font-family:var(--pixel);
+    font-size:1.1rem;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    padding:12px 20px;
+    border-radius:4px;
+    border:3px solid var(--ink-900);
+    cursor:pointer;
+    box-shadow:4px 4px 0 var(--ink-900);
+    transition:transform .08s ease, box-shadow .08s ease, background .1s ease;
+  }
+  button.cta:not(:disabled):active{
+    transform:translate(4px,4px);
+    box-shadow:0 0 0 var(--ink-900);
+  }
+  button.cta:disabled{ opacity:.4; cursor:not-allowed; }
+
+  .cta-primary{ background:var(--rust-600); color:var(--cream-50); }
+  .cta-primary:not(:disabled):hover{ background:var(--rust-500); }
+  .cta-secondary{ background:transparent; color:var(--cream-50); border-color:var(--cream-50); }
+  .cta-secondary:not(:disabled):hover{ background:rgba(255,255,255,.1); }
+  .cta-ghost{ background:transparent; color:var(--cream-100); border-color:transparent; box-shadow:none; text-decoration:underline; text-underline-offset:3px; text-transform:none; }
+  .cta-outline{ background:var(--cream-50); color:var(--forest-700); border-color:var(--ink-900); }
+  .cta-outline:not(:disabled):hover{ background:var(--cream-200); }
+
+  .guess-prompt{
+    text-align:center;
+    font-family:var(--pixel);
+    font-size:1.15rem;
+    color:var(--ink-700);
+    max-width:480px;
+    margin:22px auto 0;
+  }
+
+  .stats-toggle-row{
+    display:flex;
+    justify-content:center;
+    margin-top:26px;
+  }
+
+  .about-row{
+    display:flex;
+    justify-content:center;
+    margin-top:18px;
+  }
+
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(23,36,26,.6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    z-index:50;
+  }
+  .modal-box{
+    background:var(--cream-50);
+    border:4px solid var(--ink-900);
+    border-radius:8px;
+    max-width:520px;
+    width:100%;
+    padding:28px 26px 22px;
+    box-shadow:8px 8px 0 var(--ink-900);
+  }
+  .modal-box h2{
+    font-family:var(--pixel-display);
+    font-size:1rem;
+    line-height:1.6;
+    letter-spacing:.5px;
+    color:var(--forest-800);
+    margin:0 0 18px;
+  }
+  .modal-box p{
+    font-family:var(--pixel);
+    font-size:1.15rem;
+    line-height:1.5;
+    color:var(--ink-700);
+    margin:0 0 14px;
+  }
+  .modal-close-row{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:6px;
+  }
+
+  .panels{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+    margin-top:16px;
+  }
+  @media (max-width:560px){ .panels{ grid-template-columns:1fr; } }
+
+  .panel{
+    background:var(--cream-100);
+    border:3px solid var(--ink-900);
+    border-radius:6px;
+    box-shadow:5px 5px 0 var(--ink-900);
+    padding:16px 18px 18px;
+    overflow:hidden;
+  }
+  .panel h2{
+    font-family:var(--pixel-display);
+    font-size:.8rem;
+    line-height:1.6;
+    letter-spacing:.5px;
+    color:var(--cream-50);
+    background:var(--forest-700);
+    margin:-16px -18px 14px;
+    padding:10px 18px;
+    border-bottom:3px solid var(--ink-900);
+  }
+
+  .stat-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-family:var(--pixel);
+    font-size:1.1rem;
+    color:var(--ink-700);
+    padding:6px 0;
+    border-bottom:1px dashed rgba(0,0,0,.2);
+  }
+  .stat-row:last-child{ border-bottom:none; }
+  .stat-row b{ color:var(--rust-600); font-size:1.2rem; }
+
+  .bar-group{ margin-top:4px; }
+  .bar-label{
+    display:flex; justify-content:space-between;
+    font-family:var(--pixel);
+    font-size:1.02rem; color:var(--ink-700);
+    margin-bottom:4px;
+  }
+  .bar-track{
+    height:12px;
+    background:var(--cream-50);
+    border:2px solid var(--ink-900);
+    border-radius:2px;
+    overflow:hidden;
+    margin-bottom:14px;
+  }
+  .bar-fill{
+    height:100%;
+    transition:width .4s steps(10,end);
+  }
+  .bar-fill.stay{ background:var(--loss-600); }
+  .bar-fill.switch{ background:var(--win-600); }
+
+  .sim-row{
+    display:flex; gap:8px; align-items:center; margin-top:14px;
+    flex-wrap:wrap;
+  }
+  .sim-row input{
+    width:84px;
+    background:var(--cream-50);
+    border:2px solid var(--ink-900);
+    color:var(--ink-900);
+    border-radius:3px;
+    padding:8px 10px;
+    font-family:var(--pixel);
+    font-size:1.05rem;
+  }
+
+  .loading{
+    text-align:center;
+    padding:60px 0;
+    font-family:var(--pixel);
+    color:var(--ink-700);
+    font-size:1.25rem;
+  }
+  .loading::after{
+    content:'_';
+    animation:blink 1s steps(1) infinite;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+  .hidden{ display:none !important; }
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Switch or Stay?</h1>
+    <p class="subtitle" style="text-align:center;">A Monty Hall Game</p>
+    <p>Pick a door. The host, who knows what's behind every door, opens a different one to show you a goat. Then you decide: keep your door, or switch to the one still closed?</p>
+  </header>
+
+  <div id="loading" class="loading">Setting up the game engine (loading Python in your browser)…</div>
+
+  <div id="game" class="hidden">
+    <div class="stage">
+      <div id="message" class="message">Pick a door to begin.</div>
+
+      <div class="doors" id="doors"></div>
+
+      <p class="doors-hint">Click your original door to stay. Click the other closed door to switch.</p>
+
+      <div class="actions" id="actions"></div>
+    </div>
+
+    <p class="guess-prompt">Before you reveal the results: what do you think your probability of winning is with this strategy?</p>
+
+    <div class="stats-toggle-row">
+      <button class="cta cta-outline" id="toggle-stats">Reveal results</button>
+    </div>
+
+    <div class="panels hidden" id="panels">
+      <div class="panel">
+        <h2>Your results</h2>
+        <div class="stat-row"><span>Games played</span><b id="stat-total">0</b></div>
+        <div class="stat-row"><span>Stay wins</span><b id="stat-stay">0 / 0</b></div>
+        <div class="stat-row"><span>Switch wins</span><b id="stat-switch">0 / 0</b></div>
+      </div>
+
+      <div class="panel">
+        <h2>Win rate by strategy</h2>
+        <div class="bar-group">
+          <div class="bar-label"><span>Stay</span><span id="pct-stay">N/A</span></div>
+          <div class="bar-track"><div class="bar-fill stay" id="bar-stay" style="width:0%"></div></div>
+          <div class="bar-label"><span>Switch</span><span id="pct-switch">N/A</span></div>
+          <div class="bar-track"><div class="bar-fill switch" id="bar-switch" style="width:0%"></div></div>
+        </div>
+        <div class="sim-row">
+          <input type="number" id="sim-count" value="1000" min="10" max="200000" step="10">
+          <button class="cta cta-outline" id="sim-btn" style="padding:8px 14px;font-size:.82rem;">Run auto-simulations</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-row">
+      <button class="cta cta-outline" id="about-btn">About</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="about-modal">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="about-title">
+    <h2 id="about-title">The Monty Hall Problem</h2>
+    <p>There are three doors. One hides a car, the other two hide goats. You pick a door. Then the host, who knows what's behind each one, opens a different door to show you a goat.</p>
+    <p>Now you get to decide: keep your original door, or switch to the other one still closed?</p>
+    <p>Your first pick has a 1-in-3 chance of hiding the car, and that never changes. But the host's reveal doesn't spread that remaining 2-in-3 chance evenly. It collapses entirely onto the one door you didn't pick and the host didn't open. That's why switching wins about two-thirds of the time, while staying wins only about one-third.</p>
+    <div class="modal-close-row">
+      <button class="cta cta-primary" id="about-close">Got it</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+const state = { chosen:null, revealed:null, over:false };
+let pyodide, py;
+
+const els = {
+  loading: document.getElementById('loading'),
+  game: document.getElementById('game'),
+  doors: document.getElementById('doors'),
+  actions: document.getElementById('actions'),
+  message: document.getElementById('message'),
+  statTotal: document.getElementById('stat-total'),
+  statStay: document.getElementById('stat-stay'),
+  statSwitch: document.getElementById('stat-switch'),
+  pctStay: document.getElementById('pct-stay'),
+  pctSwitch: document.getElementById('pct-switch'),
+  barStay: document.getElementById('bar-stay'),
+  barSwitch: document.getElementById('bar-switch'),
+  simBtn: document.getElementById('sim-btn'),
+  simCount: document.getElementById('sim-count'),
+  toggleStats: document.getElementById('toggle-stats'),
+  panels: document.getElementById('panels'),
+  aboutBtn: document.getElementById('about-btn'),
+  aboutModal: document.getElementById('about-modal'),
+  aboutClose: document.getElementById('about-close'),
+};
+
+const PYTHON_SOURCE = `
+import random
+
+class MontyHallGame:
+    """Core Monty Hall logic, kept entirely in Python and driven from JS."""
+
+    def __init__(self):
+        self.car_door = None
+        self.chosen_door = None
+        self.revealed_door = None
+        self.stats = {
+            "stay":   {"wins": 0, "losses": 0},
+            "switch": {"wins": 0, "losses": 0},
+        }
+
+    def new_round(self):
+        self.car_door = random.randint(1, 3)
+        self.chosen_door = None
+        self.revealed_door = None
+        return self.car_door  # never sent to JS directly; used server-side only
+
+    def pick_door(self, door):
+        self.chosen_door = door
+        # host opens a door that is neither the player's door nor the car
+        candidates = [d for d in (1, 2, 3) if d != door and d != self.car_door]
+        self.revealed_door = random.choice(candidates)
+        return self.revealed_door
+
+    def remaining_door(self):
+        return next(d for d in (1, 2, 3) if d not in (self.chosen_door, self.revealed_door))
+
+    def decide(self, switch):
+        final_door = self.remaining_door() if switch else self.chosen_door
+        won = (final_door == self.car_door)
+        bucket = "switch" if switch else "stay"
+        if won:
+            self.stats[bucket]["wins"] += 1
+        else:
+            self.stats[bucket]["losses"] += 1
+        return {
+            "final_door": final_door,
+            "car_door": self.car_door,
+            "won": won,
+        }
+
+    def get_stats(self):
+        return self.stats
+
+    def simulate(self, trials, strategy):
+        wins = 0
+        for _ in range(trials):
+            car = random.randint(1, 3)
+            first_pick = random.randint(1, 3)
+            others = [d for d in (1, 2, 3) if d != first_pick and d != car]
+            host_opens = random.choice(others)
+            if strategy == "switch":
+                final = next(d for d in (1, 2, 3) if d not in (first_pick, host_opens))
+            else:
+                final = first_pick
+            if final == car:
+                wins += 1
+            bucket = "switch" if strategy == "switch" else "stay"
+            if final == car:
+                self.stats[bucket]["wins"] += 1
+            else:
+                self.stats[bucket]["losses"] += 1
+        return wins
+
+game = MontyHallGame()
+game
+`;
+
+async function boot(){
+  pyodide = await loadPyodide();
+  py = await pyodide.runPythonAsync(PYTHON_SOURCE);
+  els.loading.classList.add('hidden');
+  els.game.classList.remove('hidden');
+  buildDoors();
+  startRound();
+}
+
+function buildDoors(){
+  els.doors.innerHTML = '';
+  for(let i=1;i<=3;i++){
+    const btn = document.createElement('button');
+    btn.className = 'door';
+    btn.dataset.door = i;
+    btn.innerHTML = `
+      <div class="door-face">
+        <div class="door-panel-inset"></div>
+        <div class="door-knob"></div>
+      </div>
+      <div class="door-number">${i}</div>
+      <div class="door-interior" id="interior-${i}"></div>
+      <div class="door-tag" id="tag-${i}"></div>
+    `;
+    btn.addEventListener('click', () => onDoorClick(i));
+    els.doors.appendChild(btn);
+  }
+}
+
+function doorEl(n){ return els.doors.querySelector(`.door[data-door="${n}"]`); }
+
+function setMessage(html){ els.message.innerHTML = html; }
+
+function clearTags(){
+  [1,2,3].forEach(n=>{
+    const tagEl = document.getElementById(`tag-${n}`);
+    tagEl.textContent = '';
+    tagEl.classList.remove('tag-pick','tag-switch');
+  });
+}
+
+function startRound(){
+  state.chosen = null;
+  state.revealed = null;
+  state.over = false;
+  py.new_round();
+  [1,2,3].forEach(n=>{
+    const d = doorEl(n);
+    d.classList.remove('open','chosen','revealed-goat');
+    d.disabled = false;
+    document.getElementById(`interior-${n}`).textContent = '';
+  });
+  clearTags();
+  setMessage('Pick a door to begin.');
+  renderActions([]);
+}
+
+function renderActions(buttons){
+  els.actions.innerHTML = '';
+  buttons.forEach(b=>{
+    const btn = document.createElement('button');
+    btn.className = `cta ${b.type || 'cta-secondary'}`;
+    btn.textContent = b.label;
+    btn.addEventListener('click', b.onClick);
+    els.actions.appendChild(btn);
+  });
+}
+
+function onDoorClick(n){
+  if(state.over) return;
+
+  if(state.chosen === null){
+    pickDoor(n);
+    return;
+  }
+
+  if(n === state.revealed) return;
+  resolveRound(n !== state.chosen);
+}
+
+function pickDoor(n){
+  state.chosen = n;
+  const revealed = py.pick_door(n);
+  state.revealed = revealed;
+
+  doorEl(n).classList.add('chosen');
+  document.getElementById(`interior-${revealed}`).textContent = '🐐';
+  doorEl(revealed).classList.add('open','revealed-goat');
+  doorEl(revealed).disabled = true;
+
+  const remaining = [1,2,3].find(d => d !== n && d !== revealed);
+
+  document.getElementById(`tag-${n}`).textContent = 'Your pick';
+  document.getElementById(`tag-${n}`).classList.add('tag-pick');
+  document.getElementById(`tag-${remaining}`).textContent = 'Click to switch';
+  document.getElementById(`tag-${remaining}`).classList.add('tag-switch');
+
+  setMessage(`You picked door <strong>${n}</strong>. Behind door <strong>${revealed}</strong> is a goat. Click door <strong>${n}</strong> again to stay, or click door <strong>${remaining}</strong> to switch.`);
+}
+
+function resolveRound(switchDoors){
+  state.over = true;
+  const result = py.decide(switchDoors).toJs({dict_converter: Object.fromEntries});
+  clearTags();
+  [1,2,3].forEach(n=>{
+    const d = doorEl(n);
+    d.disabled = true;
+    if(n === result.car_door){
+      document.getElementById(`interior-${n}`).textContent = '🚗';
+    } else if(!document.getElementById(`interior-${n}`).textContent){
+      document.getElementById(`interior-${n}`).textContent = '🐐';
+    }
+    if(n !== state.chosen && n !== state.revealed) d.classList.add('open');
+  });
+
+  const verb = switchDoors ? 'switched' : 'stayed';
+  if(result.won){
+    setMessage(`You ${verb}, and door <strong>${result.final_door}</strong> had the car. 🎉 You win!`);
+  } else {
+    setMessage(`You ${verb}. Door <strong>${result.final_door}</strong> had a goat. The car was behind door <strong>${result.car_door}</strong>.`);
+  }
+
+  updateStats();
+  renderActions([
+    { label:'Play again', type:'cta-primary', onClick: startRound },
+  ]);
+}
+
+function updateStats(){
+  const stats = py.get_stats().toJs({dict_converter: Object.fromEntries});
+  const stay = stats.stay, sw = stats.switch;
+  const stayTotal = stay.wins + stay.losses;
+  const swTotal = sw.wins + sw.losses;
+  const total = stayTotal + swTotal;
+
+  els.statTotal.textContent = total;
+  els.statStay.textContent = `${stay.wins} / ${stayTotal}`;
+  els.statSwitch.textContent = `${sw.wins} / ${swTotal}`;
+
+  const stayPct = stayTotal ? Math.round(100*stay.wins/stayTotal) : 0;
+  const swPct = swTotal ? Math.round(100*sw.wins/swTotal) : 0;
+
+  els.pctStay.textContent = stayTotal ? `${stayPct}%` : 'N/A';
+  els.pctSwitch.textContent = swTotal ? `${swPct}%` : 'N/A';
+  els.barStay.style.width = `${stayPct}%`;
+  els.barSwitch.style.width = `${swPct}%`;
+}
+
+els.simBtn.addEventListener('click', () => {
+  const n = Math.max(10, Math.min(200000, parseInt(els.simCount.value) || 1000));
+  py.simulate(n, "stay");
+  py.simulate(n, "switch");
+  updateStats();
+  setMessage(`Ran <strong>${n.toLocaleString()}</strong> simulated games for each strategy. Watch the win-rate bars settle near 33% and 67%.`);
+});
+
+els.toggleStats.addEventListener('click', () => {
+  const nowHidden = els.panels.classList.toggle('hidden');
+  els.toggleStats.textContent = nowHidden ? 'Reveal results' : 'Hide results';
+});
+
+function openAbout(){ els.aboutModal.classList.remove('hidden'); }
+function closeAbout(){ els.aboutModal.classList.add('hidden'); }
+
+els.aboutBtn.addEventListener('click', openAbout);
+els.aboutClose.addEventListener('click', closeAbout);
+els.aboutModal.addEventListener('click', (e) => {
+  if(e.target === els.aboutModal) closeAbout();
+});
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape' && !els.aboutModal.classList.contains('hidden')) closeAbout();
+});
+
+boot();
+</script>
+
+</body>
+</html>
