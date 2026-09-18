@@ -30,10 +30,11 @@ icon_link(
 
 ## Teaching Tools
 
-### Shiny Apps
+### Interactive Online Applications
 
 *These tools are developed for teaching purposes.*
 
+- [Monty Hall Simulator](learning-tools/monty_hall_retro.html){target="_blank"}
 - [Phase Portrait Visualizer for 1st-Order Homogeneous Linear System](https://pcnkto-alex0john-quijano.shinyapps.io/ode-visualize/){target="_blank"}
 
 ## Courses
