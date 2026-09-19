@@ -79,12 +79,62 @@
   }
 
   .stage{
+    position:relative;
+    overflow:hidden;
     background-color:var(--forest-800);
     background-image:repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 2px, transparent 2px 5px);
     border:4px solid var(--ink-900);
     border-radius:8px;
     padding:32px 24px 28px;
     box-shadow:8px 8px 0 var(--ink-900);
+  }
+
+  .celebration{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:5;
+  }
+  .confetti-piece{
+    position:absolute;
+    top:-14px;
+    width:9px;
+    height:9px;
+    opacity:.95;
+    animation-name:confetti-fall;
+    animation-timing-function:linear;
+    animation-fill-mode:forwards;
+  }
+  @keyframes confetti-fall{
+    0%{ transform:translateY(0) rotate(0deg); opacity:1; }
+    100%{ transform:translateY(440px) rotate(360deg); opacity:0; }
+  }
+  .balloon{
+    position:absolute;
+    bottom:-40px;
+    width:26px;
+    height:34px;
+    border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+    border:2px solid var(--ink-900);
+    animation-name:balloon-float;
+    animation-timing-function:ease-in;
+    animation-fill-mode:forwards;
+  }
+  .balloon::after{
+    content:'';
+    position:absolute;
+    left:50%;
+    top:100%;
+    width:1px;
+    height:22px;
+    background:var(--ink-900);
+    transform:translateX(-50%);
+  }
+  @keyframes balloon-float{
+    0%{ transform:translateY(0) translateX(0); opacity:1; }
+    50%{ transform:translateY(-180px) translateX(12px); }
+    100%{ transform:translateY(-380px) translateX(-8px); opacity:0; }
   }
 
   .message{
@@ -205,6 +255,47 @@
     z-index:0;
   }
 
+  .door.win-fx .door-interior{
+    background:linear-gradient(120deg, #ff3b3b, #ff9a00, #ffee00, #4dff4d, #00c2ff, #7a4dff, #ff3b3b);
+    background-size:400% 400%;
+    animation:rainbow-wave 2.4s ease-in-out infinite;
+  }
+  @keyframes rainbow-wave{
+    0%{ background-position:0% 50%; }
+    50%{ background-position:100% 50%; }
+    100%{ background-position:0% 50%; }
+  }
+  .door.win-fx{
+    animation:rainbow-glow 2.4s linear infinite;
+  }
+  @keyframes rainbow-glow{
+    0%{ box-shadow:0 0 18px 6px rgba(255,59,59,.65); }
+    16%{ box-shadow:0 0 18px 6px rgba(255,154,0,.65); }
+    33%{ box-shadow:0 0 18px 6px rgba(255,238,0,.65); }
+    50%{ box-shadow:0 0 18px 6px rgba(77,255,77,.65); }
+    66%{ box-shadow:0 0 18px 6px rgba(0,194,255,.65); }
+    83%{ box-shadow:0 0 18px 6px rgba(122,77,255,.65); }
+    100%{ box-shadow:0 0 18px 6px rgba(255,59,59,.65); }
+  }
+
+  .door.lose-fx .door-interior{
+    background-color:#2a2f35;
+    background-image:repeating-linear-gradient(112deg, rgba(210,225,235,.35) 0px, rgba(210,225,235,.35) 1px, transparent 1px, transparent 9px);
+    background-size:100% 44px;
+    animation:gloomy-rain .5s linear infinite;
+  }
+  @keyframes gloomy-rain{
+    0%{ background-position:0 0; }
+    100%{ background-position:-9px 44px; }
+  }
+  .door.lose-fx{
+    animation:gloomy-glow 3s ease-in-out infinite;
+  }
+  @keyframes gloomy-glow{
+    0%,100%{ box-shadow:0 0 14px 4px rgba(15,18,22,.55); }
+    50%{ box-shadow:0 0 22px 7px rgba(15,18,22,.75); }
+  }
+
   .door-tag{
     position:absolute;
     bottom:-26px; left:0; right:0;
@@ -254,18 +345,11 @@
   .cta-outline{ background:var(--cream-50); color:var(--forest-700); border-color:var(--ink-900); }
   .cta-outline:not(:disabled):hover{ background:var(--cream-200); }
 
-  .guess-prompt{
-    text-align:center;
-    font-family:var(--pixel);
-    font-size:1.15rem;
-    color:var(--ink-700);
-    max-width:480px;
-    margin:22px auto 0;
-  }
-
   .stats-toggle-row{
     display:flex;
     justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
     margin-top:26px;
   }
 
@@ -309,6 +393,12 @@
     color:var(--ink-700);
     margin:0 0 14px;
   }
+  .modal-box a{
+    color:var(--rust-600);
+    text-decoration:underline;
+    text-underline-offset:2px;
+  }
+  .modal-box a:hover{ color:var(--rust-500); }
   .modal-close-row{
     display:flex;
     justify-content:flex-end;
@@ -316,20 +406,73 @@
   }
 
   .panels{
-    display:grid;
-    grid-template-columns:1fr 1fr;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
     gap:18px;
     margin-top:16px;
   }
-  @media (max-width:560px){ .panels{ grid-template-columns:1fr; } }
 
   .panel{
+    flex:1 1 300px;
+    max-width:380px;
     background:var(--cream-100);
     border:3px solid var(--ink-900);
     border-radius:6px;
     box-shadow:5px 5px 0 var(--ink-900);
     padding:16px 18px 18px;
     overflow:hidden;
+  }
+  .panel.wide{
+    flex-basis:100%;
+    max-width:860px;
+  }
+
+  .tree-hint{
+    font-family:var(--pixel);
+    font-size:.95rem;
+    color:var(--ink-700);
+    text-align:center;
+    margin:0 0 12px;
+  }
+  .tree-svg{
+    width:100%;
+    height:auto;
+    display:block;
+  }
+  .tree-edge{
+    stroke:var(--ink-900);
+    stroke-width:3;
+    fill:none;
+    transition:stroke .2s ease, stroke-width .2s ease;
+  }
+  .tree-edge.tree-highlight{
+    stroke:var(--rust-600);
+    stroke-width:5;
+  }
+  .tree-node rect{
+    fill:var(--cream-50);
+    stroke:var(--ink-900);
+    stroke-width:3;
+    transition:stroke .2s ease, stroke-width .2s ease;
+  }
+  .tree-node.outcome-win rect{ fill:var(--wood-300); }
+  .tree-node.outcome-lose rect{ fill:var(--rust-300); }
+  .tree-node text{
+    font-family:var(--pixel);
+    font-size:14px;
+    fill:var(--ink-900);
+  }
+  .tree-node.tree-highlight rect{
+    stroke:var(--rust-600);
+    stroke-width:5;
+  }
+  .tree-node circle{
+    fill:var(--ink-900);
+    transition:fill .2s ease;
+  }
+  .tree-node.tree-highlight circle{
+    fill:var(--rust-600);
   }
   .panel h2{
     font-family:var(--pixel-display);
@@ -407,6 +550,28 @@
   @keyframes blink{ 50%{ opacity:0; } }
   .hidden{ display:none !important; }
 
+  .site-footer{
+    width:100%;
+    max-width:880px;
+    margin:36px auto 0;
+    padding-top:20px;
+    border-top:2px dashed var(--ink-900);
+    text-align:center;
+  }
+  .site-footer p{
+    font-family:var(--pixel);
+    font-size:.95rem;
+    line-height:1.5;
+    color:var(--ink-700);
+    margin:0;
+  }
+  .site-footer a{
+    color:var(--rust-600);
+    text-decoration:underline;
+    text-underline-offset:2px;
+  }
+  .site-footer a:hover{ color:var(--rust-500); }
+
 </style>
 </head>
 <body>
@@ -422,6 +587,8 @@
 
   <div id="game" class="hidden">
     <div class="stage">
+      <div class="celebration" id="celebration"></div>
+
       <div id="message" class="message">Pick a door to begin.</div>
 
       <div class="doors" id="doors"></div>
@@ -431,22 +598,128 @@
       <div class="actions" id="actions"></div>
     </div>
 
-    <p class="guess-prompt">Before you reveal the results: what do you think your probability of winning is with this strategy?</p>
-
     <div class="stats-toggle-row">
-      <button class="cta cta-outline" id="toggle-stats">Reveal results</button>
+      <button class="cta cta-outline" id="toggle-your-results">Your Results</button>
+      <button class="cta cta-outline" id="toggle-probability">Your Decision</button>
+      <button class="cta cta-outline" id="toggle-simulate">Simulate</button>
     </div>
 
-    <div class="panels hidden" id="panels">
-      <div class="panel">
+    <div class="panels">
+      <div class="panel hidden" id="panel-your-results">
         <h2>Your results</h2>
         <div class="stat-row"><span>Games played</span><b id="stat-total">0</b></div>
-        <div class="stat-row"><span>Stay wins</span><b id="stat-stay">0 / 0</b></div>
-        <div class="stat-row"><span>Switch wins</span><b id="stat-switch">0 / 0</b></div>
+        <div class="stat-row"><span>Stay wins</span><b id="stat-stay">0 / 0 (N/A)</b></div>
+        <div class="stat-row"><span>Switch wins</span><b id="stat-switch">0 / 0 (N/A)</b></div>
       </div>
 
-      <div class="panel">
-        <h2>Win rate by strategy</h2>
+      <div class="panel wide hidden" id="panel-probability">
+        <h2>Decision Tree</h2>
+        <p class="tree-hint">Top row: which door hides the car. Your most recent round is highlighted below.</p>
+        <svg class="tree-svg" viewBox="0 0 900 280" xmlns="http://www.w3.org/2000/svg">
+          <line class="tree-edge" id="tree-edge-root-branch2" x1="450" y1="24" x2="120" y2="64"/>
+          <line class="tree-edge" id="tree-edge-root-branch1" x1="450" y1="24" x2="450" y2="64"/>
+          <line class="tree-edge" id="tree-edge-root-branch3" x1="450" y1="24" x2="780" y2="64"/>
+
+          <line class="tree-edge" id="tree-edge-branch1-hostA" x1="450" y1="104" x2="340" y2="144"/>
+          <line class="tree-edge" id="tree-edge-branch1-hostB" x1="450" y1="104" x2="560" y2="144"/>
+          <line class="tree-edge" id="tree-edge-branch2-host" x1="120" y1="104" x2="120" y2="144"/>
+          <line class="tree-edge" id="tree-edge-branch3-host" x1="780" y1="104" x2="780" y2="144"/>
+
+          <line class="tree-edge" id="tree-edge-branch1-hostA-stay" x1="340" y1="184" x2="290" y2="224"/>
+          <line class="tree-edge" id="tree-edge-branch1-hostA-switch" x1="340" y1="184" x2="390" y2="224"/>
+          <line class="tree-edge" id="tree-edge-branch1-hostB-stay" x1="560" y1="184" x2="510" y2="224"/>
+          <line class="tree-edge" id="tree-edge-branch1-hostB-switch" x1="560" y1="184" x2="610" y2="224"/>
+          <line class="tree-edge" id="tree-edge-branch2-host-stay" x1="120" y1="184" x2="70" y2="224"/>
+          <line class="tree-edge" id="tree-edge-branch2-host-switch" x1="120" y1="184" x2="170" y2="224"/>
+          <line class="tree-edge" id="tree-edge-branch3-host-stay" x1="780" y1="184" x2="730" y2="224"/>
+          <line class="tree-edge" id="tree-edge-branch3-host-switch" x1="780" y1="184" x2="830" y2="224"/>
+
+          <g class="tree-node" id="tree-root">
+            <circle cx="450" cy="24" r="7"/>
+          </g>
+
+          <g class="tree-node" id="tree-branch2">
+            <rect x="50" y="64" width="140" height="40" rx="4"/>
+            <text id="branch2-label" x="120" y="89" text-anchor="middle">? (Goat)</text>
+          </g>
+
+          <g class="tree-node" id="tree-branch1">
+            <rect x="380" y="64" width="140" height="40" rx="4"/>
+            <text id="branch1-label" x="450" y="89" text-anchor="middle">? (Car)</text>
+          </g>
+
+          <g class="tree-node" id="tree-branch3">
+            <rect x="710" y="64" width="140" height="40" rx="4"/>
+            <text id="branch3-label" x="780" y="89" text-anchor="middle">? (Goat)</text>
+          </g>
+
+          <g class="tree-node" id="tree-branch2-host">
+            <rect x="46" y="144" width="148" height="40" rx="4"/>
+            <text id="branch2-host-label" x="120" y="169" text-anchor="middle">Host opens ?</text>
+          </g>
+
+          <g class="tree-node" id="tree-branch1-hostA">
+            <rect x="266" y="144" width="148" height="40" rx="4"/>
+            <text id="branch1-hostA-label" x="340" y="169" text-anchor="middle">Host opens ?</text>
+          </g>
+
+          <g class="tree-node" id="tree-branch1-hostB">
+            <rect x="486" y="144" width="148" height="40" rx="4"/>
+            <text id="branch1-hostB-label" x="560" y="169" text-anchor="middle">Host opens ?</text>
+          </g>
+
+          <g class="tree-node" id="tree-branch3-host">
+            <rect x="706" y="144" width="148" height="40" rx="4"/>
+            <text id="branch3-host-label" x="780" y="169" text-anchor="middle">Host opens ?</text>
+          </g>
+
+          <g class="tree-node outcome-lose" id="tree-branch2-host-stay">
+            <rect x="25" y="224" width="90" height="40" rx="4"/>
+            <text x="70" y="249" text-anchor="middle">Stay: LOSE</text>
+          </g>
+
+          <g class="tree-node outcome-win" id="tree-branch2-host-switch">
+            <rect x="125" y="224" width="90" height="40" rx="4"/>
+            <text x="170" y="249" text-anchor="middle">Switch: WIN</text>
+          </g>
+
+          <g class="tree-node outcome-win" id="tree-branch1-hostA-stay">
+            <rect x="245" y="224" width="90" height="40" rx="4"/>
+            <text x="290" y="249" text-anchor="middle">Stay: WIN</text>
+          </g>
+
+          <g class="tree-node outcome-lose" id="tree-branch1-hostA-switch">
+            <rect x="345" y="224" width="90" height="40" rx="4"/>
+            <text x="390" y="249" text-anchor="middle">Switch: LOSE</text>
+          </g>
+
+          <g class="tree-node outcome-win" id="tree-branch1-hostB-stay">
+            <rect x="465" y="224" width="90" height="40" rx="4"/>
+            <text x="510" y="249" text-anchor="middle">Stay: WIN</text>
+          </g>
+
+          <g class="tree-node outcome-lose" id="tree-branch1-hostB-switch">
+            <rect x="565" y="224" width="90" height="40" rx="4"/>
+            <text x="610" y="249" text-anchor="middle">Switch: LOSE</text>
+          </g>
+
+          <g class="tree-node outcome-lose" id="tree-branch3-host-stay">
+            <rect x="685" y="224" width="90" height="40" rx="4"/>
+            <text x="730" y="249" text-anchor="middle">Stay: LOSE</text>
+          </g>
+
+          <g class="tree-node outcome-win" id="tree-branch3-host-switch">
+            <rect x="785" y="224" width="90" height="40" rx="4"/>
+            <text x="830" y="249" text-anchor="middle">Switch: WIN</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="panel hidden" id="panel-simulate">
+        <h2>Simulation results</h2>
+        <div class="stat-row"><span>Games simulated</span><b id="sim-total">0</b></div>
+        <div class="stat-row"><span>Stay wins</span><b id="sim-stay">0 / 0 (N/A)</b></div>
+        <div class="stat-row"><span>Switch wins</span><b id="sim-switch">0 / 0 (N/A)</b></div>
         <div class="bar-group">
           <div class="bar-label"><span>Stay</span><span id="pct-stay">N/A</span></div>
           <div class="bar-track"><div class="bar-fill stay" id="bar-stay" style="width:0%"></div></div>
@@ -463,15 +736,12 @@
     <div class="about-row">
       <button class="cta cta-outline" id="about-btn">About</button>
     </div>
-
-    <div class="disclosure-row">
-    <header>
-      <br><br>
-      <p>This application is for personal or educational use only. It was created by <a href="https://alexjohnquijano.com/" target="_blank" rel="noopener noreferrer">Alex John Quijano</a> at the University of Portland using HTML and Python, with assistance from Claude AI. Text and figures are licensed under Creative Commons Attribution (CC BY 4.0).</p>
-    </header>
-    </div>
   </div>
 </div>
+
+<footer class="site-footer">
+  <p>This application is for personal or educational use only. This was designed by <a href="https://alexjohnquijano.com/" target="_blank" rel="noopener noreferrer">Alex John Quijano</a> at the University of Portland using HTML and Python, with assistance from Claude AI. Text and figures are licensed under Creative Commons Attribution (CC BY 4.0).</p>
+</footer>
 
 <div class="modal-overlay hidden" id="about-modal">
   <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="about-title">
@@ -479,6 +749,7 @@
     <p>There are three doors. One hides a car, the other two hide goats. You pick a door. Then the host, who knows what's behind each one, opens a different door to show you a goat.</p>
     <p>Now you get to decide: keep your original door, or switch to the other one still closed?</p>
     <p>Your first pick has a 1-in-3 chance of hiding the car, and that never changes. But the host's reveal doesn't spread that remaining 2-in-3 chance evenly. It collapses entirely onto the one door you didn't pick and the host didn't open. That's why switching wins about two-thirds of the time, while staying wins only about one-third.</p>
+    <p>Read more on <a href="https://en.wikipedia.org/wiki/Monty_Hall_problem" target="_blank" rel="noopener noreferrer">Wikipedia</a>.</p>
     <div class="modal-close-row">
       <button class="cta cta-primary" id="about-close">Got it</button>
     </div>
@@ -488,25 +759,34 @@
 <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 <script>
 const state = { chosen:null, revealed:null, over:false };
+let celebrationTimeout = null;
 let pyodide, py;
 
 const els = {
   loading: document.getElementById('loading'),
   game: document.getElementById('game'),
   doors: document.getElementById('doors'),
+  celebration: document.getElementById('celebration'),
   actions: document.getElementById('actions'),
   message: document.getElementById('message'),
   statTotal: document.getElementById('stat-total'),
   statStay: document.getElementById('stat-stay'),
   statSwitch: document.getElementById('stat-switch'),
+  simTotal: document.getElementById('sim-total'),
+  simStay: document.getElementById('sim-stay'),
+  simSwitch: document.getElementById('sim-switch'),
   pctStay: document.getElementById('pct-stay'),
   pctSwitch: document.getElementById('pct-switch'),
   barStay: document.getElementById('bar-stay'),
   barSwitch: document.getElementById('bar-switch'),
   simBtn: document.getElementById('sim-btn'),
   simCount: document.getElementById('sim-count'),
-  toggleStats: document.getElementById('toggle-stats'),
-  panels: document.getElementById('panels'),
+  toggleYourResults: document.getElementById('toggle-your-results'),
+  panelYourResults: document.getElementById('panel-your-results'),
+  toggleSimulate: document.getElementById('toggle-simulate'),
+  panelSimulate: document.getElementById('panel-simulate'),
+  toggleProbability: document.getElementById('toggle-probability'),
+  panelProbability: document.getElementById('panel-probability'),
   aboutBtn: document.getElementById('about-btn'),
   aboutModal: document.getElementById('about-modal'),
   aboutClose: document.getElementById('about-close'),
@@ -522,7 +802,11 @@ class MontyHallGame:
         self.car_door = None
         self.chosen_door = None
         self.revealed_door = None
-        self.stats = {
+        self.play_stats = {
+            "stay":   {"wins": 0, "losses": 0},
+            "switch": {"wins": 0, "losses": 0},
+        }
+        self.sim_stats = {
             "stay":   {"wins": 0, "losses": 0},
             "switch": {"wins": 0, "losses": 0},
         }
@@ -544,23 +828,28 @@ class MontyHallGame:
         return next(d for d in (1, 2, 3) if d not in (self.chosen_door, self.revealed_door))
 
     def decide(self, switch):
+        """Resolve a round the player actually played. Counts toward play_stats only."""
         final_door = self.remaining_door() if switch else self.chosen_door
         won = (final_door == self.car_door)
         bucket = "switch" if switch else "stay"
         if won:
-            self.stats[bucket]["wins"] += 1
+            self.play_stats[bucket]["wins"] += 1
         else:
-            self.stats[bucket]["losses"] += 1
+            self.play_stats[bucket]["losses"] += 1
         return {
             "final_door": final_door,
             "car_door": self.car_door,
             "won": won,
         }
 
-    def get_stats(self):
-        return self.stats
+    def get_play_stats(self):
+        return self.play_stats
+
+    def get_sim_stats(self):
+        return self.sim_stats
 
     def simulate(self, trials, strategy):
+        """Run automated trials. Counts toward sim_stats only, kept separate from play_stats."""
         wins = 0
         for _ in range(trials):
             car = random.randint(1, 3)
@@ -575,9 +864,9 @@ class MontyHallGame:
                 wins += 1
             bucket = "switch" if strategy == "switch" else "stay"
             if final == car:
-                self.stats[bucket]["wins"] += 1
+                self.sim_stats[bucket]["wins"] += 1
             else:
-                self.stats[bucket]["losses"] += 1
+                self.sim_stats[bucket]["losses"] += 1
         return wins
 
 game = MontyHallGame()
@@ -625,6 +914,36 @@ function clearTags(){
   });
 }
 
+const CELEBRATION_COLORS = ['#c15f2c','#f0b98a','#4a9a5c','#a8dab5','#f3ecd9','#e8c84a'];
+
+function celebrateWin(){
+  const container = els.celebration;
+  container.innerHTML = '';
+
+  for(let i=0;i<28;i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = `${Math.random()*100}%`;
+    piece.style.background = CELEBRATION_COLORS[Math.floor(Math.random()*CELEBRATION_COLORS.length)];
+    piece.style.animationDuration = `${2 + Math.random()*1.5}s`;
+    piece.style.animationDelay = `${Math.random()*0.6}s`;
+    container.appendChild(piece);
+  }
+
+  for(let i=0;i<5;i++){
+    const balloon = document.createElement('div');
+    balloon.className = 'balloon';
+    balloon.style.left = `${8 + Math.random()*84}%`;
+    balloon.style.background = CELEBRATION_COLORS[Math.floor(Math.random()*CELEBRATION_COLORS.length)];
+    balloon.style.animationDuration = `${3 + Math.random()*1.5}s`;
+    balloon.style.animationDelay = `${Math.random()*0.4}s`;
+    container.appendChild(balloon);
+  }
+
+  clearTimeout(celebrationTimeout);
+  celebrationTimeout = setTimeout(() => { container.innerHTML = ''; }, 4200);
+}
+
 function startRound(){
   state.chosen = null;
   state.revealed = null;
@@ -632,11 +951,14 @@ function startRound(){
   py.new_round();
   [1,2,3].forEach(n=>{
     const d = doorEl(n);
-    d.classList.remove('open','chosen','revealed-goat');
+    d.classList.remove('open','chosen','revealed-goat','win-fx','lose-fx');
     d.disabled = false;
     document.getElementById(`interior-${n}`).textContent = '';
   });
   clearTags();
+  clearTimeout(celebrationTimeout);
+  els.celebration.innerHTML = '';
+  resetProbabilityTree();
   setMessage('Pick a door to begin.');
   renderActions([]);
 }
@@ -696,32 +1018,106 @@ function resolveRound(switchDoors){
     } else if(!document.getElementById(`interior-${n}`).textContent){
       document.getElementById(`interior-${n}`).textContent = '🐐';
     }
-    if(n !== state.chosen && n !== state.revealed) d.classList.add('open');
+    d.classList.add('open');
   });
 
   const verb = switchDoors ? 'switched' : 'stayed';
   if(result.won){
     setMessage(`You ${verb}, and door <strong>${result.final_door}</strong> had the car. 🎉 You win!`);
+    celebrateWin();
+    doorEl(result.final_door).classList.add('win-fx');
   } else {
-    setMessage(`You ${verb}. Door <strong>${result.final_door}</strong> had a goat. The car was behind door <strong>${result.car_door}</strong>.`);
+    setMessage(`You ${verb}. Door <strong>${result.final_door}</strong> had a goat. The car was behind door <strong>${result.car_door}</strong>. 😢`);
+    doorEl(result.final_door).classList.add('lose-fx');
   }
 
-  updateStats();
+  updatePlayStats();
+  updateProbabilityTree(state.chosen, result.car_door, state.revealed, switchDoors);
   renderActions([
     { label:'Play again', type:'cta-primary', onClick: startRound },
   ]);
 }
 
-function updateStats(){
-  const stats = py.get_stats().toJs({dict_converter: Object.fromEntries});
+function resetProbabilityTree(){
+  document.querySelectorAll('.tree-highlight').forEach(el => el.classList.remove('tree-highlight'));
+  document.getElementById('branch1-label').textContent = '? (Car)';
+  document.getElementById('branch2-label').textContent = '? (Goat)';
+  document.getElementById('branch3-label').textContent = '? (Goat)';
+  document.getElementById('branch1-hostA-label').textContent = 'Host opens ?';
+  document.getElementById('branch1-hostB-label').textContent = 'Host opens ?';
+  document.getElementById('branch2-host-label').textContent = 'Host opens ?';
+  document.getElementById('branch3-host-label').textContent = 'Host opens ?';
+}
+
+function updateProbabilityTree(chosenDoor, carDoor, revealedDoor, switched){
+  document.querySelectorAll('.tree-highlight').forEach(el => el.classList.remove('tree-highlight'));
+
+  const goatDoors = [1,2,3].filter(d => d !== carDoor).sort((a,b) => a - b);
+  const choice = switched ? 'switch' : 'stay';
+
+  document.getElementById('branch1-label').textContent = `${carDoor} (Car)`;
+  document.getElementById('branch2-label').textContent = `${goatDoors[0]} (Goat)`;
+  document.getElementById('branch3-label').textContent = `${goatDoors[1]} (Goat)`;
+  document.getElementById('branch1-hostA-label').textContent = `Host opens door ${goatDoors[0]}`;
+  document.getElementById('branch1-hostB-label').textContent = `Host opens door ${goatDoors[1]}`;
+  document.getElementById('branch2-host-label').textContent = `Host opens door ${goatDoors[1]}`;
+  document.getElementById('branch3-host-label').textContent = `Host opens door ${goatDoors[0]}`;
+
+  let branch, hostBranch;
+  if(chosenDoor === carDoor){
+    branch = 'branch1';
+    hostBranch = (revealedDoor === goatDoors[0]) ? 'branch1-hostA' : 'branch1-hostB';
+  } else if(chosenDoor === goatDoors[0]){
+    branch = 'branch2';
+    hostBranch = 'branch2-host';
+  } else {
+    branch = 'branch3';
+    hostBranch = 'branch3-host';
+  }
+
+  const ids = [
+    'tree-root',
+    `tree-${branch}`,
+    `tree-${hostBranch}`,
+    `tree-${hostBranch}-${choice}`,
+    `tree-edge-root-${branch}`,
+    `tree-edge-${hostBranch}`,
+    `tree-edge-${hostBranch}-${choice}`,
+  ];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.add('tree-highlight');
+  });
+}
+
+function formatRecord(wins, total){
+  if(total === 0) return `${wins} / ${total} (N/A)`;
+  const pct = Math.round(100 * wins / total);
+  return `${wins} / ${total} (${pct}%)`;
+}
+
+function updatePlayStats(){
+  const stats = py.get_play_stats().toJs({dict_converter: Object.fromEntries});
   const stay = stats.stay, sw = stats.switch;
   const stayTotal = stay.wins + stay.losses;
   const swTotal = sw.wins + sw.losses;
   const total = stayTotal + swTotal;
 
   els.statTotal.textContent = total;
-  els.statStay.textContent = `${stay.wins} / ${stayTotal}`;
-  els.statSwitch.textContent = `${sw.wins} / ${swTotal}`;
+  els.statStay.textContent = formatRecord(stay.wins, stayTotal);
+  els.statSwitch.textContent = formatRecord(sw.wins, swTotal);
+}
+
+function updateSimStats(){
+  const stats = py.get_sim_stats().toJs({dict_converter: Object.fromEntries});
+  const stay = stats.stay, sw = stats.switch;
+  const stayTotal = stay.wins + stay.losses;
+  const swTotal = sw.wins + sw.losses;
+  const total = stayTotal + swTotal;
+
+  els.simTotal.textContent = total;
+  els.simStay.textContent = formatRecord(stay.wins, stayTotal);
+  els.simSwitch.textContent = formatRecord(sw.wins, swTotal);
 
   const stayPct = stayTotal ? Math.round(100*stay.wins/stayTotal) : 0;
   const swPct = swTotal ? Math.round(100*sw.wins/swTotal) : 0;
@@ -736,13 +1132,23 @@ els.simBtn.addEventListener('click', () => {
   const n = Math.max(10, Math.min(200000, parseInt(els.simCount.value) || 1000));
   py.simulate(n, "stay");
   py.simulate(n, "switch");
-  updateStats();
+  updateSimStats();
   setMessage(`Ran <strong>${n.toLocaleString()}</strong> simulated games for each strategy. Watch the win-rate bars settle near 33% and 67%.`);
 });
 
-els.toggleStats.addEventListener('click', () => {
-  const nowHidden = els.panels.classList.toggle('hidden');
-  els.toggleStats.textContent = nowHidden ? 'Reveal results' : 'Hide results';
+els.toggleYourResults.addEventListener('click', () => {
+  const nowHidden = els.panelYourResults.classList.toggle('hidden');
+  els.toggleYourResults.textContent = nowHidden ? 'Your Results' : 'Hide Results';
+});
+
+els.toggleSimulate.addEventListener('click', () => {
+  const nowHidden = els.panelSimulate.classList.toggle('hidden');
+  els.toggleSimulate.textContent = nowHidden ? 'Simulate' : 'Hide Simulation';
+});
+
+els.toggleProbability.addEventListener('click', () => {
+  const nowHidden = els.panelProbability.classList.toggle('hidden');
+  els.toggleProbability.textContent = nowHidden ? 'Your Decision' : 'Hide Your Decision';
 });
 
 function openAbout(){ els.aboutModal.classList.remove('hidden'); }
