@@ -256,37 +256,45 @@
   }
 
   .door.win-fx .door-interior{
-    background:linear-gradient(120deg, #ff3b3b, #ff9a00, #ffee00, #4dff4d, #00c2ff, #7a4dff, #ff3b3b);
-    background-size:400% 400%;
-    animation:rainbow-wave 2.4s ease-in-out infinite;
+    background:repeating-linear-gradient(
+      75deg,
+      #ff2d2d 0px 20px,
+      #ff8c00 20px 40px,
+      #ffd500 40px 60px,
+      #16b84c 60px 80px,
+      #0074ff 80px 100px,
+      #4b0082 100px 120px,
+      #9400d3 120px 140px
+    );
+    animation:rainbow-wave 4s linear infinite;
   }
   @keyframes rainbow-wave{
-    0%{ background-position:0% 50%; }
-    50%{ background-position:100% 50%; }
-    100%{ background-position:0% 50%; }
+    0%{ background-position:0px 0px; }
+    100%{ background-position:280px 0px; }
   }
   .door.win-fx{
-    animation:rainbow-glow 2.4s linear infinite;
+    animation:rainbow-glow 4s linear infinite;
   }
   @keyframes rainbow-glow{
-    0%{ box-shadow:0 0 18px 6px rgba(255,59,59,.65); }
-    16%{ box-shadow:0 0 18px 6px rgba(255,154,0,.65); }
-    33%{ box-shadow:0 0 18px 6px rgba(255,238,0,.65); }
-    50%{ box-shadow:0 0 18px 6px rgba(77,255,77,.65); }
-    66%{ box-shadow:0 0 18px 6px rgba(0,194,255,.65); }
-    83%{ box-shadow:0 0 18px 6px rgba(122,77,255,.65); }
-    100%{ box-shadow:0 0 18px 6px rgba(255,59,59,.65); }
+    0%{ box-shadow:0 0 24px 8px rgba(255,45,45,.85); }
+    7.143%{ box-shadow:0 0 24px 8px rgba(255,140,0,.85); }
+    14.286%{ box-shadow:0 0 24px 8px rgba(255,213,0,.85); }
+    21.429%{ box-shadow:0 0 24px 8px rgba(22,184,76,.85); }
+    28.571%{ box-shadow:0 0 24px 8px rgba(0,116,255,.85); }
+    35.714%{ box-shadow:0 0 24px 8px rgba(75,0,130,.85); }
+    42.857%{ box-shadow:0 0 24px 8px rgba(148,0,211,.85); }
+    50%{ box-shadow:0 0 24px 8px rgba(255,45,45,.85); }
+    57.143%{ box-shadow:0 0 24px 8px rgba(255,140,0,.85); }
+    64.286%{ box-shadow:0 0 24px 8px rgba(255,213,0,.85); }
+    71.429%{ box-shadow:0 0 24px 8px rgba(22,184,76,.85); }
+    78.571%{ box-shadow:0 0 24px 8px rgba(0,116,255,.85); }
+    85.714%{ box-shadow:0 0 24px 8px rgba(75,0,130,.85); }
+    92.857%{ box-shadow:0 0 24px 8px rgba(148,0,211,.85); }
+    100%{ box-shadow:0 0 24px 8px rgba(255,45,45,.85); }
   }
 
   .door.lose-fx .door-interior{
     background-color:#2a2f35;
-    background-image:repeating-linear-gradient(112deg, rgba(210,225,235,.35) 0px, rgba(210,225,235,.35) 1px, transparent 1px, transparent 9px);
-    background-size:100% 44px;
-    animation:gloomy-rain .5s linear infinite;
-  }
-  @keyframes gloomy-rain{
-    0%{ background-position:0 0; }
-    100%{ background-position:-9px 44px; }
   }
   .door.lose-fx{
     animation:gloomy-glow 3s ease-in-out infinite;
@@ -294,6 +302,46 @@
   @keyframes gloomy-glow{
     0%,100%{ box-shadow:0 0 14px 4px rgba(15,18,22,.55); }
     50%{ box-shadow:0 0 22px 7px rgba(15,18,22,.75); }
+  }
+
+  .rain-container{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:2;
+  }
+  .rain-drop{
+    position:absolute;
+    top:-12%;
+    width:3px;
+    height:11px;
+    border-radius:0 0 50% 50% / 0 0 70% 70%;
+    background:rgba(220,232,245,.85);
+    animation-name:rain-fall;
+    animation-timing-function:linear;
+    animation-iteration-count:infinite;
+  }
+  @keyframes rain-fall{
+    0%{ transform:translateY(0); }
+    100%{ transform:translateY(240px); }
+  }
+
+  .lightning-flash{
+    position:absolute;
+    inset:0;
+    background:#f3ecd9;
+    animation:lightning-strike .3s ease-out forwards;
+    pointer-events:none;
+    z-index:3;
+  }
+  @keyframes lightning-strike{
+    0%{ opacity:0; }
+    8%{ opacity:.9; }
+    18%{ opacity:.1; }
+    30%{ opacity:.75; }
+    45%{ opacity:.05; }
+    100%{ opacity:0; }
   }
 
   .door-tag{
@@ -760,6 +808,7 @@
 <script>
 const state = { chosen:null, revealed:null, over:false };
 let celebrationTimeout = null;
+let lightningTimeout = null;
 let pyodide, py;
 
 const els = {
@@ -895,6 +944,7 @@ function buildDoors(){
       </div>
       <div class="door-number">${i}</div>
       <div class="door-interior" id="interior-${i}"></div>
+      <div class="rain-container" id="rain-${i}"></div>
       <div class="door-tag" id="tag-${i}"></div>
     `;
     btn.addEventListener('click', () => onDoorClick(i));
@@ -920,7 +970,7 @@ function celebrateWin(){
   const container = els.celebration;
   container.innerHTML = '';
 
-  for(let i=0;i<28;i++){
+  for(let i=0;i<55;i++){
     const piece = document.createElement('div');
     piece.className = 'confetti-piece';
     piece.style.left = `${Math.random()*100}%`;
@@ -930,7 +980,7 @@ function celebrateWin(){
     container.appendChild(piece);
   }
 
-  for(let i=0;i<5;i++){
+  for(let i=0;i<11;i++){
     const balloon = document.createElement('div');
     balloon.className = 'balloon';
     balloon.style.left = `${8 + Math.random()*84}%`;
@@ -954,9 +1004,11 @@ function startRound(){
     d.classList.remove('open','chosen','revealed-goat','win-fx','lose-fx');
     d.disabled = false;
     document.getElementById(`interior-${n}`).textContent = '';
+    stopRain(n);
   });
   clearTags();
   clearTimeout(celebrationTimeout);
+  stopLightning();
   els.celebration.innerHTML = '';
   resetProbabilityTree();
   setMessage('Pick a door to begin.');
@@ -1006,6 +1058,48 @@ function pickDoor(n){
   setMessage(`You picked door <strong>${n}</strong>. Behind door <strong>${revealed}</strong> is a goat. Click door <strong>${n}</strong> again to stay, or click door <strong>${remaining}</strong> to switch.`);
 }
 
+function startRain(doorNum){
+  const container = document.getElementById(`rain-${doorNum}`);
+  if(!container) return;
+  container.innerHTML = '';
+  const count = 32;
+  for(let i=0;i<count;i++){
+    const drop = document.createElement('div');
+    drop.className = 'rain-drop';
+    drop.style.left = `${Math.random()*100}%`;
+    drop.style.opacity = (0.5 + Math.random()*0.4).toFixed(2);
+    drop.style.animationDuration = `${0.7 + Math.random()*0.8}s`;
+    drop.style.animationDelay = `${(Math.random()*1.2).toFixed(2)}s`;
+    container.appendChild(drop);
+  }
+}
+
+function stopRain(doorNum){
+  const container = document.getElementById(`rain-${doorNum}`);
+  if(container) container.innerHTML = '';
+}
+
+function triggerLightning(doorNum){
+  const container = document.getElementById(`rain-${doorNum}`);
+  if(!container) return;
+  const flash = document.createElement('div');
+  flash.className = 'lightning-flash';
+  flash.addEventListener('animationend', () => flash.remove());
+  container.appendChild(flash);
+}
+
+function scheduleLightning(doorNum){
+  const delay = 1200 + Math.random() * 2800;
+  lightningTimeout = setTimeout(() => {
+    triggerLightning(doorNum);
+    scheduleLightning(doorNum);
+  }, delay);
+}
+
+function stopLightning(){
+  clearTimeout(lightningTimeout);
+}
+
 function resolveRound(switchDoors){
   state.over = true;
   const result = py.decide(switchDoors).toJs({dict_converter: Object.fromEntries});
@@ -1029,6 +1123,8 @@ function resolveRound(switchDoors){
   } else {
     setMessage(`You ${verb}. Door <strong>${result.final_door}</strong> had a goat. The car was behind door <strong>${result.car_door}</strong>. 😢`);
     doorEl(result.final_door).classList.add('lose-fx');
+    startRain(result.final_door);
+    scheduleLightning(result.final_door);
   }
 
   updatePlayStats();
