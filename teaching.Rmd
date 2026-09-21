@@ -34,6 +34,7 @@ icon_link(
 
 *These tools are developed for teaching purposes.*
 
+- [1st-Order ODE Slope Field & Phase Diagram Visualizer](learning-tools/1st-order-ode-visualizer.html){target="_blank"}
 - [Monty Hall Simulator](learning-tools/monty_hall_retro.html){target="_blank"}
 - [Phase Portrait Visualizer for 1st-Order Homogeneous Linear System](https://pcnkto-alex0john-quijano.shinyapps.io/ode-visualize/){target="_blank"}
 
