@@ -6,6 +6,7 @@
 <title>1st-Order ODE Slope Field & Phase Diagram Visualizer</title>
 <style>
   :root {
+    color-scheme: light;
     --paper: #f5f7f1;
     --panel: #fdfdfa;
     --ink: #1f2a22;
@@ -19,9 +20,10 @@
     --positive: #3f6b46;
     --negative: #9c2f42;
     --vector: #74806f;
-    --nullcline: #b8860b;
-    --equilibrium: #4d8a54;
-    --curve: #a3432f;
+    --blue: #2b6cb0;
+    --nullcline: var(--blue);
+    --equilibrium: #b3312f;
+    --curve: var(--blue);
     --canvas-bg: #fdfefb;
     --danger-bg: #f6e8e6;
     --danger-text: #8a2a3a;
@@ -178,12 +180,19 @@
     background: var(--accent-soft); color: var(--ink); border: 1px solid var(--border-soft);
   }
   .notice.danger { background: var(--danger-bg); color: var(--danger-text); border-color: var(--danger-border); }
+  .notice code {
+    font-family: var(--font-mono); background: var(--canvas-bg); border: 1px solid var(--border-soft);
+    border-radius: 4px; padding: 1px 5px;
+  }
+  .notice + .notice { margin-top: -6px; }
+  .legend + .notice { margin-top: 14px; }
 
   .eq-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin-top: 4px; }
   .eq-table td { padding: 4px 2px; border-bottom: 1px solid var(--border-soft); }
   .eq-table td.val { font-family: var(--font-mono); }
 
   footer { margin-top: 18px; font-size: 0.78rem; color: var(--ink-muted); text-align: center; }
+  footer a { color: var(--accent); text-decoration: underline; }
 
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
@@ -196,6 +205,13 @@
       <h1>1st-Order ODE Slope Field &amp; Phase Diagram Visualizer</h1>
       <p class="tagline">Type a first-order ODE and sketch its slope field or, for autonomous equations, its phase diagram.</p>
     </div>
+  </div>
+
+  <div class="notice" id="variableNotice">
+    <strong>Before you type an equation:</strong> this tool always plots <span style="font-family:var(--font-serif); font-style:italic;">dy/dt = f(y, t)</span>, where <code>y</code> is the dependent variable and <code>t</code> is the independent variable. If your ODE uses different notation (for example <code>dP/dt = kP</code>, or <code>dx/ds = rx(1 &minus; x/K)</code>), first translate it into <code>y</code> and <code>t</code> before typing it into the box below. For example, <code>dP/dt = kP</code> becomes <code>k*y</code>.
+  </div>
+  <div class="notice" id="parameterNotice">
+    <strong>Parameters must be numbers:</strong> this tool only recognizes <code>y</code> and <code>t</code>, so it cannot evaluate an equation that still has a symbolic parameter in it (like <code>k</code>, <code>r</code>, or <code>K</code>) and will show a parse error. Decide on a numeric value for each parameter first, then substitute it in. For example, <code>dP/dt = kP</code> with <code>k = 0.3</code> should be entered as <code>0.3*y</code>, not <code>k*y</code>.
   </div>
 
   <div class="eq-card">
@@ -234,6 +250,10 @@
             <span><span class="swatch" style="background:var(--nullcline)"></span> nullcline (f = 0)</span>
             <span><span class="swatch" style="background:var(--equilibrium)"></span> equilibrium</span>
             <span><span style="color:var(--ink-muted)">×</span> undefined point</span>
+          </div>
+          <div class="notice" id="axisReminderSlope">
+            <strong>Choosing axis limits:</strong> the t and y ranges decide what you can see, not what's true about the ODE. Adjust them, or drag and scroll on the plot itself, until the picture actually shows the ODE's behavior: any equilibria and nullclines, and how nearby solution curves grow, decay, or level off. Too narrow a window can hide equilibria; too wide a window can flatten out the interesting behavior into what looks like nothing.
+            <br><br><strong>Resolution and vector size:</strong> too coarse a resolution can skip right over a nullcline or an equilibrium between grid points, and arrows that are too small or too large can be hard to read or can overlap and hide the pattern. Adjust these, and the axis limits, one more time right before you submit your work, so the plot you turn in actually shows what you're describing.
           </div>
         </div>
         <details class="controls" open>
@@ -308,6 +328,9 @@
             <span><span class="dot" style="color:var(--equilibrium); background:linear-gradient(90deg, var(--equilibrium) 50%, var(--canvas-bg) 50%)"></span> semistable</span>
             <span><span style="color:var(--equilibrium)">→</span> direction of flow (sign of y′)</span>
           </div>
+          <div class="notice" id="axisReminderPhase">
+            <strong>Choosing axis limits:</strong> the y and y&prime; ranges decide what you can see, not what's true about the ODE. Widen or narrow them, or drag and scroll on the plot itself, until every equilibrium is visible and you can see how y&prime; behaves between and beyond them. Too narrow a window can hide equilibria off the top or bottom edge; too wide a window can squash the interesting behavior down into what looks like a flat line. Adjust these one more time right before you submit your work, so the plot you turn in actually shows what you're describing.
+          </div>
         </div>
         <details class="controls" open>
           <summary>Range &amp; equilibria</summary>
@@ -326,7 +349,6 @@
                 <input type="number" id="pYPrimeMax" value="1" class="num-input" aria-label="y prime maximum">
               </div>
             </div>
-            <label class="checkline"><input type="checkbox" id="chkAutoScale" checked> Auto-scale y′ axis</label>
             <button class="btn small" id="resetPhaseBtn" type="button">Reset view</button>
             <hr class="sep">
             <div id="eqSummary"></div>
@@ -336,7 +358,7 @@
     </section>
   </main>
 
-  <footer>All computation runs locally in your browser. Nothing is uploaded. Built for exploring first-order ODEs, not for exact symbolic analysis. This application is for personal or educational use only.</footer>
+  <footer>This application is for personal or educational use only. This was designed by <a href="https://alexjohnquijano.com/" target="_blank" rel="noopener noreferrer">Alex John Quijano</a> at the University of Portland using HTML and JavaScript, with assistance from Claude AI. Text and figures are licensed under Creative Commons Attribution (CC BY 4.0).</footer>
 </div>
 
 <script>
@@ -754,7 +776,7 @@ const el = {};
 ['eqInput', 'eqStatus', 'exampleSelect', 'tabBtnSlope', 'tabBtnPhase', 'panel-slope', 'panel-phase',
  'slopeCanvas', 'phaseCanvas', 'tMin', 'tMax', 'yMin', 'yMax', 'resSlider', 'resVal', 'vecSizeSlider',
  'vecSizeVal', 'tRangeVal', 'yRangeVal', 'chkNullcline', 'chkEquilibria', 'chkUndefined',
- 'icT0', 'icY0', 'addIcBtn', 'icList', 'clearIcBtn', 'resetSlopeBtn', 'pYMin', 'pYMax', 'pYPrimeMin', 'pYPrimeMax', 'chkAutoScale',
+ 'icT0', 'icY0', 'addIcBtn', 'icList', 'clearIcBtn', 'resetSlopeBtn', 'pYMin', 'pYMax', 'pYPrimeMin', 'pYPrimeMax',
  'resetPhaseBtn', 'eqSummary', 'phaseNotice'
 ].forEach(function (id) { el[id] = document.getElementById(id); });
 
@@ -763,7 +785,16 @@ let isAutonomous = false;
 let activeTab = 'slope';
 let solutionCurves = [];
 let nextCurveId = 1;
-const CURVE_PALETTE = ['#5b4e8c', '#2f6f8f', '#b3572f', '#9c3f6b', '#a68a2e', '#46618c'];
+let autoScaleY = true;
+// Grass-green gradient for solution curves: dark to light, cycling every
+// CURVE_STEPS curves so colors stay distinguishable however many are added.
+const CURVE_HUE = 100, CURVE_SAT = 55, CURVE_LIGHT_MIN = 18, CURVE_LIGHT_MAX = 60, CURVE_STEPS = 8;
+function grassGreenShade(index) {
+  const i = index % CURVE_STEPS;
+  const t = CURVE_STEPS === 1 ? 0 : i / (CURVE_STEPS - 1);
+  const lightness = CURVE_LIGHT_MIN + t * (CURVE_LIGHT_MAX - CURVE_LIGHT_MIN);
+  return 'hsl(' + CURVE_HUE + ', ' + CURVE_SAT + '%, ' + lightness + '%)';
+}
 
 const slopePlot = new Plot2D(el.slopeCanvas, { xmin: -10, xmax: 10, ymin: -10, ymax: 10 });
 const phasePlot = new Plot2D(el.phaseCanvas, { xmin: -6, xmax: 6, ymin: -1, ymax: 1 });
@@ -911,7 +942,7 @@ function drawUndefinedMarker(ctx, plot, colors, t, y) {
 }
 
 // Draws a small gray arrow centered on (t,y), pointing in the direction of
-// increasing t along the local tangent line (dt, f(t,y)*dt). lengthPx is the
+// increasing t along the local tangent line (dt, f(y,t)*dt). lengthPx is the
 // already-resolved on-screen length for this arrow (normalized or rate-scaled).
 function drawVector(ctx, plot, colors, t, y, val, lengthPx) {
   const b = plot.bounds;
@@ -1193,7 +1224,7 @@ function drawPhaseDiagram() {
   }
   const finite = vals.filter(Number.isFinite);
   let ymin, ymax;
-  if (finite.length && el.chkAutoScale.checked) {
+  if (finite.length && autoScaleY) {
     const sorted = finite.slice().sort(function (a, b) { return a - b; });
     const lo = sorted[Math.floor(sorted.length * 0.03)];
     const hi = sorted[Math.ceil(sorted.length * 0.97) - 1];
@@ -1287,7 +1318,7 @@ function renderEqTable(eqs, classes) {
 
 function addIC(t0, y0) {
   if (!Number.isFinite(t0) || !Number.isFinite(y0)) return;
-  const color = CURVE_PALETTE[(nextCurveId - 1) % CURVE_PALETTE.length];
+  const color = grassGreenShade(nextCurveId - 1);
   solutionCurves.push({ id: nextCurveId++, t0: t0, y0: y0, color: color });
   renderICList();
   drawSlopeField();
@@ -1387,7 +1418,7 @@ el.resetSlopeBtn.addEventListener('click', function () {
 });
 
 makeDraggable(el.phaseCanvas, phasePlot, drawPhaseDiagram, syncPhaseInputsFromBounds, {
-  allowY: function () { return !el.chkAutoScale.checked; }
+  allowY: function () { return !autoScaleY; }
 });
 el.phaseCanvas.addEventListener('wheel', function (e) {
   e.preventDefault();
@@ -1398,7 +1429,7 @@ el.phaseCanvas.addEventListener('wheel', function (e) {
   const b = phasePlot.bounds;
   const newXmin = wx - (wx - b.xmin) * factor, newXmax = wx + (b.xmax - wx) * factor;
   let newYmin = b.ymin, newYmax = b.ymax;
-  if (!el.chkAutoScale.checked) {
+  if (!autoScaleY) {
     newYmin = wy - (wy - b.ymin) * factor;
     newYmax = wy + (b.ymax - wy) * factor;
   }
@@ -1407,19 +1438,19 @@ el.phaseCanvas.addEventListener('wheel', function (e) {
   drawPhaseDiagram();
 }, { passive: false });
 
-[el.pYMin, el.pYMax, el.chkAutoScale].forEach(function (inp) { inp.addEventListener('change', drawPhaseDiagram); inp.addEventListener('input', drawPhaseDiagram); });
+[el.pYMin, el.pYMax].forEach(function (inp) { inp.addEventListener('change', drawPhaseDiagram); inp.addEventListener('input', drawPhaseDiagram); });
 [el.pYPrimeMin, el.pYPrimeMax].forEach(function (inp) {
   inp.addEventListener('change', function () {
     const ymin = parseFloat(el.pYPrimeMin.value), ymax = parseFloat(el.pYPrimeMax.value);
     if (Number.isFinite(ymin) && Number.isFinite(ymax) && ymax > ymin) {
-      el.chkAutoScale.checked = false;
+      autoScaleY = false;
       phasePlot.bounds.ymin = ymin; phasePlot.bounds.ymax = ymax;
     }
     drawPhaseDiagram();
   });
 });
 el.resetPhaseBtn.addEventListener('click', function () {
-  el.pYMin.value = -6; el.pYMax.value = 6; el.chkAutoScale.checked = true;
+  el.pYMin.value = -6; el.pYMax.value = 6; autoScaleY = true;
   drawPhaseDiagram();
 });
 
