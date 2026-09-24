@@ -873,15 +873,22 @@
       ctx.setLineDash([8,3,2,3]);
       ctx.beginPath();
       if (Math.abs(state.b) > 1e-6){
-        const slope = -(state.k/state.b);
-        const v1 = slope*(-xLim), v2 = slope*(xLim);
-        ctx.moveTo(map.X(-xLim), map.Y(Math.max(-vLim,Math.min(vLim,v1))));
-        ctx.lineTo(map.X(xLim), map.Y(Math.max(-vLim,Math.min(vLim,v2))));
-      } else {
-        ctx.moveTo(map.X(0), map.Y(-vLim)); ctx.lineTo(map.X(0), map.Y(vLim));
-      }
-      ctx.stroke();
-      ctx.setLineDash([]);
+  	const slope = -(state.k/state.b);
+  	let x1 = -xLim, x2 = xLim;
+  	if (Math.abs(slope) > 1e-9) {
+    	// shrink the x-range so v stays within [-vLim, vLim], preserving the true slope
+    	const xBound = vLim / Math.abs(slope);
+    	x1 = -Math.min(xLim, xBound);
+    	x2 =  Math.min(xLim, xBound);
+  	}
+  	const v1 = slope * x1, v2 = slope * x2;
+  	ctx.moveTo(map.X(x1), map.Y(v1));
+  	ctx.lineTo(map.X(x2), map.Y(v2));
+	} else {
+  		ctx.moveTo(map.X(0), map.Y(-vLim)); ctx.lineTo(map.X(0), map.Y(vLim));
+	}
+      	ctx.stroke();
+      	ctx.setLineDash([]);
     }
 
     // full path (light) then trace so far (grass)
