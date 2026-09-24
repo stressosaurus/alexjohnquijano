@@ -65,12 +65,22 @@
   header.top p.sub { margin: 6px 0 0; color: var(--ink-soft); font-size: 14.5px; }
 
   .explain-panel { margin: 20px 0; }
+  .systrj-panel { margin: 20px 0; }
+  .toggle-row { display: flex; justify-content: center; gap: 8px; margin: 20px 0; }
   .explain-body { padding: 16px 18px 18px; }
   .explain-body p { margin: 0 0 12px; color: var(--ink-soft); font-size: 14.5px; line-height: 1.6; }
   .explain-body p:last-child { margin-bottom: 0; }
 
-  .layout { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 20px; }
-  @media (max-width: 760px) { .layout { flex-direction: column; } }
+  .layout { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 0; }
+  .layout > .plot-panel { padding: 0 14px; }
+  .layout > .plot-panel:first-child { padding-left: 0; }
+  .layout > .plot-panel:last-child { padding-right: 0; }
+  .layout > .plot-panel + .plot-panel { border-left: 1px solid var(--line-soft); }
+  @media (max-width: 760px) {
+    .layout { flex-direction: column; }
+    .layout > .plot-panel { padding: 0; }
+    .layout > .plot-panel + .plot-panel { border-left: none; border-top: 1px solid var(--line-soft); padding-top: 20px; margin-top: 20px; }
+  }
 
   .panel { background: var(--paper-raised); border: 1px solid var(--line); box-shadow: var(--shadow); }
   .panel > .panel-head {
@@ -165,19 +175,25 @@
   }
 
   .anim-panel canvas { width: 100%; height: 125px; display: block; }
-  .anim-caption { padding: 8px 14px 12px; display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--ink-soft); }
-  .anim-caption .v { font-family: 'JetBrains Mono', monospace; color: var(--ink); }
 
-  .plot-panel { display: flex; flex-direction: column; flex: 0 0 auto; }
-  .plot-panel canvas { width: 100%; display: block; touch-action: none; }
-  #phasePanel { width: min(39%); }
-  #phasePanel canvas { aspect-ratio: 1 / 1; }
-  #timePanel { width: min(59%); }
-  #timePanel canvas { aspect-ratio: 2.37 / 1; }
+  .plot-panel { display: flex; flex-direction: column; flex: 0 0 auto; max-width: 100%; }
+  .plot-panel canvas { display: block; touch-action: none; }
+  #phasePanel canvas { width: 300px; aspect-ratio: 1 / 1; }
+  #phasePanel #miniAnimCanvas { width: 300px; height: 70px; aspect-ratio: auto; border-bottom: 1px solid var(--line-soft); }
+  #timePanel canvas { width: 480px; aspect-ratio: 2.63 / 1; }
+  #timePanel { overflow-x: auto; max-width: 500px; }
+  .subplot-label { padding: 10px 14px 0; font-size: 11px; font-weight: 600; color: var(--ink-soft); }
+  .subplot-label.bordered { border-top: 1px solid var(--line-soft); margin-top: 4px; }
   .plot-legend { padding: 6px 10px 10px; font-size: 11px; color: var(--ink-soft); display: flex; gap: 7px 11px; flex-wrap: wrap; align-items: center; }
   .plot-legend .lg { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
   .swatch { display: inline-block; width: 16px; height: 0; border-top-width: 2px; border-top-style: solid; vertical-align: middle; }
-  .legend-eq-canvas { width: 14px; height: 14px; vertical-align: middle; display: inline-block; }
+  .swatch-eq {
+    display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+    border: 2px solid var(--red); box-sizing: border-box; vertical-align: middle;
+  }
+  .swatch-eq.stable { background: var(--red); }
+  .swatch-eq.unstable { background: var(--paper-raised); }
+  .swatch-eq.center { background: linear-gradient(to right, var(--paper-raised) 50%, var(--red) 50%); }
   .swatch.dash { border-top-style: dashed; }
   .swatch.dashdot { border-top-style: dotted; }
   .swatch.grass { border-color: var(--grass); }
@@ -209,7 +225,7 @@
   .toolbar .minival { font-family: 'JetBrains Mono', monospace; font-size: 10px; min-width: 22px; display: inline-block; }
   .toolbar .sep { width: 1px; height: 14px; background: var(--line); }
 
-  .phase-body { display: flex; }
+  .phase-body { display: flex; overflow-x: auto; }
   .toolbar.vertical {
     flex-direction: column; align-items: stretch; flex-wrap: nowrap;
     width: 140px; flex-shrink: 0; gap: 10px;
@@ -220,8 +236,7 @@
   .toolbar.vertical .grp-row { display: flex; justify-content: space-between; align-items: center; }
   .toolbar.vertical input[type=range] { width: 100%; }
   .toolbar.vertical input[type=number] { width: 100%; }
-  .phase-plot { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; }
-  #phasePanel canvas { width: 300px; max-width: 100%; }
+  .phase-plot { display: flex; flex-direction: column; flex: 0 0 auto; width: 300px; }
 
   .scrub-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px 14px; border-top: 1px solid var(--line-soft); }
   .scrub-row .tlabel { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft); width: 66px; flex-shrink: 0; }
@@ -276,12 +291,6 @@
       </div>
       <div class="motion-canvas-col">
         <canvas id="animCanvas"></canvas>
-        <div class="anim-caption">
-          <span>x = <span class="v mono" id="xNow">0.00</span></span>
-          <span>x′ = <span class="v mono" id="vNow">0.00</span></span>
-          <span>x″ = <span class="v mono" id="aNow">0.00</span></span>
-          <span>t = <span class="v mono" id="tNow">0.00</span></span>
-        </div>
         <div class="scrub-row">
           <span class="tlabel">t = <span id="scrubLabel">0.00</span></span>
           <input type="range" id="scrubSlider" min="0" max="10" step="0.01" value="0">
@@ -292,15 +301,6 @@
     <div class="motion-params">
       <div class="mp-col mp-params">
         <div class="mp-head">Parameters <span class="tag">m, b, k</span></div>
-        <div class="field">
-          <label>quick presets</label>
-          <div class="btnrow" style="padding:0;">
-            <button class="secondary preset-btn" id="presetUndamped">Undamped</button>
-            <button class="secondary preset-btn" id="presetUnder">Underdamped</button>
-            <button class="secondary preset-btn" id="presetCrit">Critically damped</button>
-            <button class="secondary preset-btn" id="presetOver">Overdamped</button>
-          </div>
-        </div>
         <div class="hrow cols-3">
           <div class="field">
             <label>mass (m)</label>
@@ -325,6 +325,15 @@
           </div>
         </div>
         <div class="field eq mono" id="eqDisplay" style="border-top:1px solid var(--line-soft); text-align:center;">1.00·x″ + 0.40·x′ + 4.00·x = 0</div>
+        <div class="field">
+          <label style="font-weight:bold;">Parameter presets</label>
+          <div class="btnrow" style="padding:0;">
+            <button class="secondary preset-btn" id="presetUndamped">Undamped</button>
+            <button class="secondary preset-btn" id="presetUnder">Underdamped</button>
+            <button class="secondary preset-btn" id="presetCrit">Critically damped</button>
+            <button class="secondary preset-btn" id="presetOver">Overdamped</button>
+          </div>
+        </div>
       </div>
       <div class="mp-col mp-ic">
         <div class="mp-head">Initial condition <span class="tag">x(0), x′(0)</span></div>
@@ -349,13 +358,83 @@
           <div class="classline" id="classLine">—</div>
         </div>
       </div>
-      <div class="mp-col mp-plots">
-        <div class="mp-head">Details</div>
-        <div class="btnrow">
-          <button id="togglePhysicsBtn">Physics</button>
-          <button id="toggleTrajectoriesBtn">System Trajectories</button>
+    </div>
+  </div>
+
+  <div class="toggle-row">
+    <button id="togglePhysicsBtn">Physics</button>
+    <button id="toggleTrajectoriesBtn">System Trajectories</button>
+  </div>
+
+  <div class="panel systrj-panel" id="systrjPanel" style="display:none;">
+    <div class="panel-head"><h2>System trajectories</h2></div>
+    <div class="layout">
+
+    <div class="plot-panel" id="phasePanel">
+      <div class="mp-head">Phase portrait <span class="tag">x vs v = x′</span></div>
+      <div class="phase-body">
+        <div class="toolbar vertical">
+          <label class="chk"><input type="checkbox" id="fieldToggle" checked> vector field</label>
+          <span class="grp">
+            <span class="grp-row"><label>vector size</label><span class="minival mono" id="vecSizeVal">2.0</span></span>
+            <input type="range" id="vecSizeSlider" min="1" max="3" step="0.1" value="2">
+          </span>
+          <span class="grp">
+            <span class="grp-row"><label>grid size</label><span class="minival mono" id="gridVal">15</span></span>
+            <input type="range" id="gridSlider" min="6" max="30" step="1" value="15">
+          </span>
+          <label class="chk"><input type="checkbox" id="magToggle" checked> scaled</label>
+          <label class="chk"><input type="checkbox" id="nullToggle"> nullclines</label>
+          <div style="font-size:11px; font-weight:600; color:var(--ink-soft);">Playback</div>
+          <div class="btnrow" style="padding:0;">
+            <button id="playBtn2">▶ Play</button>
+            <button class="secondary" id="resetBtn2">Reset</button>
+          </div>
+          <span class="grp">
+            <span class="grp-row"><label>speed</label><span class="minival mono" id="speedVal2">1.0×</span></span>
+            <input type="range" id="speedSlider2" min="0.1" max="10" step="0.05" value="1">
+          </span>
+        </div>
+        <div class="phase-plot">
+          <canvas id="miniAnimCanvas"></canvas>
+          <canvas id="phaseCanvas"></canvas>
+          <div class="plot-legend">
+            <span class="lg"><i class="swatch arrow">→</i>direction field</span>
+            <span class="lg"><i class="swatch dash blue"></i>x′ = 0</span>
+            <span class="lg"><i class="swatch dashdot blue"></i>v′ = 0</span>
+            <span class="lg"><i class="swatch-eq" id="legendEqMarker"></i>equilibrium</span>
+            <span class="lg"><i class="swatch grass-light"></i>full trajectory</span>
+            <span class="lg"><i class="swatch grass"></i>traced so far</span>
+          </div>
         </div>
       </div>
+      <div class="field" style="border-top:1px solid var(--line-soft);">
+        <label style="font-weight:bold;">Parameter presets</label>
+        <div class="btnrow" style="padding:0;">
+          <button class="secondary preset-btn" id="presetUndamped2">Undamped</button>
+          <button class="secondary preset-btn" id="presetUnder2">Underdamped</button>
+          <button class="secondary preset-btn" id="presetCrit2">Critically damped</button>
+          <button class="secondary preset-btn" id="presetOver2">Overdamped</button>
+        </div>
+      </div>
+    </div>
+    <div class="plot-panel" id="timePanel">
+      <div class="mp-head">Time series <span class="tag">t vs x, v</span></div>
+      <div class="subplot-label">displacement (x)</div>
+      <canvas id="tyCanvas"></canvas>
+      <div class="plot-legend">
+        <span class="lg"><i class="swatch dash red"></i>equilibrium (x = 0)</span>
+        <span class="lg"><i class="swatch grass-light"></i>full solution</span>
+        <span class="lg"><i class="swatch grass"></i>traced so far</span>
+      </div>
+      <div class="subplot-label bordered">velocity (v)</div>
+      <canvas id="vtCanvas"></canvas>
+      <div class="plot-legend">
+        <span class="lg"><i class="swatch dash red"></i>equilibrium (v = 0)</span>
+        <span class="lg"><i class="swatch grass-light"></i>full solution</span>
+        <span class="lg"><i class="swatch grass"></i>traced so far</span>
+      </div>
+    </div>
     </div>
   </div>
 
@@ -384,60 +463,6 @@
       });
     })();
   </script>
-
-  <div class="layout">
-
-    <div class="panel plot-panel" id="phasePanel">
-      <div class="panel-head"><h2>Phase portrait</h2><span class="tag">x vs v = x′</span></div>
-      <div class="phase-body">
-        <div class="toolbar vertical">
-          <label class="chk"><input type="checkbox" id="fieldToggle" checked> field</label>
-          <label class="chk"><input type="checkbox" id="nullToggle"> nullclines</label>
-          <label class="chk"><input type="checkbox" id="magToggle" checked> by magnitude</label>
-          <span class="grp">
-            <span class="grp-row"><label>grid</label><span class="minival mono" id="gridVal">15</span></span>
-            <input type="range" id="gridSlider" min="6" max="30" step="1" value="15">
-          </span>
-          <span class="grp">
-            <span class="grp-row"><label>vec size</label><span class="minival mono" id="vecSizeVal">2.0</span></span>
-            <input type="range" id="vecSizeSlider" min="1" max="3" step="0.1" value="2">
-          </span>
-          <span class="grp">
-            <span class="grp-row"><label>x ±</label><label class="chk tiny"><input type="checkbox" id="pxRangeAuto" checked> auto</label></span>
-            <input type="number" id="pxRangeInput" step="0.1" min="0.1">
-          </span>
-          <span class="grp">
-            <span class="grp-row"><label>v ±</label><label class="chk tiny"><input type="checkbox" id="vRangeAuto" checked> auto</label></span>
-            <input type="number" id="vRangeInput" step="0.1" min="0.1">
-          </span>
-        </div>
-        <div class="phase-plot">
-          <canvas id="phaseCanvas"></canvas>
-          <div class="plot-legend">
-            <span class="lg"><i class="swatch arrow">→</i>direction field</span>
-            <span class="lg"><i class="swatch dash blue"></i>x′ = 0</span>
-            <span class="lg"><i class="swatch dashdot blue"></i>v′ = 0</span>
-            <span class="lg"><canvas id="legendEqCanvas" class="legend-eq-canvas"></canvas>equilibrium</span>
-            <span class="lg"><i class="swatch grass-light"></i>full trajectory</span>
-            <span class="lg"><i class="swatch grass"></i>traced so far</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="panel plot-panel" id="timePanel">
-      <div class="panel-head"><h2>Time series</h2><span class="tag">t vs x</span></div>
-      <div class="toolbar">
-        <span class="grp"><label>t range</label><input type="number" id="tRangeInput" step="0.5" min="0.5"><label class="chk tiny"><input type="checkbox" id="tRangeAuto" checked> auto</label></span>
-        <span class="grp"><label>x ±</label><input type="number" id="xRangeInput" step="0.1" min="0.1"><label class="chk tiny"><input type="checkbox" id="xRangeAuto" checked> auto</label></span>
-      </div>
-      <canvas id="tyCanvas"></canvas>
-      <div class="plot-legend">
-        <span class="lg"><i class="swatch dash red"></i>equilibrium (x = 0)</span>
-        <span class="lg"><i class="swatch grass-light"></i>full solution</span>
-        <span class="lg"><i class="swatch grass"></i>traced so far</span>
-      </div>
-    </div>
-  </div>
 
   <footer class="note">
     This application is for personal or educational use only. This was designed by <a href="https://alexjohnquijano.com/" target="_blank" rel="noopener">Alex John Quijano</a> at the University of Portland using HTML and JavaScript, with assistance from Claude AI. Text and figures are licensed under Creative Commons Attribution (CC BY 4.0).
@@ -515,11 +540,10 @@
   }
 
   function subtypeLabel(s, cls){
-    if (cls === 'center') return 'Center — undamped oscillation (marginally stable)';
-    const word = cls === 'stable' ? 'Stable' : 'Unstable';
-    if (s.type === 'complex') return word + ' spiral — underdamped';
-    if (s.type === 'repeated') return word + ' degenerate node — critically damped';
-    return word + ' node — overdamped';
+    if (cls === 'center') return 'Undamped';
+    if (s.type === 'complex') return 'Underdamped';
+    if (s.type === 'repeated') return 'Critically damped';
+    return 'Overdamped';
   }
 
   function computeDuration(s){
@@ -575,7 +599,6 @@
     if (state.vLimitAuto) state.vLimit = Math.max(sample.vMax*1.25, 0.4);
     updateReadouts();
     updateEqDisplay();
-    syncAxisInputs();
   }
 
   // ---------- UI refs ----------
@@ -591,6 +614,10 @@
   const resetBtn = document.getElementById('resetBtn');
   const speedSlider = document.getElementById('speedSlider');
   const speedVal = document.getElementById('speedVal');
+  const playBtn2 = document.getElementById('playBtn2');
+  const resetBtn2 = document.getElementById('resetBtn2');
+  const speedSlider2 = document.getElementById('speedSlider2');
+  const speedVal2 = document.getElementById('speedVal2');
   const fieldToggle = document.getElementById('fieldToggle');
   const nullToggle = document.getElementById('nullToggle');
   const gridSlider = document.getElementById('gridSlider');
@@ -598,26 +625,11 @@
   const vecSizeSlider = document.getElementById('vecSizeSlider');
   const vecSizeVal = document.getElementById('vecSizeVal');
   const magToggle = document.getElementById('magToggle');
-  const vRangeInput = document.getElementById('vRangeInput');
-  const vRangeAuto = document.getElementById('vRangeAuto');
-  const pxRangeInput = document.getElementById('pxRangeInput');
-  const pxRangeAuto = document.getElementById('pxRangeAuto');
-  const tRangeInput = document.getElementById('tRangeInput');
-  const tRangeAuto = document.getElementById('tRangeAuto');
-  const xRangeInput = document.getElementById('xRangeInput');
-  const xRangeAuto = document.getElementById('xRangeAuto');
   const scrubSlider = document.getElementById('scrubSlider');
   const scrubLabel = document.getElementById('scrubLabel');
   const eqDisplay = document.getElementById('eqDisplay');
 
   function fmt(x, d){ if (!isFinite(x)) return '—'; return x.toFixed(d===undefined?2:d); }
-
-  function syncAxisInputs(){
-    tRangeInput.value = state.duration.toFixed(2);
-    xRangeInput.value = state.xLimit.toFixed(2);
-    pxRangeInput.value = state.xLimit.toFixed(2);
-    vRangeInput.value = state.vLimit.toFixed(2);
-  }
 
   function updateEqDisplay(){
     eqDisplay.textContent = fmt(state.m,2)+'·x″ + '+fmt(state.b,2)+'·x′ + '+fmt(state.k,2)+'·x = 0';
@@ -640,18 +652,17 @@
     document.getElementById('period').textContent = sol.beta > 1e-9 ? fmt(2*Math.PI/sol.beta,3) : 'not periodic';
     const cls = classify(state.b);
     document.getElementById('classLine').textContent = subtypeLabel(sol, cls);
-    drawLegendEqMarker(cls);
+    updateLegendEqMarker(cls);
   }
 
-  function drawLegendEqMarker(cls){
-    const canvas = document.getElementById('legendEqCanvas');
-    if (!canvas) return;
-    const {ctx, w, h} = getCtx(canvas);
-    ctx.clearRect(0,0,w,h);
-    drawEquilibriumMarker(ctx, w/2, h/2, cls, Math.max(1, Math.min(w,h)/2 - 2), cssVar('--red'));
+  function updateLegendEqMarker(cls){
+    const el = document.getElementById('legendEqMarker');
+    if (!el) return;
+    el.classList.remove('stable','unstable','center');
+    el.classList.add(cls);
   }
 
-  function redrawAll(){ if (!sol) return; drawAnim(state.t); drawPhase(state.t); drawTY(state.t); }
+  function redrawAll(){ if (!sol) return; drawAnim(state.t); drawMiniAnim(state.t); drawPhase(state.t); drawTY(state.t); drawVT(state.t); }
 
   function clampVal(v,lo,hi){ return Math.min(hi, Math.max(lo, v)); }
 
@@ -688,6 +699,10 @@
   document.getElementById('presetUnder').addEventListener('click', ()=>applyPreset(1,1.2,4,1.5,0));
   document.getElementById('presetCrit').addEventListener('click', ()=>applyPreset(1,4,4,1.5,0));
   document.getElementById('presetOver').addEventListener('click', ()=>applyPreset(1,8,4,1.5,0));
+  document.getElementById('presetUndamped2').addEventListener('click', ()=>applyPreset(1,0,4,1.5,0));
+  document.getElementById('presetUnder2').addEventListener('click', ()=>applyPreset(1,1.2,4,1.5,0));
+  document.getElementById('presetCrit2').addEventListener('click', ()=>applyPreset(1,4,4,1.5,0));
+  document.getElementById('presetOver2').addEventListener('click', ()=>applyPreset(1,8,4,1.5,0));
   x0Input.addEventListener('input', ()=>{ const v=parseFloat(x0Input.value); state.x0 = isFinite(v)?v:0; recompute(); redrawAll(); });
   v0Input.addEventListener('input', ()=>{ const v=parseFloat(v0Input.value); state.v0 = isFinite(v)?v:0; recompute(); redrawAll(); });
 
@@ -697,62 +712,46 @@
   vecSizeSlider.addEventListener('input', ()=>{ state.vectorSize = parseFloat(vecSizeSlider.value); vecSizeVal.textContent = fmt(state.vectorSize,1); redrawAll(); });
   magToggle.addEventListener('change', ()=>{ state.scaleByMagnitude = magToggle.checked; redrawAll(); });
 
-  function wireRange(pairs, key){
-    for (const p of pairs){
-      p.input.addEventListener('input', ()=>{
-        const v = parseFloat(p.input.value);
-        if (!isFinite(v) || v<=0) return;
-        state[key] = v;
-        state[key+'Auto'] = false;
-        for (const q of pairs){ q.auto.checked = false; }
-        for (const q of pairs){ if (q!==p) q.input.value = p.input.value; }
-        if (key==='duration'){ rebuildSample(); }
-        redrawAll();
-      });
-      p.auto.addEventListener('change', ()=>{
-        state[key+'Auto'] = p.auto.checked;
-        for (const q of pairs){ q.auto.checked = p.auto.checked; }
-        if (p.auto.checked){
-          if (key==='duration'){ state.duration = computeDuration(sol); rebuildSample(); }
-          else if (key==='xLimit'){ state.xLimit = Math.max(sample.xMax*1.25,0.4); }
-          else if (key==='vLimit'){ state.vLimit = Math.max(sample.vMax*1.25,0.4); }
-          syncAxisInputs();
-          redrawAll();
-        }
-      });
-    }
+  function syncSpeedUI(){
+    const label = fmt(state.speed,2)+'×';
+    speedVal.textContent = label; speedVal2.textContent = label;
+    speedSlider.value = state.speed; speedSlider2.value = state.speed;
   }
-  wireRange([{input:tRangeInput, auto:tRangeAuto}], 'duration');
-  wireRange([{input:xRangeInput, auto:xRangeAuto}, {input:pxRangeInput, auto:pxRangeAuto}], 'xLimit');
-  wireRange([{input:vRangeInput, auto:vRangeAuto}], 'vLimit');
+  speedSlider.addEventListener('input', ()=>{ state.speed = parseFloat(speedSlider.value); syncSpeedUI(); });
+  speedSlider2.addEventListener('input', ()=>{ state.speed = parseFloat(speedSlider2.value); syncSpeedUI(); });
 
-  speedSlider.addEventListener('input', ()=>{ state.speed = parseFloat(speedSlider.value); speedVal.textContent = fmt(state.speed,2)+'×'; });
-
-  playBtn.addEventListener('click', ()=>{
+  function syncPlayButtons(){
+    const label = state.playing ? '⏸ Pause' : '▶ Play';
+    playBtn.textContent = label; playBtn2.textContent = label;
+  }
+  function togglePlay(){
     state.playing = !state.playing;
-    playBtn.textContent = state.playing ? '⏸ Pause' : '▶ Play';
+    syncPlayButtons();
     lastFrame = null;
-  });
-  resetBtn.addEventListener('click', ()=>{
-    state.t = 0; state.playing = false; playBtn.textContent = '▶ Play'; redrawAll();
-  });
+  }
+  playBtn.addEventListener('click', togglePlay);
+  playBtn2.addEventListener('click', togglePlay);
 
-  const phasePanel = document.getElementById('phasePanel');
-  const timePanel = document.getElementById('timePanel');
+  function doReset(){
+    state.t = 0; state.playing = false; syncPlayButtons(); redrawAll();
+  }
+  resetBtn.addEventListener('click', doReset);
+  resetBtn2.addEventListener('click', doReset);
+
+  const systrjPanel = document.getElementById('systrjPanel');
   const toggleTrajectoriesBtn = document.getElementById('toggleTrajectoriesBtn');
   const panelVisible = { trajectories: false };
 
   function updatePlotPanelVisibility(){
-    phasePanel.style.display = panelVisible.trajectories ? '' : 'none';
-    timePanel.style.display = panelVisible.trajectories ? '' : 'none';
+    systrjPanel.style.display = panelVisible.trajectories ? '' : 'none';
     toggleTrajectoriesBtn.textContent = panelVisible.trajectories ? 'Hide System Trajectories' : 'System Trajectories';
-    drawLegendEqMarker(classify(state.b));
+    updateLegendEqMarker(classify(state.b));
     redrawAll();
   }
   toggleTrajectoriesBtn.addEventListener('click', ()=>{ panelVisible.trajectories = !panelVisible.trajectories; updatePlotPanelVisibility(); });
   updatePlotPanelVisibility();
 
-  function onScrubStart(){ state.scrubbing = true; state.playing = false; playBtn.textContent = '▶ Play'; }
+  function onScrubStart(){ state.scrubbing = true; state.playing = false; syncPlayButtons(); }
   scrubSlider.addEventListener('pointerdown', onScrubStart);
   scrubSlider.addEventListener('input', ()=>{ state.t = parseFloat(scrubSlider.value); redrawAll(); });
   scrubSlider.addEventListener('pointerup', ()=>{ state.scrubbing = false; });
@@ -767,7 +766,9 @@
   // ---------- canvas ----------
   const animCanvas = document.getElementById('animCanvas');
   const phaseCanvas = document.getElementById('phaseCanvas');
+  const miniAnimCanvas = document.getElementById('miniAnimCanvas');
   const tyCanvas = document.getElementById('tyCanvas');
+  const vtCanvas = document.getElementById('vtCanvas');
 
   function getCtx(canvas){
     const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
@@ -1022,6 +1023,49 @@
     ctx.restore();
   }
 
+  function drawVT(tNow){
+    const {ctx, w, h} = getCtx(vtCanvas);
+    ctx.clearRect(0,0,w,h);
+    const marginL = 58, marginR = 16, marginT = 14, marginB = 40;
+    const pw = w - marginL - marginR, ph = h - marginT - marginB;
+
+    const vLim = state.vLimit;
+    const map = makeMapper(marginL, marginT, pw, ph, 0, state.duration, -vLim, vLim);
+    drawAxes(ctx, map, 't', 'v');
+
+    // equilibrium as red dashed horizontal line
+    ctx.strokeStyle = cssVar('--red');
+    ctx.lineWidth = 1.6;
+    ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(map.px, map.Y(0)); ctx.lineTo(map.px+map.pw, map.Y(0)); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // full path (light) then trace so far (grass)
+    ctx.strokeStyle = cssVar('--grass-light'); ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    for (let i=0;i<=sample.N;i++){
+      const X = map.X(sample.ts[i]), Y = map.Y(sample.vs[i]);
+      if (i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y);
+    }
+    ctx.stroke();
+
+    const idx = idxForT(tNow);
+    ctx.strokeStyle = cssVar('--grass'); ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i=0;i<=idx;i++){
+      const X = map.X(sample.ts[i]), Y = map.Y(sample.vs[i]);
+      if (i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y);
+    }
+    ctx.stroke();
+
+    const cur = evalState(sol, tNow);
+    const dotColor = cssVar('--grass');
+    ctx.save();
+    ctx.shadowColor = dotColor; ctx.shadowBlur = 8; ctx.fillStyle = dotColor;
+    ctx.beginPath(); ctx.arc(map.X(tNow), map.Y(cur.v), 5.5, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
   // ---------- motion animation ----------
   function springPath(ctx, x1, y, x2, amp, coils){
     const len = x2 - x1;
@@ -1146,11 +1190,62 @@
     ctx.fillStyle = cssVar('--ink-soft');
     ctx.font = '13px "Space Grotesk", sans-serif';
     ctx.fillText('equilibrium', baseX, axisY+24);
+  }
 
-    document.getElementById('xNow').textContent = fmt(cur.x,3);
-    document.getElementById('vNow').textContent = fmt(cur.v,3);
-    document.getElementById('aNow').textContent = fmt(cur.a,3);
-    document.getElementById('tNow').textContent = fmt(tNow,2);
+  function drawMiniAnim(tNow){
+    const {ctx, w, h} = getCtx(miniAnimCanvas);
+    ctx.clearRect(0,0,w,h);
+
+    const cur = evalState(sol, tNow);
+    const color = cssVar('--grass');
+
+    // Same plot-area margins as drawPhase (marginL=58, marginR=16 on a
+    // 300px-wide canvas), so the mass's horizontal position here lines up
+    // pixel-for-pixel with its x-coordinate on the phase portrait below.
+    const marginL = 58, marginR = 16;
+    const axisX0 = marginL, axisX1 = w - marginR;
+    const axisSpan = axisX1 - axisX0;
+    const xLim = Math.max(state.xLimit, 0.1);
+    const pxPerUnit = axisSpan / (2*xLim);
+    const toPx = (xv) => axisX0 + axisSpan/2 + xv*pxPerUnit;
+    const baseX = toPx(0);
+    const massX = toPx(cur.x);
+
+    const axisY = h - 13;
+    const wallW = 7;
+    const massHalfW = 15, massHalfH = 11;
+    const centerY = axisY - massHalfH;
+
+    // wall (fixed support)
+    const wallTop = centerY - massHalfH - 5;
+    ctx.fillStyle = cssVar('--ink-soft');
+    ctx.fillRect(axisX0-wallW, wallTop, wallW, axisY-wallTop);
+
+    // spring, same shape logic as the main animation, scaled down
+    const baseAmp = 9;
+    const targetPeriod = baseAmp * 2.2;
+    const restLen = Math.max(1, (baseX-massHalfW) - axisX0);
+    const springCoils = Math.max(4, Math.min(30, Math.round(restLen/targetPeriod)));
+    const liveLen = Math.max(1, (massX-massHalfW) - axisX0);
+    const ampFactor = Math.max(0.7, Math.min(1.4, restLen/liveLen));
+    const maxAmp = massHalfH - 3;
+    const springAmp = Math.min(maxAmp, baseAmp*ampFactor);
+    ctx.strokeStyle = cssVar('--ink-soft');
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    springPath(ctx, axisX0, centerY, massX-massHalfW, springAmp, springCoils);
+
+    // mass block
+    ctx.fillStyle = color;
+    ctx.strokeStyle = cssVar('--ink');
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(massX-massHalfW, centerY-massHalfH, massHalfW*2, massHalfH*2);
+    ctx.strokeRect(massX-massHalfW, centerY-massHalfH, massHalfW*2, massHalfH*2);
+
+    // baseline (floor) — same color as the main animation's x-axis line
+    ctx.strokeStyle = cssVar('--ink');
+    ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(axisX0, axisY); ctx.lineTo(axisX1, axisY); ctx.stroke();
   }
 
   // ---------- animation loop ----------
@@ -1167,8 +1262,10 @@
     scrubLabel.textContent = fmt(state.t,2);
 
     drawAnim(state.t);
+    drawMiniAnim(state.t);
     drawPhase(state.t);
     drawTY(state.t);
+    drawVT(state.t);
 
     requestAnimationFrame(frame);
   }
