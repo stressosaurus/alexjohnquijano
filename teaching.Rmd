@@ -43,6 +43,7 @@ icon_link(
 * Probability and Statistics
 
   - [Monty Hall Simulator](learning-tools/monty_hall_retro.html){target="_blank"}
+  - [Monty Hall Simulator (Four-Door Variant)](learning-tools/monty_hall_4doors_retro.html){target="_blank"}
 
 ## Courses
 
