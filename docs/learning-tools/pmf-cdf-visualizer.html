@@ -77,7 +77,7 @@ input[type=number],select{
 .zoom button:hover:not(:disabled){border-color:var(--bar)}
 .zoom button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .zoom button:disabled{opacity:.45;cursor:not-allowed}
-.sheet svg{display:block;width:100%;height:auto;touch-action:pan-y}
+.sheet > svg{display:block;width:100%;height:auto;touch-action:pan-y}
 .readout{min-height:1.6rem;color:var(--muted);margin:.8rem 0 0;font-variant-numeric:tabular-nums}
 .readout b{color:var(--ink);font-weight:700}
 
@@ -90,6 +90,8 @@ input[type=number],select{
 .prob-line{font-family:"Newsreader",Georgia,serif;font-size:clamp(1.8rem,4vw,2.5rem);line-height:1.2;margin:0}
 .prob-line output{font-weight:600;font-variant-numeric:tabular-nums;background:linear-gradient(transparent 58%,var(--hl-soft) 58%);padding:0 .15em}
 .deriv{overflow-x:auto;overflow-y:hidden;max-width:100%}
+.deriv mjx-container[display="true"]{text-align:left!important;margin-left:0!important}
+.reminder{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:.6rem .85rem;max-width:80ch;margin-top:.6rem}
 .note{color:var(--muted);max-width:70ch;margin:.3rem 0 0}
 .swatch{display:inline-block;width:.9em;height:.9em;background:var(--hl);border:1px solid var(--hl-ink);vertical-align:-.1em;margin-right:.35em;border-radius:2px}
 
@@ -161,7 +163,7 @@ window.MathJax = {
       <svg id="pmfSvg" viewBox="0 0 560 330" role="img" aria-label="Bar chart of the probability mass function"></svg>
     </figure>
     <figure class="sheet">
-      <figcaption><h2>Cumulative distribution function</h2><div id="cdfTex" class="formula math"></div><div class="zoom" role="group" aria-label="CDF vertical axis" data-plot="cdf">Vertical axis: <button type="button" data-z="full" aria-pressed="true">0 to 1</button><button type="button" data-z="fit" aria-pressed="false">Zoom in</button></div></figcaption>
+      <figcaption><h2>Cumulative distribution function</h2><div id="cdfTex" class="formula math"></div></figcaption>
       <svg id="cdfSvg" viewBox="0 0 560 330" role="img" aria-label="Step plot of the cumulative distribution function"></svg>
     </figure>
   </section>
@@ -169,6 +171,7 @@ window.MathJax = {
 
   <section class="calc" aria-labelledby="h-calc">
     <h2 id="h-calc">Compute a probability</h2>
+    <p class="note math reminder"><b>Remember:</b> \(X\) is a <em>discrete</em> random variable, so the support of its PMF is a set of integers. \(P_X(x) = 0\) for every \(x\) outside the support, including every non-integer. The CDF \(F_X(x) = P(X \le x)\), by contrast, is defined for every real \(x\). It is a step function that jumps only at the integers in the support, so \(F_X(x) = F_X(\lfloor x \rfloor)\). You can still enter non-integer values for \(a\) and \(b\). The event keeps only the integers it contains; for example, \(P(X \le 2.7) = P(X \le 2) = F_X(2)\) and \(P(X \ge 2.3) = P(X \ge 3)\).</p>
     <div class="calc-row">
       <label>Event
         <select id="evType">
@@ -183,8 +186,8 @@ window.MathJax = {
           <option value="oo">P(a &lt; X &lt; b)</option>
         </select>
       </label>
-      <label id="aWrap"><span><i>a</i></span><input id="evA" type="number" step="1" placeholder="a"></label>
-      <label id="bWrap"><span><i>b</i></span><input id="evB" type="number" step="1" placeholder="b"></label>
+      <label id="aWrap"><span><i>a</i></span><input id="evA" type="number" step="any" placeholder="a"></label>
+      <label id="bWrap"><span><i>b</i></span><input id="evB" type="number" step="any" placeholder="b"></label>
     </div>
     <p id="probLine" class="prob-line" hidden><span id="evHtml"></span> = <output id="prob">0</output></p>
     <div id="deriv" class="deriv math"></div>
@@ -222,6 +225,7 @@ const DISTS={
     mean:P=>P.p,variance:P=>P.p*(1-P.p),
     story:'A single trial has success probability \\(p\\) and failure probability \\(1-p\\). \\(X\\) is 1 on a success and 0 on a failure.',
     notation:P=>`X \\sim \\text{Bern}(p), \\qquad p = ${fn(P.p)}`,
+    pmfAt:(k,P)=>`(${fn(P.p)})^{${k}}(${fn(1-P.p)})^{${1-k}}`,
     pmfTex:'P_X(x) = p^{x}(1-p)^{1-x}, \\quad x \\in \\{0, 1\\}',
     cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ 1-p & 0 \\le x < 1 \\\\ 1 & x \\ge 1 \\end{cases}'},
   geometric:{label:'Geometric',rv:'X',v:'x',
@@ -231,6 +235,9 @@ const DISTS={
     mean:P=>1/P.p,variance:P=>(1-P.p)/(P.p*P.p),
     story:'Repeat independent trials, each with success probability \\(p\\) and failure probability \\(1-p\\), until the first success. \\(X\\) is the number of trials needed, including that success.',
     notation:P=>`X \\sim \\text{Geom}(p), \\qquad p = ${fn(P.p)}`,
+    cdf:(x,P)=>x<1?0:1-Math.pow(1-P.p,Math.floor(x)),
+    sf:(x,P)=>x<1?1:Math.pow(1-P.p,Math.floor(x)),
+    pmfAt:(k,P)=>`(${fn(1-P.p)})^{${k-1}}(${fn(P.p)})`,
     pmfTex:'P_X(x) = (1-p)^{x-1}p, \\quad x = 1, 2, 3, \\dots',
     cdfTex:'F_X(x) = \\begin{cases} 0 & x < 1 \\\\ 1-(1-p)^{\\lfloor x \\rfloor} & x \\ge 1 \\end{cases}'},
   binomial:{label:'Binomial',rv:'X',v:'x',
@@ -240,8 +247,9 @@ const DISTS={
     mean:P=>P.n*P.p,variance:P=>P.n*P.p*(1-P.p),
     story:'Run \\(n\\) independent trials, each with success probability \\(p\\) and failure probability \\(1-p\\). \\(X\\) is the number of successes.',
     notation:P=>`X \\sim \\text{Bin}(n, p), \\qquad n = ${P.n},\\ p = ${fn(P.p)}`,
+    pmfAt:(k,P)=>`\\binom{${P.n}}{${k}}(${fn(P.p)})^{${k}}(${fn(1-P.p)})^{${P.n-k}}`,
     pmfTex:'P_X(x) = \\binom{n}{x} p^{x}(1-p)^{n-x}, \\quad x = 0, 1, \\dots, n',
-    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ \\displaystyle\\sum_{0 \\le i \\le x} \\binom{n}{i} p^{i}(1-p)^{n-i} & 0 \\le x < n \\\\ 1 & x \\ge n \\end{cases}'}
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ \\displaystyle\\sum_{i=0}^{\\lfloor x \\rfloor} \\binom{n}{i} p^{i}(1-p)^{n-i} & 0 \\le x < n \\\\ 1 & x \\ge n \\end{cases}'}
 };
 const ORDER=['bernoulli','geometric','binomial'];
 
@@ -256,6 +264,7 @@ let cdfArr=[];
 function F(k){
   if(k===-Infinity||k<S.lo)return 0;
   if(k>=S.hi)return 1;
+  if(D.cdf)return D.cdf(k,P);
   k=Math.floor(k);
   if(k-S.lo>2e5)return 1;
   while(cdfArr.length<=k-S.lo){
@@ -424,7 +433,7 @@ function frame(X,Y,xt,yt,yf,xlab,ylab){
 }
 const clip=(id,ex=6)=>`<defs><clipPath id="${id}"><rect x="${M.l}" y="${M.t-ex}" width="${W-M.l-M.r}" height="${H-M.t-M.b+ex}"/></clipPath></defs>`;
 const plotInfo={};
-const zoom={pmf:false,cdf:false};
+const zoom={pmf:true,cdf:false};   // PMF opens zoomed in; CDF always shows 0 to 1
 function yAxis(lo,hi){
   const ys=niceStep(hi-lo,5),dec=Math.max(0,-Math.floor(Math.log10(ys)+1e-9));
   const yt=[];for(let v=Math.ceil(lo/ys-1e-9)*ys;v<=hi+1e-12;v+=ys)yt.push(+v.toFixed(10));
@@ -573,31 +582,72 @@ function renderResult(){
   const {L,U,prob}=st, R=D.rv, v=D.v, t=ev.type;
   $('#evHtml').innerHTML=eventStr(false);
   $('#prob').innerHTML=fmt(prob);
-  const Fx=a=>`F_{${R}}(${a})`, num=a=>fmt(F(a),true);
-  const parts=[eventStr(true)];
+  // 4-decimal display helpers: a value is "exact" if showing it at 4 decimals loses nothing
+  const r4=v=>Math.round(v*1e4)/1e4;
+  const exact=v=>v===0||v===1||(Math.abs(v)>=1e-4&&Math.abs(v-r4(v))<1e-12);
+  const shown=v=>(v===0||v===1||Math.abs(v)>=1e-4)?r4(v):null;   // value as displayed, or null if in scientific notation
+  const Fx=a=>`F_{${R}}(${fn(a)})`, num=a=>fmt(F(a),true);
+  const isInt=Number.isInteger;
+  const lines=[];                                   // each line: [relation, tex]
+  const add=(rel,tex)=>lines.push([rel,tex]);
+  // "=" only when the displayed operands really give the displayed answer; otherwise "≈"
+  const finalRel=vals=>{
+    if(!exact(prob))return '\\approx';
+    const sh=vals.map(shown); if(sh.some(v=>v===null))return '\\approx';
+    const d=sh.length===1?sh[0]:sh[0]-sh[1];
+    return Math.abs(d-r4(prob))<5e-9?'=':'\\approx';
+  };
+  const numRel=vals=>vals.every(exact)?'=':'\\approx';
+  const Lc=Math.max(L,S.lo),Uc=Math.min(U,S.hi);
+  const sumTex=()=>{
+    if(Lc>Uc)return null;
+    const top=Uc===Infinity?'\\infty':Uc;
+    return Lc===Uc?`P_{${R}}(${Lc})`:`\\sum_{i=${Lc}}^{${top}} P_{${R}}(i)`;
+  };
   if(t==='eq'){
-    if(L>U)parts.push('0');
-    else parts.push(`P_{${R}}(${L})`,`${Fx(L)} - ${Fx(L-1)}`,`${num(L)} - ${num(L-1)}`,fmt(prob,true));
-  }else if(L>U){parts.push('0');}
+    if(!isInt(ev.a))add('=','0');
+    else if(Lc>Uc){add('=',`P_{${R}}(${L})`);add('=','0');}
+    else{
+      add('=',`P_{${R}}(${L})`);
+      if(D.pmfAt)add('=',D.pmfAt(L,P));
+      add('=',`${Fx(L)} - ${Fx(L-1)}`);
+      const a=F(L),b=F(L-1);
+      if(prob===0||prob>=1e-4)add(numRel([a,b]),`${num(L)} - ${num(L-1)}`);
+      add(finalRel([a,b]),fmt(prob,true));
+    }
+  }else if(L>U){add('=','0');}
   else{
-    // upper and lower CDF arguments, written the way the worksheet does
     const up=['le','cc','oc'].includes(t)?(t==='le'?ev.a:ev.b):U;
     const low=['gt','oc','oo'].includes(t)?ev.a:L-1;
     const hasUp=!['ge','gt'].includes(t), hasLow=!['le','lt'].includes(t);
-    if(hasUp&&hasLow&&Number.isFinite(L)&&Number.isFinite(U))parts.push(`\\sum_{i=${L}}^{${U}} P_{${R}}(i)`);
-    if(!hasLow){
-      if(t==='lt')parts.push(`P(${R} \\le ${U})`);
-      parts.push(Fx(fn(up)),fmt(prob,true));
-    }else if(!hasUp){
-      if(t==='ge')parts.push(`1 - P(${R} \\le ${L-1})`);
-      parts.push(`1 - ${Fx(fn(low))}`,`1 - ${num(low)}`,fmt(prob,true));
-    }else{
-      parts.push(`${Fx(fn(up))} - ${Fx(fn(low))}`,`${num(up)} - ${num(low)}`,fmt(prob,true));
+    const sm=sumTex();
+    if(!sm)add('=','0');
+    else{
+      add('=',sm);
+      if(!hasLow){                                  // P(X <= up) = F(up)
+        if(t==='lt')add('=',`P(${R} \\le ${U})`);
+        add('=',Fx(up));
+        if(!isInt(up))add('=',Fx(Math.floor(up)));
+        const a=F(up); add(finalRel([a]),fmt(prob,true));
+      }else if(!hasUp){                             // P(X > low) = 1 - F(low)
+        if(t==='ge')add('=',`1 - P(${R} \\le ${L-1})`);
+        add('=',`1 - ${Fx(low)}`);
+        if(!isInt(low))add('=',`1 - ${Fx(Math.floor(low))}`);
+        const b=F(low);
+        if(prob===0||prob>=1e-4)add(numRel([b]),`1 - ${num(low)}`);   // 4-decimal operands can't show tinier answers
+        add(finalRel([1,b]),fmt(prob,true));
+      }else{                                        // P(low < X <= up) = F(up) - F(low)
+        add('=',`${Fx(up)} - ${Fx(low)}`);
+        if(!isInt(up)||!isInt(low))add('=',`${Fx(Math.floor(up))} - ${Fx(Math.floor(low))}`);
+        const a=F(up),b=F(low);
+        if(prob===0||prob>=1e-4)add(numRel([a,b]),`${num(up)} - ${num(low)}`);
+        add(finalRel([a,b]),fmt(prob,true));
+      }
     }
   }
-  setMath($('#deriv'),`\\[${parts.join(' = ')}\\]`);
+  const body=lines.map(([rel,tex],i)=>(i?'\\\\ ':'')+`${i?'':eventStr(true)} &${rel} ${tex}`).join(' ');
+  setMath($('#deriv'),`\\[\\begin{aligned} ${body} \\end{aligned}\\]`);
   let note='';
-  const Lc=Math.max(L,S.lo),Uc=Math.min(U,S.hi);
   if(t==='eq'&&!Number.isInteger(ev.a))note=`<i>${R}</i> only takes whole-number values, so this probability is 0.`;
   else if(isPair()&&ev.a>ev.b)note=`<i>a</i> is larger than <i>b</i>, so no value satisfies the event.`;
   else if(L>U)note='No whole number satisfies this event, so its probability is 0.';
@@ -619,11 +669,22 @@ function renderDefinition(){
   setMath($('#cdfTex'),`\\[${val(D.cdfTex,P)}\\]`);
 }
 
+/* ---------- event probability ---------- */
+// Sum the PMF directly over the integers in the event (avoids 1 - F cancellation in far tails).
+function probOf(L,U){
+  if(L>U)return 0;
+  const Lc=Math.max(L,S.lo),Uc=Math.min(U,S.hi);
+  if(Lc>Uc)return 0;
+  if(Number.isFinite(Uc)&&Uc-Lc<=2e5){let t=0;for(let k=Lc;k<=Uc;k++)t+=D.pmf(k,P);return Math.min(1,t);}
+  if(D.sf)return Math.max(0,D.sf(Lc-1,P)-(Number.isFinite(Uc)?D.sf(Uc,P):0));
+  return Math.max(0,Math.min(1,F(U)-F(L-1)));
+}
+
 /* ---------- main update ---------- */
 function update(full){
   st.active=isActive();
   const [L,U]=st.active?bounds():[1,0]; st.L=L; st.U=U;
-  st.prob=L>U?0:Math.max(0,Math.min(1,F(U)-F(L-1)));
+  st.prob=probOf(L,U);
   [st.xmin,st.xmax]=computeRange(L,U);
   if(hoverK!==null&&(hoverK<st.xmin||hoverK>st.xmax))hoverK=null;
   drawPlots(); renderResult();
