@@ -72,6 +72,11 @@ input[type=number],select{
 .sheet h2{font-size:1.2rem}
 .formula{min-height:4.6rem;overflow-x:auto;overflow-y:hidden;display:flex;align-items:center;font-size:.95rem}
 .formula > *{flex:0 0 auto}
+.zoom{display:flex;align-items:center;gap:.4rem;margin:.2rem 0 .5rem;font-size:.85rem;color:var(--muted)}
+.zoom button{font:inherit;font-size:.85rem;padding:.25rem .7rem;border:1px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:5px;cursor:pointer}
+.zoom button:hover:not(:disabled){border-color:var(--bar)}
+.zoom button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.zoom button:disabled{opacity:.45;cursor:not-allowed}
 .sheet svg{display:block;width:100%;height:auto;touch-action:pan-y}
 .readout{min-height:1.6rem;color:var(--muted);margin:.8rem 0 0;font-variant-numeric:tabular-nums}
 .readout b{color:var(--ink);font-weight:700}
@@ -152,11 +157,11 @@ window.MathJax = {
 
   <section class="plots" aria-label="Plots">
     <figure class="sheet">
-      <figcaption><h2>Probability mass function</h2><div id="pmfTex" class="formula math"></div></figcaption>
+      <figcaption><h2>Probability mass function</h2><div id="pmfTex" class="formula math"></div><div class="zoom" role="group" aria-label="PMF vertical axis" data-plot="pmf">Vertical axis: <button type="button" data-z="full" aria-pressed="true">0 to 1</button><button type="button" data-z="fit" aria-pressed="false">Zoom in</button></div></figcaption>
       <svg id="pmfSvg" viewBox="0 0 560 330" role="img" aria-label="Bar chart of the probability mass function"></svg>
     </figure>
     <figure class="sheet">
-      <figcaption><h2>Cumulative distribution function</h2><div id="cdfTex" class="formula math"></div></figcaption>
+      <figcaption><h2>Cumulative distribution function</h2><div id="cdfTex" class="formula math"></div><div class="zoom" role="group" aria-label="CDF vertical axis" data-plot="cdf">Vertical axis: <button type="button" data-z="full" aria-pressed="true">0 to 1</button><button type="button" data-z="fit" aria-pressed="false">Zoom in</button></div></figcaption>
       <svg id="cdfSvg" viewBox="0 0 560 330" role="img" aria-label="Step plot of the cumulative distribution function"></svg>
     </figure>
   </section>
@@ -417,19 +422,42 @@ function frame(X,Y,xt,yt,yf,xlab,ylab){
   s+=`<text class="axlab" transform="translate(16 ${(M.t+H-M.b)/2}) rotate(-90)" text-anchor="middle">${ylab}</text>`;
   return s;
 }
-const clip=id=>`<defs><clipPath id="${id}"><rect x="${M.l}" y="${M.t-6}" width="${W-M.l-M.r}" height="${H-M.t-M.b+6}"/></clipPath></defs>`;
+const clip=(id,ex=6)=>`<defs><clipPath id="${id}"><rect x="${M.l}" y="${M.t-ex}" width="${W-M.l-M.r}" height="${H-M.t-M.b+ex}"/></clipPath></defs>`;
 const plotInfo={};
+const zoom={pmf:false,cdf:false};
+function yAxis(lo,hi){
+  const ys=niceStep(hi-lo,5),dec=Math.max(0,-Math.floor(Math.log10(ys)+1e-9));
+  const yt=[];for(let v=Math.ceil(lo/ys-1e-9)*ys;v<=hi+1e-12;v+=ys)yt.push(+v.toFixed(10));
+  return {yt,dec};
+}
+function syncZoomButtons(name,canZoom){
+  const g=document.querySelector(`.zoom[data-plot="${name}"]`);if(!g)return;
+  const on=zoom[name]&&canZoom;
+  g.querySelector('[data-z="full"]').setAttribute('aria-pressed',!on);
+  const f=g.querySelector('[data-z="fit"]');
+  f.setAttribute('aria-pressed',on); f.disabled=!canZoom;
+  f.title=canZoom?'':'Compute a probability below to zoom in on it';
+}
+function attachZoom(){
+  document.querySelectorAll('.zoom').forEach(g=>g.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b||b.disabled)return;
+    zoom[g.dataset.plot]=b.dataset.z==='fit'; drawPlots();
+  }));
+}
 
 function renderPMF(){
   const {xmin,xmax,L,U}=st;
   const pad=Math.max(0.8,(4-(xmax-xmin))/2),x0=xmin-pad,x1=xmax+pad;
   const ps=[];let maxP=0;
   for(let k=xmin;k<=xmax;k++){const v=D.pmf(k,P);ps.push(v);if(v>maxP)maxP=v;}
-  const top=(maxP||1)*1.1,ys=niceStep(top,5),ymax=Math.ceil(top/ys-1e-9)*ys;
+  syncZoomButtons('pmf',true);
+  let ymax,yt,dec;
+  if(zoom.pmf){
+    const top=(maxP||1)*1.1,ys=niceStep(top,5);
+    ymax=Math.ceil(top/ys-1e-9)*ys; ({yt,dec}=yAxis(0,ymax));
+  }else{ymax=1.06; yt=[0,.2,.4,.6,.8,1]; dec=1;}
   const X=lin(x0,x1,M.l,W-M.r),Y=lin(0,ymax,H-M.b,M.t);
   const unit=X(1)-X(0),bw=Math.max(1,Math.min(unit*0.7,46));
-  const dec=Math.max(0,-Math.floor(Math.log10(ys)+1e-9));
-  const yt=[];for(let i=0;i*ys<=ymax+1e-12;i++)yt.push(+(i*ys).toFixed(10));
   let s=clip('cpPmf');
   // event band behind bars
   const Lc=Math.max(L,xmin),Uc=Math.min(U,xmax);
@@ -453,17 +481,25 @@ function renderPMF(){
 function renderCDF(){
   const {xmin,xmax,L,U}=st;
   const pad=Math.max(1,(5-(xmax-xmin))/2),x0=xmin-pad,x1=xmax+pad;
-  const X=lin(x0,x1,M.l,W-M.r),Y=lin(0,1.06,H-M.b,M.t);
-  const unit=X(1)-X(0),rad=Math.max(1.6,Math.min(3.8,unit*0.22));
-  let s=clip('cpCdf');
   const empty=L>U;
   let lowK,lowF,hiF;
+  if(!empty){lowK=Number.isFinite(L)?L-1:-Infinity; lowF=F(lowK); hiF=Number.isFinite(U)?F(U):1;}
+  const canZoom=!empty&&isActive();
+  syncZoomButtons('cdf',canZoom);
+  let y0=0,y1=1.06,yt=[0,.2,.4,.6,.8,1],dec=1;
+  if(zoom.cdf&&canZoom){
+    const pad=Math.max(0.15*(hiF-lowF),0.01);
+    y0=Math.max(0,lowF-pad); y1=Math.min(1.06,hiF+pad);
+    ({yt,dec}=yAxis(y0,y1));
+  }
+  const X=lin(x0,x1,M.l,W-M.r),Y=lin(y0,y1,H-M.b,M.t);
+  const unit=X(1)-X(0),rad=Math.max(1.6,Math.min(3.8,unit*0.22));
+  let s=clip('cpCdf',y0>0||y1<1.06?0:6);
   if(!empty){
-    lowK=Number.isFinite(L)?L-1:-Infinity; lowF=F(lowK); hiF=Number.isFinite(U)?F(U):1;
     const yh=Y(hiF),yl=Y(lowF);
     s+=`<rect class="evband" x="${M.l}" y="${r2(yh)}" width="${W-M.l-M.r}" height="${r2(Math.max(0,yl-yh))}"/>`;
   }
-  s+=frame(X,Y,xTicks(x0,x1),[0,.2,.4,.6,.8,1],v=>v.toFixed(1),D.v,`F<tspan baseline-shift="sub" font-size="11">${D.rv}</tspan>(${D.v})`);
+  s+=frame(X,Y,xTicks(x0,x1),yt,v=>v.toFixed(dec),D.v,`F<tspan baseline-shift="sub" font-size="11">${D.rv}</tspan>(${D.v})`);
   s+='<g clip-path="url(#cpCdf)">';
   if(!empty){
     const yh=r2(Y(hiF)),yl=r2(Y(lowF));
@@ -604,6 +640,7 @@ $('#evType').addEventListener('change',e=>{ev.type=e.target.value;syncEventUI();
 buildPicker();
 attachHover('#pmfSvg','pmf');
 attachHover('#cdfSvg','cdf');
+attachZoom();
 syncEventUI();
 selectDist('bernoulli');
 </script>
