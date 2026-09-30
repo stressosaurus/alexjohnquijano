@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PMF/CDF Visualizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F1F6EC; --gridline:rgba(76,154,42,.10); --ink:#1B2A17; --muted:#55664E;
+  --rule:#C5D6B8; --panel:#FCFEFA; --bar:#4C9A2A; --bar-strong:#2D6414;
+  --hl:#C2185B; --hl-ink:#8E0F42; --hl-soft:rgba(194,24,91,.16); --focus:#7B1FA2;
+  --shadow:rgba(27,42,23,.35);
+  color-scheme:light;
+}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0;color:var(--ink);background-color:var(--paper);
+  background-image:linear-gradient(var(--gridline) 1px,transparent 1px),linear-gradient(90deg,var(--gridline) 1px,transparent 1px);
+  background-size:24px 24px;
+  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.5;
+}
+.site-footer{max-width:1180px;margin:0 auto;padding:1.25rem 1.25rem 2.5rem;border-top:1px solid var(--rule);color:var(--muted);font-size:.9rem;line-height:1.5}
+.site-footer a{color:var(--bar-strong)}
+main{max-width:1180px;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+h1,h2,h3{font-family:"Newsreader",Georgia,"Times New Roman",serif;font-weight:400;margin:0;line-height:1.15}
+h1{font-size:clamp(2rem,4.5vw,3rem);letter-spacing:-.01em}
+h2{font-size:1.4rem}
+h3{font-size:1.1rem;font-weight:600}
+.lede{max-width:none;color:var(--muted);margin:.6rem 0 1.6rem;font-size:1.05rem}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+.dists{display:flex;flex-wrap:wrap;gap:.5rem}
+.dists button{
+  font:inherit;font-size:.95rem;padding:.45rem .95rem;border:1px solid var(--rule);
+  background:var(--panel);color:var(--ink);border-radius:6px;cursor:pointer;
+}
+.dists button:hover{border-color:var(--bar)}
+.dists button[aria-checked="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+.define{
+  display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:2.5rem;
+  margin:2rem 0 2.25rem;padding:.25rem 0 .25rem 1.5rem;border-left:3px solid var(--bar);
+}
+.story{font-family:"Newsreader",Georgia,serif;font-size:1.25rem;line-height:1.55;max-width:58ch;margin:.7rem 0 .4rem}
+.notation{overflow-x:auto;overflow-y:hidden}
+.facts{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:.35rem 1.25rem;margin:.4rem 0 0;align-items:baseline}
+.facts dt{color:var(--muted);font-size:.92rem}
+.facts dd{margin:0;overflow-x:auto;overflow-y:hidden}
+.define-params h3{margin-bottom:.8rem}
+.param{margin-bottom:1.1rem}
+.param-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.3rem}
+.param label{font-size:.95rem}
+.param input[type=number]{width:6.2rem}
+.param input[type=range]{width:100%;accent-color:var(--bar)}
+.param select{width:100%;margin-top:.3rem}
+input[type=number],select{
+  font:inherit;font-size:.95rem;color:var(--ink);background:var(--panel);
+  border:1px solid var(--rule);border-radius:5px;padding:.3rem .45rem;font-variant-numeric:tabular-nums;
+}
+
+.plots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem}
+.sheet{
+  margin:0;background:var(--panel);border:1px solid var(--rule);border-radius:3px;
+  padding:1rem 1.1rem .5rem;box-shadow:0 12px 26px -20px var(--shadow);
+}
+.sheet h2{font-size:1.2rem}
+.formula{min-height:4.6rem;overflow-x:auto;overflow-y:hidden;display:flex;align-items:center;font-size:.95rem}
+.formula > *{flex:0 0 auto}
+.sheet svg{display:block;width:100%;height:auto;touch-action:pan-y}
+.readout{min-height:1.6rem;color:var(--muted);margin:.8rem 0 0;font-variant-numeric:tabular-nums}
+.readout b{color:var(--ink);font-weight:700}
+
+.calc{margin-top:2.5rem;padding:.25rem 0 .25rem 1.5rem;border-left:3px solid var(--hl)}
+.calc-row{display:flex;flex-wrap:wrap;gap:1rem 1.5rem;align-items:end;margin:1rem 0 1.25rem}
+.calc-row label{display:flex;flex-direction:column;gap:.3rem;font-size:.92rem;color:var(--muted)}
+.calc-row input{width:7rem}
+.calc-row [hidden]{display:none}
+.prob-line[hidden]{display:none}
+.prob-line{font-family:"Newsreader",Georgia,serif;font-size:clamp(1.8rem,4vw,2.5rem);line-height:1.2;margin:0}
+.prob-line output{font-weight:600;font-variant-numeric:tabular-nums;background:linear-gradient(transparent 58%,var(--hl-soft) 58%);padding:0 .15em}
+.deriv{overflow-x:auto;overflow-y:hidden;max-width:100%}
+.note{color:var(--muted);max-width:70ch;margin:.3rem 0 0}
+.swatch{display:inline-block;width:.9em;height:.9em;background:var(--hl);border:1px solid var(--hl-ink);vertical-align:-.1em;margin-right:.35em;border-radius:2px}
+
+/* SVG */
+.grid{stroke:var(--rule);stroke-width:1}
+.axis{stroke:var(--ink);stroke-width:1.2}
+.tickmark{stroke:var(--ink);stroke-width:1}
+.tick{fill:var(--muted);font-size:12px;font-family:"Atkinson Hyperlegible",system-ui,sans-serif}
+.axlab{fill:var(--ink);font-family:"Newsreader",Georgia,serif;font-style:italic;font-size:16px}
+.bar{fill:var(--bar)}
+.bar.hov{fill:var(--bar-strong)}
+.bar.on{fill:var(--hl);stroke:var(--hl-ink);stroke-width:1}
+.bar.on.hov{stroke-width:2.5}
+.evband{fill:var(--hl-soft)}
+.evaxis{fill:var(--hl)}
+.step{stroke:var(--bar);stroke-width:2.2;fill:none;stroke-linecap:round}
+.dot{fill:var(--bar)}
+.odot{fill:var(--panel);stroke:var(--bar);stroke-width:1.5}
+.lvl{stroke:var(--hl-ink);stroke-width:1.2;stroke-dasharray:4 3}
+.brk{stroke:var(--hl-ink);stroke-width:2;fill:none}
+.blabel{fill:var(--hl-ink);font-weight:700;font-size:13px;font-family:"Atkinson Hyperlegible",system-ui,sans-serif;paint-order:stroke;stroke:var(--panel);stroke-width:5px;stroke-linejoin:round}
+.hdot{fill:var(--hl);stroke:var(--hl-ink);stroke-width:1.6}
+.hring{fill:var(--panel);stroke:var(--hl-ink);stroke-width:1.8}
+.guide{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 3}
+.hvdot{fill:var(--bar-strong)}
+
+@media (max-width:860px){
+  .define,.plots{grid-template-columns:minmax(0,1fr)}
+  .define{gap:1.5rem}
+}
+@media (max-width:520px){
+  main{padding-top:1.5rem}
+  .define,.calc{padding-left:1rem}
+}
+</style>
+<script>
+window.MathJax = {
+  tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},
+  svg:{fontCache:'global'},
+  startup:{typeset:false,ready(){MathJax.startup.defaultReady();MathJax.startup.promise.then(()=>{window.__mj=true;typesetAll();});}}
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" defer></script>
+</head>
+<body>
+<main>
+  <header>
+    <h1>PMF/CDF Visualizer</h1>
+    <p class="lede math">The probability mass function (PMF), \(p_X(x) = P(X = x)\), gives the probability that a discrete random variable \(X\) takes exactly the value \(x\). The cumulative distribution function (CDF), \(F_X(x) = P(X \le x)\), gives the probability that \(X\) is at most \(x\); it is the running sum of the PMF. Choose a distribution and set its parameters. The mass function and distribution function update together, and any probability you compute is highlighted in both plots.</p>
+  </header>
+
+  <nav id="dists" class="dists" role="radiogroup" aria-label="Distribution"></nav>
+
+  <section class="define" aria-labelledby="h-def">
+    <div>
+      <h2 id="h-def">The Discrete Random Variable: <span id="rvName"></span></h2>
+      <p id="story" class="story math"></p>
+      <div id="notation" class="notation math"></div>
+    </div>
+    <div class="define-params">
+      <h3>Parameters</h3>
+      <div id="params"></div>
+    </div>
+  </section>
+
+  <section class="plots" aria-label="Plots">
+    <figure class="sheet">
+      <figcaption><h2>Probability mass function</h2><div id="pmfTex" class="formula math"></div></figcaption>
+      <svg id="pmfSvg" viewBox="0 0 560 330" role="img" aria-label="Bar chart of the probability mass function"></svg>
+    </figure>
+    <figure class="sheet">
+      <figcaption><h2>Cumulative distribution function</h2><div id="cdfTex" class="formula math"></div></figcaption>
+      <svg id="cdfSvg" viewBox="0 0 560 330" role="img" aria-label="Step plot of the cumulative distribution function"></svg>
+    </figure>
+  </section>
+  <p id="readout" class="readout" aria-live="polite"></p>
+
+  <section class="calc" aria-labelledby="h-calc">
+    <h2 id="h-calc">Compute a probability</h2>
+    <div class="calc-row">
+      <label>Event
+        <select id="evType">
+          <option value="eq">P(X = a)</option>
+          <option value="le">P(X ≤ a)</option>
+          <option value="lt">P(X &lt; a)</option>
+          <option value="ge">P(X ≥ a)</option>
+          <option value="gt">P(X &gt; a)</option>
+          <option value="cc">P(a ≤ X ≤ b)</option>
+          <option value="oc">P(a &lt; X ≤ b)</option>
+          <option value="co">P(a ≤ X &lt; b)</option>
+          <option value="oo">P(a &lt; X &lt; b)</option>
+        </select>
+      </label>
+      <label id="aWrap"><span><i>a</i></span><input id="evA" type="number" step="1" placeholder="a"></label>
+      <label id="bWrap"><span><i>b</i></span><input id="evB" type="number" step="1" placeholder="b"></label>
+    </div>
+    <p id="probLine" class="prob-line" hidden><span id="evHtml"></span> = <output id="prob">0</output></p>
+    <div id="deriv" class="deriv math"></div>
+    <p id="evNote" class="note"></p>
+    <p class="note"><span class="swatch" aria-hidden="true"></span>Pink marks the event: the bars it adds up on the left, and on the right the rise in the CDF between the two dashed levels.</p>
+  </section>
+</main>
+<footer class="site-footer">
+  <p>This application is for personal or educational use only. This was designed by <a href="https://alexjohnquijano.com/" target="_blank" rel="noopener">Alex John Quijano</a> at the University of Portland using HTML and JavaScript, with assistance from Claude AI. Text and figures are licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">Creative Commons Attribution (CC BY 4.0)</a>.</p>
+</footer>
+
+<script>
+/* ---------- math helpers ---------- */
+const LF=[0];
+function lf(n){for(let i=LF.length;i<=n;i++)LF[i]=LF[i-1]+Math.log(i);return LF[n];}
+function lchoose(n,k){if(k<0||k>n||!Number.isInteger(k))return -Infinity;return lf(n)-lf(k)-lf(n-k);}
+function xlog(k,p){return k===0?0:(p<=0?-Infinity:k*Math.log(p));}
+const val=(x,P)=>typeof x==='function'?x(P):x;
+function fn(v){const s=String(+(+v).toFixed(4));return s;}
+function fmt(v,tex){
+  if(v===0)return '0'; if(v===1)return '1';
+  if(Math.abs(v)<1e-4){let [m,e]=v.toExponential(2).split('e');e=+e;
+    return tex?`${m} \\times 10^{${e}}`:`${m} × 10<sup>${e<0?'−'+(-e):e}</sup>`;}
+  return v.toFixed(4);
+}
+const neg=s=>String(s).replace(/^-/,'−');
+
+/* ---------- distributions ---------- */
+const PP={k:'p',label:'Success probability <i>p</i>',min:0,max:1,step:0.01};
+const DISTS={
+  bernoulli:{label:'Bernoulli',rv:'X',v:'x',
+    params:[{...PP,val:0.3}],
+    support:()=>({lo:0,hi:1}),
+    pmf:(k,P)=>k===0?1-P.p:k===1?P.p:0,
+    mean:P=>P.p,variance:P=>P.p*(1-P.p),
+    story:'A single trial has success probability \\(p\\) and failure probability \\(1-p\\). \\(X\\) is 1 on a success and 0 on a failure.',
+    notation:P=>`X \\sim \\text{Bern}(p), \\qquad p = ${fn(P.p)}`,
+    pmfTex:'P_X(x) = p^{x}(1-p)^{1-x}, \\quad x \\in \\{0, 1\\}',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ 1-p & 0 \\le x < 1 \\\\ 1 & x \\ge 1 \\end{cases}'},
+  geometric:{label:'Geometric',rv:'X',v:'x',
+    params:[{...PP,min:0.01,val:0.25}],
+    support:P=>({lo:1,hi:P.p>=1?1:Infinity}),
+    pmf:(k,P)=>k<1?0:P.p*Math.pow(1-P.p,k-1),
+    mean:P=>1/P.p,variance:P=>(1-P.p)/(P.p*P.p),
+    story:'Repeat independent trials, each with success probability \\(p\\) and failure probability \\(1-p\\), until the first success. \\(X\\) is the number of trials needed, including that success.',
+    notation:P=>`X \\sim \\text{Geom}(p), \\qquad p = ${fn(P.p)}`,
+    pmfTex:'P_X(x) = (1-p)^{x-1}p, \\quad x = 1, 2, 3, \\dots',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 1 \\\\ 1-(1-p)^{\\lfloor x \\rfloor} & x \\ge 1 \\end{cases}'},
+  binomial:{label:'Binomial',rv:'X',v:'x',
+    params:[{k:'n',label:'Number of trials <i>n</i>',min:1,max:300,step:1,int:true,val:10},{...PP,val:0.3}],
+    support:P=>({lo:0,hi:P.n}),
+    pmf:(k,P)=>(k<0||k>P.n)?0:Math.exp(lchoose(P.n,k)+xlog(k,P.p)+xlog(P.n-k,1-P.p)),
+    mean:P=>P.n*P.p,variance:P=>P.n*P.p*(1-P.p),
+    story:'Run \\(n\\) independent trials, each with success probability \\(p\\) and failure probability \\(1-p\\). \\(X\\) is the number of successes.',
+    notation:P=>`X \\sim \\text{Bin}(n, p), \\qquad n = ${P.n},\\ p = ${fn(P.p)}`,
+    pmfTex:'P_X(x) = \\binom{n}{x} p^{x}(1-p)^{n-x}, \\quad x = 0, 1, \\dots, n',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ \\displaystyle\\sum_{0 \\le i \\le x} \\binom{n}{i} p^{i}(1-p)^{n-i} & 0 \\le x < n \\\\ 1 & x \\ge n \\end{cases}'}
+};
+const ORDER=['bernoulli','geometric','binomial'];
+
+/* ---------- state ---------- */
+let key, D, P={}, S={lo:0,hi:1};
+const saved={};
+const ev={type:'cc',a:2,b:5};
+let hoverK=null;
+const st={};
+let cdfArr=[];
+
+function F(k){
+  if(k===-Infinity||k<S.lo)return 0;
+  if(k>=S.hi)return 1;
+  k=Math.floor(k);
+  if(k-S.lo>2e5)return 1;
+  while(cdfArr.length<=k-S.lo){
+    const i=cdfArr.length;
+    cdfArr.push((i?cdfArr[i-1]:0)+D.pmf(S.lo+i,P));
+  }
+  return Math.min(1,cdfArr[k-S.lo]);
+}
+
+/* ---------- MathJax plumbing ---------- */
+const $=s=>document.querySelector(s);
+let texTimer=null; const texPending=new Set(); let mjChain=Promise.resolve();
+function setMath(el,html){
+  if(el.dataset.cur===html&&!texPending.has(el))return;
+  el._next=html; texPending.add(el);
+  clearTimeout(texTimer); texTimer=setTimeout(flushTex,70);
+}
+function flushTex(){
+  const els=[...texPending]; texPending.clear();
+  if(window.__mj)MathJax.typesetClear(els);
+  els.forEach(el=>{el.innerHTML=el._next;el.dataset.cur=el._next;});
+  if(window.__mj)mjChain=mjChain.then(()=>MathJax.typesetPromise(els)).catch(()=>{});
+}
+function typesetAll(){
+  const els=[...document.querySelectorAll('.math')];
+  mjChain=mjChain.then(()=>MathJax.typesetPromise(els)).catch(()=>{});
+}
+
+/* ---------- UI: distribution picker & params ---------- */
+function buildPicker(){
+  const w=$('#dists');
+  w.innerHTML=ORDER.map(k=>`<button type="button" role="radio" data-d="${k}" aria-checked="false">${DISTS[k].label}</button>`).join('');
+  w.addEventListener('click',e=>{const b=e.target.closest('button');if(b)selectDist(b.dataset.d);});
+  w.addEventListener('keydown',e=>{
+    if(!['ArrowRight','ArrowLeft'].includes(e.key))return;
+    const i=ORDER.indexOf(key),j=(i+(e.key==='ArrowRight'?1:-1)+ORDER.length)%ORDER.length;
+    selectDist(ORDER[j]); w.querySelector(`[data-d="${ORDER[j]}"]`).focus(); e.preventDefault();
+  });
+}
+function selectDist(k){
+  key=k; D=DISTS[k];
+  $('#rvName').textContent=D.label;
+  P=saved[k]?{...saved[k]}:Object.fromEntries(D.params.map(p=>[p.k,p.val]));
+  document.querySelectorAll('#dists button').forEach(b=>{
+    const on=b.dataset.d===k; b.setAttribute('aria-checked',on); b.tabIndex=on?0:-1;});
+  buildParams(); S=D.support(P); cdfArr=[]; hoverK=null;
+  resetEvent(); update(true);
+}
+function clampParam(p,v){
+  const mn=val(p.min,P),mx=val(p.max,P);
+  v=Math.min(mx,Math.max(mn,v));
+  v=p.int?Math.round(v):Math.round(v/p.step)*p.step;
+  return +v.toFixed(6);
+}
+function buildParams(){
+  const box=$('#params'); box.innerHTML='';
+  D.params.forEach(p=>{
+    const row=document.createElement('div'); row.className='param';
+    if(p.type==='choice'){
+      row.innerHTML=`<label for="pc-${p.k}">${p.label}</label><select id="pc-${p.k}">${p.options.map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}</select>`;
+      const sel=row.querySelector('select'); sel.value=P[p.k];
+      sel.addEventListener('change',()=>{P[p.k]=sel.value;onParam(p.k);});
+    }else{
+      row.innerHTML=`<div class="param-head"><label for="pn-${p.k}">${p.label}</label><input type="number" id="pn-${p.k}" step="${p.step}"></div><input type="range" id="pr-${p.k}" step="${p.step}" aria-label="${p.label.replace(/<[^>]+>/g,'')}">`;
+      const num=row.querySelector('input[type=number]'),rng=row.querySelector('input[type=range]');
+      rng.addEventListener('input',()=>{P[p.k]=+rng.value;onParam(p.k);});
+      num.addEventListener('input',()=>{const v=parseFloat(num.value);
+        if(!isNaN(v)&&v>=val(p.min,P)&&v<=val(p.max,P)){P[p.k]=v;onParam(p.k,true);}});
+      num.addEventListener('change',()=>{const v=parseFloat(num.value);
+        P[p.k]=isNaN(v)?P[p.k]:v;onParam(p.k);});
+    }
+    box.appendChild(row);
+  });
+  syncParams();
+}
+function syncParams(skipFocused){
+  D.params.forEach(p=>{
+    if(p.type==='choice')return;
+    const num=$(`#pn-${p.k}`),rng=$(`#pr-${p.k}`),mn=val(p.min,P),mx=val(p.max,P);
+    rng.min=mn;rng.max=mx;rng.value=P[p.k];num.min=mn;num.max=mx;
+    if(!(skipFocused&&document.activeElement===num))num.value=P[p.k];
+  });
+}
+function onParam(k,typing){
+  if(D.fix)D.fix(P,k);
+  D.params.forEach(p=>{if(p.type!=='choice')P[p.k]=clampParam(p,P[p.k]);});
+  saved[key]={...P};
+  syncParams(typing);
+  S=D.support(P); cdfArr=[];
+  update(true);
+}
+
+/* ---------- event ---------- */
+function resetEvent(){
+  ev.a=NaN; ev.b=NaN;
+  setEventOptions();
+  $('#evA').value=''; $('#evB').value=''; $('#evType').value=ev.type;
+}
+const isActive=()=>!isNaN(ev.a)&&(!isPair()||!isNaN(ev.b));
+function bounds(){
+  const a=ev.a,b=ev.b;
+  switch(ev.type){
+    case 'eq':return Number.isInteger(a)?[a,a]:[1,0];
+    case 'le':return [-Infinity,Math.floor(a)];
+    case 'lt':return [-Infinity,Math.ceil(a)-1];
+    case 'ge':return [Math.ceil(a),Infinity];
+    case 'gt':return [Math.floor(a)+1,Infinity];
+    case 'cc':return [Math.ceil(a),Math.floor(b)];
+    case 'oc':return [Math.floor(a)+1,Math.floor(b)];
+    case 'co':return [Math.ceil(a),Math.ceil(b)-1];
+    case 'oo':return [Math.floor(a)+1,Math.ceil(b)-1];
+  }
+}
+function setEventOptions(){
+  const R=D.rv,lab={eq:`P(${R} = a)`,le:`P(${R} ≤ a)`,lt:`P(${R} < a)`,ge:`P(${R} ≥ a)`,gt:`P(${R} > a)`,
+    cc:`P(a ≤ ${R} ≤ b)`,oc:`P(a < ${R} ≤ b)`,co:`P(a ≤ ${R} < b)`,oo:`P(a < ${R} < b)`};
+  document.querySelectorAll('#evType option').forEach(o=>o.textContent=lab[o.value]);
+}
+const isPair=()=>['cc','oc','co','oo'].includes(ev.type);
+function eventStr(tex){
+  const a=tex?fn(ev.a):neg(fn(ev.a)),b=tex?fn(ev.b):neg(fn(ev.b));
+  const X=tex?D.rv:`<i>${D.rv}</i>`,le=tex?'\\le ':'≤ ',ge=tex?'\\ge ':'≥ ',lt=tex?'< ':'&lt; ',gt=tex?'> ':'&gt; ';
+  const inner={eq:`${X} = ${a}`,le:`${X} ${le}${a}`,lt:`${X} ${lt}${a}`,ge:`${X} ${ge}${a}`,gt:`${X} ${gt}${a}`,
+    cc:`${a} ${le}${X} ${le}${b}`,oc:`${a} ${lt}${X} ${le}${b}`,co:`${a} ${le}${X} ${lt}${b}`,oo:`${a} ${lt}${X} ${lt}${b}`}[ev.type];
+  return tex?`P(${inner})`:`<i>P</i>(${inner})`;
+}
+
+/* ---------- axis range ---------- */
+function computeRange(L,U){
+  const {lo,hi}=S; let xmin=lo,xmax=hi; const t=5e-4;
+  if(hi===Infinity||hi-lo>40){
+    let k=lo,g=0; while(F(k)<t&&k<hi&&g++<1e5)k++; xmin=k;
+    g=0; while(F(k)<1-t&&k<hi&&g++<1e5)k++; xmax=k;
+  }
+  if(xmax-xmin<5)xmax=Math.min(hi,xmin+5);
+  if(xmax-xmin<5)xmin=Math.max(lo,xmax-5);
+  if(L<=U){
+    if(Number.isFinite(L)){const c=Math.min(Math.max(L,lo),hi); if(c>=xmin-400&&c<=xmax+400){xmin=Math.min(xmin,c);xmax=Math.max(xmax,c);}}
+    if(Number.isFinite(U)){const c=Math.max(Math.min(U,hi),lo); if(c>=xmin-400&&c<=xmax+400){xmin=Math.min(xmin,c);xmax=Math.max(xmax,c);}}
+  }
+  return [xmin,xmax];
+}
+
+/* ---------- plotting ---------- */
+const W=560,H=330,M={l:58,r:18,t:16,b:46};
+const lin=(d0,d1,r0,r1)=>v=>r0+(v-d0)/(d1-d0)*(r1-r0);
+const r2=v=>Math.round(v*100)/100;
+function niceStep(range,target){
+  const raw=range/target,mag=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/mag;
+  return (f<1.5?1:f<3?2:f<7?5:10)*mag;
+}
+function xTicks(x0,x1){
+  const step=Math.max(1,Math.round(niceStep(Math.max(x1-x0,1),8)));
+  const out=[]; for(let v=Math.ceil(x0/step)*step;v<=x1+1e-9;v+=step)out.push(v); return out;
+}
+function frame(X,Y,xt,yt,yf,xlab,ylab){
+  let s='';
+  yt.forEach(v=>{const y=r2(Y(v));
+    s+=`<line class="grid" x1="${M.l}" x2="${W-M.r}" y1="${y}" y2="${y}"/><text class="tick" x="${M.l-8}" y="${y}" text-anchor="end" dominant-baseline="middle">${yf(v)}</text>`;});
+  xt.forEach(v=>{const x=r2(X(v));
+    s+=`<line class="tickmark" x1="${x}" x2="${x}" y1="${H-M.b}" y2="${H-M.b+5}"/><text class="tick" x="${x}" y="${H-M.b+19}" text-anchor="middle">${neg(v)}</text>`;});
+  s+=`<line class="axis" x1="${M.l}" x2="${W-M.r}" y1="${H-M.b}" y2="${H-M.b}"/><line class="axis" x1="${M.l}" x2="${M.l}" y1="${M.t}" y2="${H-M.b}"/>`;
+  s+=`<text class="axlab" x="${(M.l+W-M.r)/2}" y="${H-6}" text-anchor="middle">${xlab}</text>`;
+  s+=`<text class="axlab" transform="translate(16 ${(M.t+H-M.b)/2}) rotate(-90)" text-anchor="middle">${ylab}</text>`;
+  return s;
+}
+const clip=id=>`<defs><clipPath id="${id}"><rect x="${M.l}" y="${M.t-6}" width="${W-M.l-M.r}" height="${H-M.t-M.b+6}"/></clipPath></defs>`;
+const plotInfo={};
+
+function renderPMF(){
+  const {xmin,xmax,L,U}=st;
+  const pad=Math.max(0.8,(4-(xmax-xmin))/2),x0=xmin-pad,x1=xmax+pad;
+  const ps=[];let maxP=0;
+  for(let k=xmin;k<=xmax;k++){const v=D.pmf(k,P);ps.push(v);if(v>maxP)maxP=v;}
+  const top=(maxP||1)*1.1,ys=niceStep(top,5),ymax=Math.ceil(top/ys-1e-9)*ys;
+  const X=lin(x0,x1,M.l,W-M.r),Y=lin(0,ymax,H-M.b,M.t);
+  const unit=X(1)-X(0),bw=Math.max(1,Math.min(unit*0.7,46));
+  const dec=Math.max(0,-Math.floor(Math.log10(ys)+1e-9));
+  const yt=[];for(let i=0;i*ys<=ymax+1e-12;i++)yt.push(+(i*ys).toFixed(10));
+  let s=clip('cpPmf');
+  // event band behind bars
+  const Lc=Math.max(L,xmin),Uc=Math.min(U,xmax);
+  if(L<=U&&Lc<=Uc){
+    const a=X(Lc-0.5),b=X(Uc+0.5);
+    s+=`<g clip-path="url(#cpPmf)"><rect class="evband" x="${r2(a)}" y="${M.t}" width="${r2(b-a)}" height="${H-M.t-M.b}"/></g>`;
+  }
+  s+=frame(X,Y,xTicks(x0,x1),yt,v=>v.toFixed(dec),D.v,`P<tspan baseline-shift="sub" font-size="11">${D.rv}</tspan>(${D.v})`);
+  s+='<g clip-path="url(#cpPmf)">';
+  ps.forEach((v,i)=>{const k=xmin+i,on=k>=L&&k<=U,hv=k===hoverK,y=Y(v);
+    s+=`<rect class="bar${on?' on':''}${hv?' hov':''}" x="${r2(X(k)-bw/2)}" y="${r2(y)}" width="${r2(bw)}" height="${r2(Y(0)-y)}"/>`;});
+  s+='</g>';
+  if(L<=U&&Lc<=Uc){const a=X(Lc-0.5),b=X(Uc+0.5);
+    s+=`<rect class="evaxis" x="${r2(Math.max(M.l,a))}" y="${H-M.b-1.5}" width="${r2(Math.min(W-M.r,b)-Math.max(M.l,a))}" height="4"/>`;}
+  if(hoverK!==null){const x=r2(X(hoverK)),y=r2(Y(D.pmf(hoverK,P)));
+    s+=`<line class="guide" x1="${M.l}" x2="${x}" y1="${y}" y2="${y}"/>`;}
+  $('#pmfSvg').innerHTML=s;
+  plotInfo.pmf={x0,x1,xmin,xmax,round:true};
+}
+
+function renderCDF(){
+  const {xmin,xmax,L,U}=st;
+  const pad=Math.max(1,(5-(xmax-xmin))/2),x0=xmin-pad,x1=xmax+pad;
+  const X=lin(x0,x1,M.l,W-M.r),Y=lin(0,1.06,H-M.b,M.t);
+  const unit=X(1)-X(0),rad=Math.max(1.6,Math.min(3.8,unit*0.22));
+  let s=clip('cpCdf');
+  const empty=L>U;
+  let lowK,lowF,hiF;
+  if(!empty){
+    lowK=Number.isFinite(L)?L-1:-Infinity; lowF=F(lowK); hiF=Number.isFinite(U)?F(U):1;
+    const yh=Y(hiF),yl=Y(lowF);
+    s+=`<rect class="evband" x="${M.l}" y="${r2(yh)}" width="${W-M.l-M.r}" height="${r2(Math.max(0,yl-yh))}"/>`;
+  }
+  s+=frame(X,Y,xTicks(x0,x1),[0,.2,.4,.6,.8,1],v=>v.toFixed(1),D.v,`F<tspan baseline-shift="sub" font-size="11">${D.rv}</tspan>(${D.v})`);
+  s+='<g clip-path="url(#cpCdf)">';
+  if(!empty){
+    const yh=r2(Y(hiF)),yl=r2(Y(lowF));
+    const xu=Number.isFinite(U)?r2(Math.min(W-M.r,X(U))):W-M.r;
+    s+=`<line class="lvl" x1="${M.l}" x2="${xu}" y1="${yh}" y2="${yh}"/>`;
+    if(Number.isFinite(lowK)){const xl=r2(Math.max(M.l,Math.min(W-M.r,X(lowK))));
+      s+=`<line class="lvl" x1="${M.l}" x2="${xl}" y1="${yl}" y2="${yl}"/>`;}
+  }
+  let d='';
+  for(let k=Math.floor(x0);k<=Math.ceil(x1);k++){
+    const xa=Math.max(x0,k),xb=Math.min(x1,k+1); if(xa>=xb)continue;
+    const y=r2(Y(F(k))); d+=`M${r2(X(xa))} ${y}H${r2(X(xb))}`;
+  }
+  s+=`<path class="step" d="${d}"/>`;
+  if(unit>=4){
+    for(let k=xmin;k<=xmax;k++){
+      if(D.pmf(k,P)<=1e-12)continue;
+      const x=r2(X(k));
+      s+=`<circle class="odot" cx="${x}" cy="${r2(Y(F(k-1)))}" r="${rad}"/><circle class="dot" cx="${x}" cy="${r2(Y(F(k)))}" r="${rad}"/>`;
+    }
+  }
+  if(hoverK!==null){const x=r2(X(hoverK)),y=r2(Y(F(hoverK)));
+    s+=`<line class="guide" x1="${x}" x2="${x}" y1="${H-M.b}" y2="${y}"/><line class="guide" x1="${M.l}" x2="${x}" y1="${y}" y2="${y}"/><circle class="hvdot" cx="${x}" cy="${y}" r="${rad+1.5}"/>`;}
+  if(!empty){
+    if(Number.isFinite(lowK)&&lowK>=x0)s+=`<circle class="hring" cx="${r2(X(lowK))}" cy="${r2(Y(lowF))}" r="${rad+1.8}"/>`;
+    if(Number.isFinite(U)&&U<=x1)s+=`<circle class="hdot" cx="${r2(X(U))}" cy="${r2(Y(hiF))}" r="${rad+1.8}"/>`;
+  }
+  s+='</g>';
+  if(!empty){
+    const yh=Y(hiF),yl=Y(lowF),bx=W-M.r-10;
+    s+=`<path class="brk" d="M${bx-5} ${r2(yh)}H${bx}V${r2(yl)}H${bx-5}"/>`;
+    const tall=yl-yh>20,ly=tall?(yh+yl)/2:yh-8;
+    s+=`<text class="blabel" x="${bx-9}" y="${r2(ly)}" text-anchor="end" dominant-baseline="middle">${fmt(st.prob)}</text>`;
+  }
+  $('#cdfSvg').innerHTML=s;
+  plotInfo.cdf={x0,x1,xmin,xmax,round:false};
+}
+
+function renderReadout(){
+  const r=$('#readout');
+  if(hoverK===null){r.innerHTML='Hover over or tap either plot to read off values.';return;}
+  const k=neg(hoverK);
+  const R=D.rv;
+  r.innerHTML=`At <i>${D.v}</i> = <b>${k}</b>: &nbsp;<i>P<sub>${R}</sub></i>(${k}) = <b>${fmt(D.pmf(hoverK,P))}</b> &nbsp;&nbsp; <i>F<sub>${R}</sub></i>(${k}) = <b>${fmt(F(hoverK))}</b>`;
+}
+function drawPlots(){renderPMF();renderCDF();renderReadout();}
+
+function attachHover(id,name){
+  const svg=$(id);
+  const onMove=e=>{
+    const info=plotInfo[name];if(!info)return;
+    const r=svg.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*W;
+    const x=info.x0+(px-M.l)/(W-M.r-M.l)*(info.x1-info.x0);
+    let k=info.round?Math.round(x):Math.floor(x);
+    if(px<M.l||px>W-M.r||k<info.xmin||k>info.xmax)k=null;
+    if(k!==hoverK){hoverK=k;drawPlots();}
+  };
+  svg.addEventListener('pointermove',onMove);
+  svg.addEventListener('pointerdown',onMove);
+  svg.addEventListener('pointerleave',()=>{if(hoverK!==null){hoverK=null;drawPlots();}});
+}
+
+/* ---------- result ---------- */
+function renderResult(){
+  $('#probLine').hidden=!st.active;
+  if(!st.active){
+    setMath($('#deriv'),'');
+    $('#evNote').innerHTML=isPair()?'Enter values for <i>a</i> and <i>b</i> to compute the probability.':'Enter a value for <i>a</i> to compute the probability.';
+    return;
+  }
+  const {L,U,prob}=st, R=D.rv, v=D.v, t=ev.type;
+  $('#evHtml').innerHTML=eventStr(false);
+  $('#prob').innerHTML=fmt(prob);
+  const Fx=a=>`F_{${R}}(${a})`, num=a=>fmt(F(a),true);
+  const parts=[eventStr(true)];
+  if(t==='eq'){
+    if(L>U)parts.push('0');
+    else parts.push(`P_{${R}}(${L})`,`${Fx(L)} - ${Fx(L-1)}`,`${num(L)} - ${num(L-1)}`,fmt(prob,true));
+  }else if(L>U){parts.push('0');}
+  else{
+    // upper and lower CDF arguments, written the way the worksheet does
+    const up=['le','cc','oc'].includes(t)?(t==='le'?ev.a:ev.b):U;
+    const low=['gt','oc','oo'].includes(t)?ev.a:L-1;
+    const hasUp=!['ge','gt'].includes(t), hasLow=!['le','lt'].includes(t);
+    if(hasUp&&hasLow&&Number.isFinite(L)&&Number.isFinite(U))parts.push(`\\sum_{i=${L}}^{${U}} P_{${R}}(i)`);
+    if(!hasLow){
+      if(t==='lt')parts.push(`P(${R} \\le ${U})`);
+      parts.push(Fx(fn(up)),fmt(prob,true));
+    }else if(!hasUp){
+      if(t==='ge')parts.push(`1 - P(${R} \\le ${L-1})`);
+      parts.push(`1 - ${Fx(fn(low))}`,`1 - ${num(low)}`,fmt(prob,true));
+    }else{
+      parts.push(`${Fx(fn(up))} - ${Fx(fn(low))}`,`${num(up)} - ${num(low)}`,fmt(prob,true));
+    }
+  }
+  setMath($('#deriv'),`\\[${parts.join(' = ')}\\]`);
+  let note='';
+  const Lc=Math.max(L,S.lo),Uc=Math.min(U,S.hi);
+  if(t==='eq'&&!Number.isInteger(ev.a))note=`<i>${R}</i> only takes whole-number values, so this probability is 0.`;
+  else if(isPair()&&ev.a>ev.b)note=`<i>a</i> is larger than <i>b</i>, so no value satisfies the event.`;
+  else if(L>U)note='No whole number satisfies this event, so its probability is 0.';
+  else if(Lc>Uc)note=`The event lies outside the support of <i>${R}</i>, so its probability is 0.`;
+  else{
+    const lo=neg(Lc),hi=neg(Uc);
+    note=Lc===Uc?`The event is the single value <i>${v}</i> = ${lo}.`
+      :Uc===Infinity?`The event covers <i>${v}</i> = ${lo}, ${neg(Lc+1)}, … (the whole upper tail).`
+      :`The event covers <i>${v}</i> = ${lo} through ${hi} (${Uc-Lc+1} values).`;
+  }
+  $('#evNote').innerHTML=note;
+}
+
+/* ---------- definition ---------- */
+function renderDefinition(){
+  setMath($('#story'),val(D.story,P));
+  setMath($('#notation'),`\\[${val(D.notation,P)}\\]`);
+  setMath($('#pmfTex'),`\\[${val(D.pmfTex,P)}\\]`);
+  setMath($('#cdfTex'),`\\[${val(D.cdfTex,P)}\\]`);
+}
+
+/* ---------- main update ---------- */
+function update(full){
+  st.active=isActive();
+  const [L,U]=st.active?bounds():[1,0]; st.L=L; st.U=U;
+  st.prob=L>U?0:Math.max(0,Math.min(1,F(U)-F(L-1)));
+  [st.xmin,st.xmax]=computeRange(L,U);
+  if(hoverK!==null&&(hoverK<st.xmin||hoverK>st.xmax))hoverK=null;
+  drawPlots(); renderResult();
+  if(full)renderDefinition();
+}
+
+/* ---------- wiring ---------- */
+function syncEventUI(){$('#bWrap').hidden=!isPair();}
+$('#evType').addEventListener('change',e=>{ev.type=e.target.value;syncEventUI();update(false);});
+['A','B'].forEach(c=>{
+  const inp=$('#ev'+c);
+  inp.addEventListener('input',()=>{ev[c.toLowerCase()]=parseFloat(inp.value);update(false);});
+});
+buildPicker();
+attachHover('#pmfSvg','pmf');
+attachHover('#cdfSvg','cdf');
+syncEventUI();
+selectDist('bernoulli');
+</script>
+</body>
+</html>
