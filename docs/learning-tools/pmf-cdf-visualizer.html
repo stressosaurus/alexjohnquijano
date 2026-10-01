@@ -6,16 +6,17 @@
 <title>PMF/CDF Visualizer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#F1F6EC; --gridline:rgba(76,154,42,.10); --ink:#1B2A17; --muted:#55664E;
   --rule:#C5D6B8; --panel:#FCFEFA; --bar:#4C9A2A; --bar-strong:#2D6414;
   --hl:#C2185B; --hl-ink:#8E0F42; --hl-soft:rgba(194,24,91,.16); --focus:#7B1FA2;
   --shadow:rgba(27,42,23,.35);
+  --ev:#1E5AA8; --ev-ink:#123E78; --ev-soft:rgba(30,90,168,.16);
   color-scheme:light;
 }
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper)}
+:root{font-size:15px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
 body{
@@ -23,44 +24,48 @@ body{
   background-image:linear-gradient(var(--gridline) 1px,transparent 1px),linear-gradient(90deg,var(--gridline) 1px,transparent 1px);
   background-size:24px 24px;
   font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
-  font-size:16px;line-height:1.5;
+  font-size:1rem;line-height:1.5;
 }
-.site-footer{max-width:1180px;margin:0 auto;padding:1.25rem 1.25rem 2.5rem;border-top:1px solid var(--rule);color:var(--muted);font-size:.9rem;line-height:1.5}
+.site-footer{max-width:1180px;margin:0 auto;padding:1.25rem 1.25rem 2.5rem;border-top:1px solid var(--rule);color:var(--muted);font-size:.8rem;line-height:1.5}
 .site-footer a{color:var(--bar-strong)}
 main{max-width:1180px;margin:0 auto;padding:2.5rem 1.25rem 4rem}
 h1,h2,h3{font-family:"Newsreader",Georgia,"Times New Roman",serif;font-weight:400;margin:0;line-height:1.15}
-h1{font-size:clamp(2rem,4.5vw,3rem);letter-spacing:-.01em}
-h2{font-size:1.4rem}
-h3{font-size:1.1rem;font-weight:600}
-.lede{max-width:none;color:var(--muted);margin:.6rem 0 1.6rem;font-size:1.05rem}
+h1{font-size:clamp(1.75rem,3.5vw,2.25rem);letter-spacing:-.01em}
+h2{font-size:1.25rem}
+h2,h3{font-weight:700}
+h3{font-size:1.25rem}
+.lede{max-width:none;color:var(--muted);margin:.6rem 0 1.6rem;font-size:1rem}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 
 .dists{display:flex;flex-wrap:wrap;gap:.5rem}
 .dists button{
-  font:inherit;font-size:.95rem;padding:.45rem .95rem;border:1px solid var(--rule);
+  font:inherit;font-size:1rem;padding:.45rem .95rem;border:1px solid var(--rule);
   background:var(--panel);color:var(--ink);border-radius:6px;cursor:pointer;
 }
 .dists button:hover{border-color:var(--bar)}
 .dists button[aria-checked="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 
 .define{
-  display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:2.5rem;
-  margin:2rem 0 2.25rem;padding:.25rem 0 .25rem 1.5rem;border-left:3px solid var(--bar);
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(16rem,20rem);gap:1.25rem;
+  margin:2rem 0 2rem;align-items:stretch;
 }
-.story{font-family:"Newsreader",Georgia,serif;font-size:1.25rem;line-height:1.55;max-width:58ch;margin:.7rem 0 .4rem}
+.story{font-size:1rem;line-height:1.5;max-width:none;margin:.7rem 0 .4rem}
+.story p{margin:0 0 .5rem}
+.story ul{margin:0 0 .4rem;padding-left:1.3em}
+.story li{margin:.15rem 0}
 .notation{overflow-x:auto;overflow-y:hidden}
 .facts{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:.35rem 1.25rem;margin:.4rem 0 0;align-items:baseline}
-.facts dt{color:var(--muted);font-size:.92rem}
+.facts dt{color:var(--muted);font-size:1rem}
 .facts dd{margin:0;overflow-x:auto;overflow-y:hidden}
 .define-params h3{margin-bottom:.8rem}
 .param{margin-bottom:1.1rem}
 .param-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.3rem}
-.param label{font-size:.95rem}
+.param label{font-size:1rem}
 .param input[type=number]{width:6.2rem}
 .param input[type=range]{width:100%;accent-color:var(--bar)}
 .param select{width:100%;margin-top:.3rem}
 input[type=number],select{
-  font:inherit;font-size:.95rem;color:var(--ink);background:var(--panel);
+  font:inherit;font-size:1rem;color:var(--ink);background:var(--panel);
   border:1px solid var(--rule);border-radius:5px;padding:.3rem .45rem;font-variant-numeric:tabular-nums;
 }
 
@@ -69,30 +74,47 @@ input[type=number],select{
   margin:0;background:var(--panel);border:1px solid var(--rule);border-radius:3px;
   padding:1rem 1.1rem .5rem;box-shadow:0 12px 26px -20px var(--shadow);
 }
-.sheet h2{font-size:1.2rem}
-.formula{min-height:4.6rem;overflow-x:auto;overflow-y:hidden;display:flex;align-items:center;font-size:.95rem}
+
+.formula{min-height:4.6rem;overflow-x:auto;overflow-y:hidden;display:flex;align-items:center;font-size:1rem}
 .formula > *{flex:0 0 auto}
-.zoom{display:flex;align-items:center;gap:.4rem;margin:.2rem 0 .5rem;font-size:.85rem;color:var(--muted)}
-.zoom button{font:inherit;font-size:.85rem;padding:.25rem .7rem;border:1px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:5px;cursor:pointer}
+.zoom{display:flex;align-items:center;gap:.4rem;margin:.2rem 0 .5rem;font-size:1rem;color:var(--muted)}
+.zoom button{font:inherit;font-size:1rem;padding:.25rem .7rem;border:1px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:5px;cursor:pointer}
 .zoom button:hover:not(:disabled){border-color:var(--bar)}
 .zoom button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .zoom button:disabled{opacity:.45;cursor:not-allowed}
 .sheet > svg{display:block;width:100%;height:auto;touch-action:pan-y}
-.readout{min-height:1.6rem;color:var(--muted);margin:.8rem 0 0;font-variant-numeric:tabular-nums}
-.readout b{color:var(--ink);font-weight:700}
+.readout{min-height:1.6rem;color:var(--muted);margin:.5rem 0 0;font-variant-numeric:tabular-nums}
+.readout b{color:var(--ink);font-weight:400}
 
-.calc{margin-top:2.5rem;padding:.25rem 0 .25rem 1.5rem;border-left:3px solid var(--hl)}
-.calc-row{display:flex;flex-wrap:wrap;gap:1rem 1.5rem;align-items:end;margin:1rem 0 1.25rem}
-.calc-row label{display:flex;flex-direction:column;gap:.3rem;font-size:.92rem;color:var(--muted)}
+.toggles{display:flex;justify-content:center;flex-wrap:wrap;gap:.75rem;margin:1.75rem 0 0}
+.toggles button{font:inherit;font-size:1rem;padding:.55rem 1.2rem;border:1px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:6px;cursor:pointer}
+.toggles button:hover{border-color:var(--bar)}
+.toggles button[aria-expanded="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.analysis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem;align-items:start;margin-top:2rem}
+.analysis > [hidden]{display:none}
+.card{--acc:var(--bar);--tint:rgba(76,154,42,.07);
+  background:linear-gradient(var(--tint),var(--tint)),var(--panel);border:1px solid var(--rule);border-left:4px solid var(--acc);
+  border-radius:6px;padding:1rem 1.25rem;box-shadow:0 12px 26px -22px var(--shadow);min-width:0}
+.card-calc{--acc:var(--hl);--tint:rgba(194,24,91,.05)}
+.card-ev{--acc:var(--ev);--tint:rgba(30,90,168,.05)}
+.card .deriv{margin-bottom:-.5rem}
+.notes{margin-top:.75rem}
+.notes .note{margin:.5rem 0 0}
+.calc{grid-column:1;min-width:0}
+.ev{grid-column:2;min-width:0}
+.ev .prob-line{margin-top:1rem}
+.ev .prob-line output{background:linear-gradient(transparent 58%,var(--ev-soft) 58%)}
+.swatch.ev-swatch{background:var(--ev);border-color:var(--ev-ink)}
+.calc-row{display:flex;flex-wrap:wrap;gap:1rem 1.5rem;align-items:end;margin:.9rem 0 1rem}
+.calc-row label{display:flex;flex-direction:column;gap:.3rem;font-size:1rem;color:var(--muted)}
 .calc-row input{width:7rem}
 .calc-row [hidden]{display:none}
 .prob-line[hidden]{display:none}
-.prob-line{font-family:"Newsreader",Georgia,serif;font-size:clamp(1.8rem,4vw,2.5rem);line-height:1.2;margin:0}
+.prob-line{font-family:"Newsreader",Georgia,serif;font-size:1.35rem;line-height:1.2;margin:0}
 .prob-line output{font-weight:600;font-variant-numeric:tabular-nums;background:linear-gradient(transparent 58%,var(--hl-soft) 58%);padding:0 .15em}
 .deriv{overflow-x:auto;overflow-y:hidden;max-width:100%}
 .deriv mjx-container[display="true"]{text-align:left!important;margin-left:0!important}
-.reminder{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:.6rem .85rem;max-width:80ch;margin-top:.6rem}
-.note{color:var(--muted);max-width:70ch;margin:.3rem 0 0}
+.note{color:var(--muted);max-width:none;margin:.3rem 0 0}
 .swatch{display:inline-block;width:.9em;height:.9em;background:var(--hl);border:1px solid var(--hl-ink);vertical-align:-.1em;margin-right:.35em;border-radius:2px}
 
 /* SVG */
@@ -100,7 +122,17 @@ input[type=number],select{
 .axis{stroke:var(--ink);stroke-width:1.2}
 .tickmark{stroke:var(--ink);stroke-width:1}
 .tick{fill:var(--muted);font-size:12px;font-family:"Atkinson Hyperlegible",system-ui,sans-serif}
-.axlab{fill:var(--ink);font-family:"Newsreader",Georgia,serif;font-style:italic;font-size:16px}
+.axlab{fill:var(--ink);font-family:"Newsreader",Georgia,serif;font-style:italic;font-size:15px}
+.stem{stroke:var(--bar);stroke-width:2.2;stroke-linecap:round}
+.sdot{fill:var(--bar)}
+.stem.on{stroke:var(--hl)}
+.sdot.on{fill:var(--hl);stroke:var(--hl-ink);stroke-width:1}
+.stem.hov{stroke-width:3.5}
+.stem.hov:not(.on){stroke:var(--bar-strong)}
+.sdot.hov:not(.on){fill:var(--bar-strong)}
+.step.on{stroke:var(--hl);stroke-width:2.8}
+.dot.on{fill:var(--hl)}
+.odot.on{stroke:var(--hl)}
 .bar{fill:var(--bar)}
 .bar.hov{fill:var(--bar-strong)}
 .bar.on{fill:var(--hl);stroke:var(--hl-ink);stroke-width:1}
@@ -117,14 +149,20 @@ input[type=number],select{
 .hring{fill:var(--panel);stroke:var(--hl-ink);stroke-width:1.8}
 .guide{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 3}
 .hvdot{fill:var(--bar-strong)}
+.evline{stroke:var(--ev);stroke-width:2}
+.evline.dash{stroke-dasharray:6 4}
+.evfulcrum{fill:var(--ev);stroke:var(--ev-ink);stroke-width:1}
+.evlabel{fill:var(--ev-ink);font-weight:700;font-size:13px;font-family:"Atkinson Hyperlegible",system-ui,sans-serif;paint-order:stroke;stroke:var(--panel);stroke-width:5px;stroke-linejoin:round}
 
 @media (max-width:860px){
   .define,.plots{grid-template-columns:minmax(0,1fr)}
   .define{gap:1.5rem}
+  .analysis{grid-template-columns:minmax(0,1fr)}
+  .analysis > *{grid-column:1}
 }
 @media (max-width:520px){
   main{padding-top:1.5rem}
-  .define,.calc{padding-left:1rem}
+  .card{padding:.85rem 1rem}
 }
 </style>
 <script>
@@ -140,22 +178,23 @@ window.MathJax = {
 <main>
   <header>
     <h1>PMF/CDF Visualizer</h1>
-    <p class="lede math">The probability mass function (PMF), \(p_X(x) = P(X = x)\), gives the probability that a discrete random variable \(X\) takes exactly the value \(x\). The cumulative distribution function (CDF), \(F_X(x) = P(X \le x)\), gives the probability that \(X\) is at most \(x\); it is the running sum of the PMF. Choose a distribution and set its parameters. The mass function and distribution function update together, and any probability you compute is highlighted in both plots.</p>
+    <p class="lede">Choose a named discrete random variable and adjust its parameters. The plots of its probability mass function and cumulative distribution function update as you go, and the buttons below the plots open tools for computing probabilities and the expected value.</p>
   </header>
 
   <nav id="dists" class="dists" role="radiogroup" aria-label="Distribution"></nav>
 
   <section class="define" aria-labelledby="h-def">
-    <div>
-      <h2 id="h-def">The Discrete Random Variable: <span id="rvName"></span></h2>
-      <p id="story" class="story math"></p>
+    <div class="card">
+      <h2 id="h-def" class="rv-title"><span id="rvName"></span> Random Variable</h2>
+      <div id="story" class="story math"></div>
       <div id="notation" class="notation math"></div>
     </div>
-    <div class="define-params">
+    <div class="card define-params">
       <h3>Parameters</h3>
       <div id="params"></div>
     </div>
   </section>
+
 
   <section class="plots" aria-label="Plots">
     <figure class="sheet">
@@ -167,11 +206,20 @@ window.MathJax = {
       <svg id="cdfSvg" viewBox="0 0 560 330" role="img" aria-label="Step plot of the cumulative distribution function"></svg>
     </figure>
   </section>
+  <div class="notes">
+    <p class="note math">The probability mass function (PMF), \(P_X(x) = P(X = x)\), gives the probability that a discrete random variable \(X\) takes exactly the value \(x\). The cumulative distribution function (CDF), \(F_X(x) = P(X \le x)\), gives the probability that \(X\) is at most \(x\); it is the running sum of the PMF. The two plots above update together, and any probability you compute is highlighted in both.</p>
+  </div>
   <p id="readout" class="readout" aria-live="polite"></p>
 
-  <section class="calc" aria-labelledby="h-calc">
-    <h2 id="h-calc">Compute a probability</h2>
-    <p class="note math reminder"><b>Remember:</b> \(X\) is a <em>discrete</em> random variable, so the support of its PMF is a set of integers. \(P_X(x) = 0\) for every \(x\) outside the support, including every non-integer. The CDF \(F_X(x) = P(X \le x)\), by contrast, is defined for every real \(x\). It is a step function that jumps only at the integers in the support, so \(F_X(x) = F_X(\lfloor x \rfloor)\). You can still enter non-integer values for \(a\) and \(b\). The event keeps only the integers it contains; for example, \(P(X \le 2.7) = P(X \le 2) = F_X(2)\) and \(P(X \ge 2.3) = P(X \ge 3)\).</p>
+  <div class="toggles">
+    <button type="button" data-target="calcBlock" aria-controls="calcBlock" aria-expanded="false">Compute probability</button>
+    <button type="button" data-target="evBlock" aria-controls="evBlock" aria-expanded="false">Expected value</button>
+  </div>
+
+  <div class="analysis">
+  <section id="calcBlock" class="calc" aria-labelledby="h-calc" hidden>
+    <div class="card card-calc">
+    <h2 id="h-calc">Compute probability</h2>
     <div class="calc-row">
       <label>Event
         <select id="evType">
@@ -191,12 +239,30 @@ window.MathJax = {
     </div>
     <p id="probLine" class="prob-line" hidden><span id="evHtml"></span> = <output id="prob">0</output></p>
     <div id="deriv" class="deriv math"></div>
+    </div>
+    <div class="notes">
     <p id="evNote" class="note"></p>
-    <p class="note"><span class="swatch" aria-hidden="true"></span>Pink marks the event: the bars it adds up on the left, and on the right the rise in the CDF between the two dashed levels.</p>
+    <p class="note"><span class="swatch" aria-hidden="true"></span>Pink marks the event: on the left, the PMF values it adds up; on the right, the steps of the CDF for those same values, between the two dashed levels.</p>
+    <p class="note math"><b>Remember:</b> \(X\) is discrete, so \(P_X(x) = 0\) for every \(x\) outside its integer support, while \(F_X(x)\) is defined for every real \(x\), with \(F_X(x) = F_X(\lfloor x \rfloor)\). Non-integer \(a\) and \(b\) are fine: the event keeps only the integers it contains, so \(P(X \le 2.7) = P(X \le 2)\).</p>
+    <div id="calcWhy" class="note math"></div>
+    </div>
   </section>
+  <section id="evBlock" class="ev" aria-labelledby="h-ev" hidden>
+    <div class="card card-ev">
+    <h2 id="h-ev">Expected value</h2>
+    <p class="prob-line"><i>E</i>[<i>X</i>] = <output id="evVal">0</output></p>
+    <div id="evDeriv" class="deriv math"></div>
+    </div>
+    <div class="notes">
+    <p id="evNote2" class="note math"></p>
+    <p class="note"><span class="swatch ev-swatch" aria-hidden="true"></span>Blue marks <i>E</i>[<i>X</i>]: on the left, the balance point of the PMF, with a fulcrum under the axis; on the right, a dashed line at the same <i>x</i>.</p>
+    <div id="evWhy" class="note math"></div>
+    </div>
+  </section>
+  </div>
 </main>
 <footer class="site-footer">
-  <p>This application is for personal or educational use only. This was designed by <a href="https://alexjohnquijano.com/" target="_blank" rel="noopener">Alex John Quijano</a> at the University of Portland using HTML and JavaScript, with assistance from Claude AI. Text and figures are licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">Creative Commons Attribution (CC BY 4.0)</a>.</p>
+  <p>This application is for personal or educational use only. This was designed by <a href="https://alexjohnquijano.com/" target="_blank" rel="noopener">Alex John Quijano</a> at the University of Portland using HTML and JavaScript, with assistance from Claude AI. Text and figures are licensed under Creative Commons Attribution (CC BY 4.0).</p>
 </footer>
 
 <script>
@@ -216,6 +282,17 @@ function fmt(v,tex){
 const neg=s=>String(s).replace(/^-/,'−');
 
 /* ---------- distributions ---------- */
+/* generalized harmonic numbers H_{N,q,s} = sum_{k=1}^N (k+q)^{-s}, with cached partial sums */
+const _zm={key:null,cum:null};
+function zmCum(N,q,s){
+  const key=N+'|'+q+'|'+s;
+  if(_zm.key!==key){const c=[0];for(let k=1;k<=N;k++)c.push(c[k-1]+Math.pow(k+q,-s));
+    for(let k=1;k<=N;k++)c[k]/=c[N]; _zm.key=key; _zm.cum=c;}
+  return _zm.cum;
+}
+function genH(N,q,s){let t=0;for(let k=1;k<=N;k++)t+=Math.pow(k+q,-s);return t;}
+const _gh=new Map();
+const genHc=(N,q,s)=>{const k=N+'|'+q+'|'+s;if(!_gh.has(k)){if(_gh.size>200)_gh.clear();_gh.set(k,genH(N,q,s));}return _gh.get(k);};
 const PP={k:'p',label:'Success probability <i>p</i>',min:0,max:1,step:0.01};
 const DISTS={
   bernoulli:{label:'Bernoulli',rv:'X',v:'x',
@@ -223,7 +300,7 @@ const DISTS={
     support:()=>({lo:0,hi:1}),
     pmf:(k,P)=>k===0?1-P.p:k===1?P.p:0,
     mean:P=>P.p,variance:P=>P.p*(1-P.p),
-    story:'A single trial has success probability \\(p\\) and failure probability \\(1-p\\). \\(X\\) is 1 on a success and 0 on a failure.',
+    story:'<p>A single trial has success probability \\(p\\) and failure probability \\(1-p\\). \\(X\\) is 1 on a success and 0 on a failure. \\(X\\) is a discrete random variable with support \\(\\{0, 1\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>There is exactly one trial.</li><li>The trial has exactly two outcomes, labeled success and failure.</li><li>The success probability \\(p\\) is fixed, with \\(0 \\le p \\le 1\\).</li><li>\\(X\\) indicates whether that one trial is a success.</li></ul>',
     notation:P=>`X \\sim \\text{Bern}(p), \\qquad p = ${fn(P.p)}`,
     pmfAt:(k,P)=>`(${fn(P.p)})^{${k}}(${fn(1-P.p)})^{${1-k}}`,
     pmfTex:'P_X(x) = p^{x}(1-p)^{1-x}, \\quad x \\in \\{0, 1\\}',
@@ -233,7 +310,7 @@ const DISTS={
     support:P=>({lo:1,hi:P.p>=1?1:Infinity}),
     pmf:(k,P)=>k<1?0:P.p*Math.pow(1-P.p,k-1),
     mean:P=>1/P.p,variance:P=>(1-P.p)/(P.p*P.p),
-    story:'Repeat independent trials, each with success probability \\(p\\) and failure probability \\(1-p\\), until the first success. \\(X\\) is the number of trials needed, including that success.',
+    story:'<p>Repeat independent trials, each with success probability \\(p\\) and failure probability \\(1-p\\), until the first success. \\(X\\) is the number of trials needed, including that success. \\(X\\) is a discrete random variable with support \\(\\{1, 2, 3, \\dots\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>The trials are independent Bernoulli trials, each with exactly two outcomes.</li><li>The success probability \\(p\\) is fixed and the same on every trial, with \\(0 < p \\le 1\\).</li><li>The number of trials is not fixed in advance; trials continue until the first success.</li><li>\\(X\\) counts the trials up to and including the first success.</li></ul>',
     notation:P=>`X \\sim \\text{Geom}(p), \\qquad p = ${fn(P.p)}`,
     cdf:(x,P)=>x<1?0:1-Math.pow(1-P.p,Math.floor(x)),
     sf:(x,P)=>x<1?1:Math.pow(1-P.p,Math.floor(x)),
@@ -245,19 +322,137 @@ const DISTS={
     support:P=>({lo:0,hi:P.n}),
     pmf:(k,P)=>(k<0||k>P.n)?0:Math.exp(lchoose(P.n,k)+xlog(k,P.p)+xlog(P.n-k,1-P.p)),
     mean:P=>P.n*P.p,variance:P=>P.n*P.p*(1-P.p),
-    story:'Run \\(n\\) independent trials, each with success probability \\(p\\) and failure probability \\(1-p\\). \\(X\\) is the number of successes.',
+    story:'<p>Run \\(n\\) independent trials, each with success probability \\(p\\) and failure probability \\(1-p\\). \\(X\\) is the number of successes. \\(X\\) is a discrete random variable with support \\(\\{0, 1, \\dots, n\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>The number of trials \\(n\\) is fixed in advance.</li><li>The trials are independent Bernoulli trials, each with exactly two outcomes.</li><li>The success probability \\(p\\) is fixed and the same on every trial, with \\(0 \\le p \\le 1\\).</li><li>\\(X\\) counts the successes among the \\(n\\) trials, regardless of order.</li></ul>',
     notation:P=>`X \\sim \\text{Bin}(n, p), \\qquad n = ${P.n},\\ p = ${fn(P.p)}`,
     pmfAt:(k,P)=>`\\binom{${P.n}}{${k}}(${fn(P.p)})^{${k}}(${fn(1-P.p)})^{${P.n-k}}`,
     pmfTex:'P_X(x) = \\binom{n}{x} p^{x}(1-p)^{n-x}, \\quad x = 0, 1, \\dots, n',
-    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ \\displaystyle\\sum_{i=0}^{\\lfloor x \\rfloor} \\binom{n}{i} p^{i}(1-p)^{n-i} & 0 \\le x < n \\\\ 1 & x \\ge n \\end{cases}'}
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ \\displaystyle\\sum_{i=0}^{\\lfloor x \\rfloor} \\binom{n}{i} p^{i}(1-p)^{n-i} & 0 \\le x < n \\\\ 1 & x \\ge n \\end{cases}'},
+  hypergeometric:{label:'Hypergeometric',rv:'X',v:'x',
+    params:[{k:'N',label:'Population size <i>N</i>',min:1,max:500,step:1,int:true,val:50},
+            {k:'K',label:'Successes in population <i>K</i>',min:0,max:P=>P.N,step:1,int:true,val:15},
+            {k:'n',label:'Number of draws <i>n</i>',min:1,max:P=>P.N,step:1,int:true,val:10}],
+    support:P=>({lo:Math.max(0,P.n-(P.N-P.K)),hi:Math.min(P.n,P.K)}),
+    pmf:(k,P)=>{const lo=Math.max(0,P.n-(P.N-P.K)),hi=Math.min(P.n,P.K);
+      return (k<lo||k>hi)?0:Math.exp(lchoose(P.K,k)+lchoose(P.N-P.K,P.n-k)-lchoose(P.N,P.n));},
+    mean:P=>P.n*P.K/P.N,
+    variance:P=>P.N>1?P.n*(P.K/P.N)*(1-P.K/P.N)*(P.N-P.n)/(P.N-1):0,
+    story:'<p>A population of \\(N\\) objects contains \\(K\\) successes and \\(N-K\\) failures. Draw \\(n\\) objects without replacement. \\(X\\) is the number of successes drawn. \\(X\\) is a discrete random variable with support \\(\\max(0,\\, n-N+K) \\le x \\le \\min(n, K)\\), and it applies to a setting that meets these criteria:</p><ul><li>The population is finite, with a fixed size \\(N\\) and exactly \\(K\\) successes.</li><li>A fixed number \\(n\\) of objects is drawn without replacement, so the draws are not independent and the chance of a success changes from draw to draw.</li><li>Every group of \\(n\\) objects is equally likely to be the one drawn.</li><li>\\(X\\) counts the successes among the \\(n\\) objects drawn.</li></ul>',
+    notation:P=>`X \\sim \\text{Hypergeom}(N, K, n), \\qquad N = ${P.N},\\ K = ${P.K},\\ n = ${P.n}`,
+    pmfAt:(k,P)=>`\\frac{\\binom{${P.K}}{${k}}\\binom{${P.N-P.K}}{${P.n-k}}}{\\binom{${P.N}}{${P.n}}}`,
+    pmfTex:'P_X(x) = \\frac{\\binom{K}{x}\\binom{N-K}{n-x}}{\\binom{N}{n}}, \\quad \\max(0,\\, n-N+K) \\le x \\le \\min(n, K)',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < \\max(0,\\, n-N+K) \\\\ \\displaystyle\\sum_{i \\le \\lfloor x \\rfloor} \\frac{\\binom{K}{i}\\binom{N-K}{n-i}}{\\binom{N}{n}} & \\max(0,\\, n-N+K) \\le x < \\min(n, K) \\\\ 1 & x \\ge \\min(n, K) \\end{cases}'},
+  poisson:{label:'Poisson',rv:'X',v:'x',
+    params:[{k:'lam',label:'Rate <i>λ</i>',min:0.1,max:100,step:0.1,val:4}],
+    support:()=>({lo:0,hi:Infinity}),
+    pmf:(k,P)=>(k<0||!Number.isInteger(k))?0:Math.exp(-P.lam+k*Math.log(P.lam)-lf(k)),
+    mean:P=>P.lam,variance:P=>P.lam,
+    story:'<p>Events happen at random over a fixed interval of time or space, at an average rate of \\(\\lambda\\) per interval. \\(X\\) is the number of events in the interval. \\(X\\) is a discrete random variable with support \\(\\{0, 1, 2, \\dots\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>Events are counted over one fixed interval, such as an hour, a page or a square meter.</li><li>Events happen one at a time, and counts in non-overlapping intervals are independent.</li><li>The average rate \\(\\lambda > 0\\) is constant across the interval.</li><li>There is no fixed maximum; \\(X\\) counts the events in the interval.</li></ul>',
+    notation:P=>`X \\sim \\text{Pois}(\\lambda), \\qquad \\lambda = ${fn(P.lam)}`,
+    pmfAt:(k,P)=>`\\frac{e^{-${fn(P.lam)}}(${fn(P.lam)})^{${k}}}{${k}!}`,
+    pmfTex:'P_X(x) = \\frac{e^{-\\lambda}\\lambda^{x}}{x!}, \\quad x = 0, 1, 2, \\dots',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ \\displaystyle\\sum_{i=0}^{\\lfloor x \\rfloor} \\frac{e^{-\\lambda}\\lambda^{i}}{i!} & x \\ge 0 \\end{cases}'},
+  uniform:{label:'Uniform',rv:'X',v:'x',
+    params:[{k:'a',label:'Lower bound <i>a</i>',min:-50,max:P=>P.b,step:1,int:true,val:1},
+            {k:'b',label:'Upper bound <i>b</i>',min:P=>P.a,max:50,step:1,int:true,val:6}],
+    support:P=>({lo:P.a,hi:P.b}),
+    pmf:(k,P)=>(k<P.a||k>P.b||!Number.isInteger(k))?0:1/(P.b-P.a+1),
+    cdf:(x,P)=>x<P.a?0:x>=P.b?1:(Math.floor(x)-P.a+1)/(P.b-P.a+1),
+    mean:P=>(P.a+P.b)/2,variance:P=>((P.b-P.a+1)**2-1)/12,
+    story:'<p>Pick one integer from \\(a\\) to \\(b\\), with every integer equally likely. \\(X\\) is the integer picked. \\(X\\) is a discrete random variable with support \\(\\{a, a+1, \\dots, b\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>The possible values are the consecutive integers \\(a, a+1, \\dots, b\\), with \\(a \\le b\\).</li><li>Each of the \\(b-a+1\\) values has the same probability.</li><li>Exactly one value is picked, and \\(X\\) is that value.</li></ul>',
+    notation:P=>`X \\sim \\text{Unif}\\{a, \\dots, b\\}, \\qquad a = ${P.a},\\ b = ${P.b}`,
+    pmfAt:(k,P)=>`\\frac{1}{${P.b-P.a+1}}`,
+    pmfTex:'P_X(x) = \\frac{1}{b-a+1}, \\quad x = a, a+1, \\dots, b',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < a \\\\ \\dfrac{\\lfloor x \\rfloor - a + 1}{b-a+1} & a \\le x < b \\\\ 1 & x \\ge b \\end{cases}'},
+  negbinomial:{label:'Negative Binomial',rv:'X',v:'x',
+    params:[{k:'r',label:'Number of successes <i>r</i>',min:1,max:50,step:1,int:true,val:3},{...PP,min:0.01,val:0.4}],
+    support:P=>({lo:P.r,hi:P.p>=1?P.r:Infinity}),
+    pmf:(k,P)=>(k<P.r||!Number.isInteger(k))?0:Math.exp(lchoose(k-1,P.r-1)+xlog(P.r,P.p)+xlog(k-P.r,1-P.p)),
+    mean:P=>P.r/P.p,variance:P=>P.r*(1-P.p)/(P.p*P.p),
+    story:'<p>Repeat independent trials, each with success probability \\(p\\) and failure probability \\(1-p\\), until the \\(r\\)th success. \\(X\\) is the number of trials needed, including that success. \\(X\\) is a discrete random variable with support \\(\\{r, r+1, r+2, \\dots\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>The trials are independent Bernoulli trials, each with exactly two outcomes.</li><li>The success probability \\(p\\) is fixed and the same on every trial, with \\(0 < p \\le 1\\).</li><li>The number of successes \\(r\\) is fixed in advance; the number of trials is not.</li><li>\\(X\\) counts the trials up to and including the \\(r\\)th success. With \\(r = 1\\), this is the geometric random variable.</li></ul>',
+    notation:P=>`X \\sim \\text{NegBin}(r, p), \\qquad r = ${P.r},\\ p = ${fn(P.p)}`,
+    pmfAt:(k,P)=>`\\binom{${k-1}}{${P.r-1}}(${fn(P.p)})^{${P.r}}(${fn(1-P.p)})^{${k-P.r}}`,
+    pmfTex:'P_X(x) = \\binom{x-1}{r-1} p^{r}(1-p)^{x-r}, \\quad x = r, r+1, r+2, \\dots',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < r \\\\ \\displaystyle\\sum_{i=r}^{\\lfloor x \\rfloor} \\binom{i-1}{r-1} p^{r}(1-p)^{i-r} & x \\ge r \\end{cases}'},
+  zipf:{label:'Zipf',rv:'X',v:'x',
+    params:[{k:'s',label:'Exponent <i>s</i>',min:0,max:4,step:0.01,val:1},{k:'N',label:'Number of ranks <i>N</i>',min:1,max:1000,step:1,int:true,val:10}],
+    support:P=>({lo:1,hi:P.N}),
+    pmf:(k,P)=>(k<1||k>P.N||!Number.isInteger(k))?0:Math.pow(k,-P.s)/genHc(P.N,0,P.s),
+    cdf:(x,P)=>x<1?0:x>=P.N?1:zmCum(P.N,0,P.s)[Math.floor(x)],
+    mean:P=>genHc(P.N,0,P.s-1)/genHc(P.N,0,P.s),
+    story:'<p>Rank \\(N\\) items from most to least common, as with words in a text or cities by size. The item of rank \\(x\\) is chosen with probability proportional to \\(1/x^{s}\\). \\(X\\) is the rank of the chosen item. \\(X\\) is a discrete random variable with support \\(\\{1, 2, \\dots, N\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>There are finitely many items, \\(N\\), ranked 1 to \\(N\\) by how common they are.</li><li>The probability of rank \\(x\\) is proportional to \\(x^{-s}\\), with a fixed exponent \\(s \\ge 0\\); a larger \\(s\\) puts more probability on the top ranks.</li><li>One item is chosen, and \\(X\\) is its rank.</li></ul>',
+    notation:P=>`X \\sim \\text{Zipf}(s, N), \\qquad s = ${fn(P.s)},\\ N = ${P.N}`,
+    pmfAt:(k,P)=>`\\frac{${k}^{-${fn(P.s)}}}{H_{${P.N},\\,${fn(P.s)}}}`,
+    pmfTex:'P_X(x) = \\frac{x^{-s}}{H_{N,s}}, \\quad x = 1, 2, \\dots, N, \\qquad H_{N,s} = \\sum_{k=1}^{N} k^{-s}',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 1 \\\\ \\dfrac{H_{\\lfloor x \\rfloor, s}}{H_{N,s}} & 1 \\le x < N \\\\ 1 & x \\ge N \\end{cases}'},
+  zipfmandelbrot:{label:'Zipf–Mandelbrot',rv:'X',v:'x',
+    params:[{k:'N',label:'Number of ranks <i>N</i>',min:1,max:1000,step:1,int:true,val:10},{k:'q',label:'Shift <i>q</i>',min:0,max:20,step:0.1,val:2.7},{k:'s',label:'Exponent <i>s</i>',min:0.01,max:4,step:0.01,val:1}],
+    support:P=>({lo:1,hi:P.N}),
+    pmf:(k,P)=>(k<1||k>P.N||!Number.isInteger(k))?0:Math.pow(k+P.q,-P.s)/genHc(P.N,P.q,P.s),
+    cdf:(x,P)=>x<1?0:x>=P.N?1:zmCum(P.N,P.q,P.s)[Math.floor(x)],
+    mean:P=>genHc(P.N,P.q,P.s-1)/genHc(P.N,P.q,P.s)-P.q,
+    story:'<p>Rank \\(N\\) items from most to least common. The item of rank \\(x\\) is chosen with probability proportional to \\(1/(x+q)^{s}\\), a Zipf law with the ranks shifted by \\(q\\). \\(X\\) is the rank of the chosen item. \\(X\\) is a discrete random variable with support \\(\\{1, 2, \\dots, N\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>There are finitely many items, \\(N\\), ranked 1 to \\(N\\) by how common they are.</li><li>The probability of rank \\(x\\) is proportional to \\((x+q)^{-s}\\), with a fixed exponent \\(s > 0\\) and shift \\(q \\ge 0\\).</li><li>The shift \\(q\\) flattens the top ranks, which fits data where the most common items are less dominant than Zipf predicts; \\(q = 0\\) gives the Zipf random variable.</li><li>One item is chosen, and \\(X\\) is its rank.</li></ul>',
+    notation:P=>`X \\sim \\text{ZM}(N, q, s), \\qquad N = ${P.N},\\ q = ${fn(P.q)},\\ s = ${fn(P.s)}`,
+    pmfAt:(k,P)=>`\\frac{(${k} + ${fn(P.q)})^{-${fn(P.s)}}}{H_{${P.N},\\,${fn(P.q)},\\,${fn(P.s)}}}`,
+    pmfTex:'P_X(x) = \\frac{(x+q)^{-s}}{H_{N,q,s}}, \\quad x = 1, 2, \\dots, N, \\qquad H_{N,q,s} = \\sum_{k=1}^{N} (k+q)^{-s}',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 1 \\\\ \\dfrac{H_{\\lfloor x \\rfloor, q, s}}{H_{N,q,s}} & 1 \\le x < N \\\\ 1 & x \\ge N \\end{cases}'},
+  benford:{label:'Benford',rv:'X',v:'x',
+    params:[{k:'b',label:'Base <i>b</i>',min:2,max:36,step:1,int:true,val:10}],
+    support:P=>({lo:1,hi:P.b-1}),
+    pmf:(k,P)=>(k<1||k>P.b-1||!Number.isInteger(k))?0:Math.log(1+1/k)/Math.log(P.b),
+    cdf:(x,P)=>x<1?0:x>=P.b-1?1:Math.log(Math.floor(x)+1)/Math.log(P.b),
+    mean:P=>(P.b-1)-lf(P.b-1)/Math.log(P.b),
+    story:'<p>Take a number from a data set that spans several orders of magnitude, such as city populations, prices or physical constants, written in base \\(b\\). \\(X\\) is its leading (first nonzero) digit. \\(X\\) is a discrete random variable with support \\(\\{1, 2, \\dots, b-1\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>The data are positive numbers spread over several orders of magnitude.</li><li>The data are scale invariant: changing units does not change the pattern of leading digits, which happens when the logarithms of the numbers are spread evenly.</li><li>\\(X\\) is the leading digit in base \\(b\\) (base 10 by default).</li><li>Smaller digits are more likely; in base 10, about 30.1% of leading digits are 1.</li></ul>',
+    notation:P=>`X \\sim \\text{Benford}(b), \\qquad b = ${P.b}`,
+    pmfAt:(k,P)=>`\\log_{${P.b}}\\left(1 + \\frac{1}{${k}}\\right)`,
+    pmfTex:'P_X(x) = \\log_b\\left(1 + \\frac{1}{x}\\right), \\quad x = 1, 2, \\dots, b-1',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 1 \\\\ \\log_b(\\lfloor x \\rfloor + 1) & 1 \\le x < b-1 \\\\ 1 & x \\ge b-1 \\end{cases}'}
 };
-const ORDER=['bernoulli','geometric','binomial'];
+const ORDER=['benford','bernoulli','binomial','geometric','hypergeometric','negbinomial','poisson','uniform','zipf','zipfmandelbrot'];
+
+const EVX={
+  negbinomial:{sum:'\\sum_{x=r}^{\\infty} x\\binom{x-1}{r-1}p^{r}(1-p)^{x-r}',closed:'\\frac{r}{p}',num:P=>`\\frac{${P.r}}{${fn(P.p)}}`,
+    why:P=>`The wait for each of the \\(r = ${P.r}\\) successes is a geometric wait of \\(1/p\\) trials on average, since the independent trials share the same \\(p = ${fn(P.p)}\\); adding the \\(r\\) waits gives \\(r/p\\).`},
+  zipf:{sum:'\\sum_{x=1}^{N} x \\cdot \\frac{x^{-s}}{H_{N,s}}',closed:'\\frac{H_{N,s-1}}{H_{N,s}}',
+    num:P=>({rel:'\\approx',tex:`\\frac{${fmt(genHc(P.N,0,P.s-1),true)}}{${fmt(genHc(P.N,0,P.s),true)}}`}),
+    why:P=>`Ranks are weighted by \\(x^{-s}\\), so with \\(s = ${fn(P.s)}\\) the top ranks get extra weight and the average rank sits below the middle rank \\((N+1)/2 = ${fn((P.N+1)/2)}\\); \\(s = 0\\) makes every rank equally likely.`},
+  zipfmandelbrot:{sum:'\\sum_{x=1}^{N} x \\cdot \\frac{(x+q)^{-s}}{H_{N,q,s}}',closed:'\\frac{H_{N,q,s-1}}{H_{N,q,s}} - q',
+    num:P=>({rel:'\\approx',tex:`\\frac{${fmt(genHc(P.N,P.q,P.s-1),true)}}{${fmt(genHc(P.N,P.q,P.s),true)}} - ${fn(P.q)}`}),
+    why:P=>`Ranks are weighted by \\((x+q)^{-s}\\); the shift \\(q = ${fn(P.q)}\\) flattens the top ranks, so the average rank is higher than for Zipf with the same \\(s\\) and \\(N\\), and \\(q = 0\\) gives Zipf exactly.`},
+  benford:{sum:'\\sum_{x=1}^{b-1} x \\log_b\\left(1 + \\frac{1}{x}\\right)',closed:'(b-1) - \\log_b\\big((b-1)!\\big)',num:P=>`${P.b-1} - \\log_{${P.b}}(${P.b-1}!)`,
+    why:P=>`Scale-invariant data have evenly spread logarithms, which favors small leading digits, so the average leading digit is below the middle digit \\(b/2 = ${fn(P.b/2)}\\).`},
+  bernoulli:{sum:'0 \\cdot (1-p) + 1 \\cdot p',closed:'p',num:P=>null,
+    why:P=>`With one trial and a fixed \\(p = ${fn(P.p)}\\), \\(X\\) averages to the long-run fraction of successes, \\(p\\).`},
+  geometric:{sum:'\\sum_{x=1}^{\\infty} x\\,(1-p)^{x-1}p',closed:'\\frac{1}{p}',num:P=>`\\frac{1}{${fn(P.p)}}`,
+    why:P=>`With independent trials that each succeed with probability \\(p = ${fn(P.p)}\\), a success comes about once every \\(1/p\\) trials, so that is the average wait.`},
+  binomial:{sum:'\\sum_{x=0}^{n} x\\binom{n}{x}p^{x}(1-p)^{n-x}',closed:'np',num:P=>`${P.n}(${fn(P.p)})`,
+    why:P=>`Each of the \\(n = ${P.n}\\) independent trials adds \\(p = ${fn(P.p)}\\) successes on average, for \\(np\\) in total.`},
+  hypergeometric:{sum:'\\sum_{x} x\\,\\frac{\\binom{K}{x}\\binom{N-K}{n-x}}{\\binom{N}{n}}',closed:'n\\,\\frac{K}{N}',num:P=>`${P.n}\\cdot\\frac{${P.K}}{${P.N}}`,
+    why:P=>`Each draw is a success with probability \\(K/N = ${fn(P.K/P.N)}\\); drawing without replacement makes the draws dependent but does not change the average, \\(nK/N\\).`},
+  poisson:{sum:'\\sum_{x=0}^{\\infty} x\\,\\frac{e^{-\\lambda}\\lambda^{x}}{x!}',closed:'\\lambda',num:P=>null,
+    why:P=>`The rate \\(\\lambda = ${fn(P.lam)}\\) is, by definition, the average count per interval, so it is the expected value.`},
+  uniform:{sum:'\\sum_{x=a}^{b} x \\cdot \\frac{1}{b-a+1}',closed:'\\frac{a+b}{2}',num:P=>`\\frac{${P.a} + ${P.b<0?`(${P.b})`:P.b}}{2}`,
+    why:P=>`The \\(b-a+1 = ${P.b-P.a+1}\\) values are equally likely, so the PMF balances at their midpoint, \\((a+b)/2\\).`}
+};
+function renderEV(){
+  const mu=D.mean(P),E=EVX[key],R=D.rv;
+  const r4=v=>Math.round(v*1e4)/1e4, rel=Math.abs(mu-r4(mu))<1e-12?'=':'\\approx';
+  const EX=`E[${R}]`, lines=[`${EX} &= \\sum_{x} x\\,P_{${R}}(x)`,`&= ${E.sum}`,`&= ${E.closed}`];
+  const n=E.num(P); if(n)lines.push(typeof n==='string'?`&= ${n}`:`&${n.rel} ${n.tex}`);
+  lines.push(`${EX} &${rel} ${fmt(mu,true)}`);
+  setMath($('#evDeriv'),`\\[\\begin{aligned} ${lines.join(' \\\\ ')} \\end{aligned}\\]`);
+  $('#evVal').innerHTML=fmt(mu);
+  let possible=Number.isInteger(r4(mu))&&D.pmf(Math.round(mu),P)>0;
+  setMath($('#evNote2'),possible?`\\(E[${R}] = ${fn(mu)}\\) is a value \\(${R}\\) can take.`
+    :`\\(E[${R}] ${rel} ${fn(mu)}\\) is not a value \\(${R}\\) can take; an average need not be a possible outcome.`);
+  setMath($('#evWhy'),`<b>Meaning:</b> \\(E[${R}]\\) is the long-run average of \\(${R}\\) over many repetitions, and the balance point of the PMF. ${E.why(P)}`);
+}
 
 /* ---------- state ---------- */
 let key, D, P={}, S={lo:0,hi:1};
 const saved={};
 const ev={type:'cc',a:2,b:5};
 let hoverK=null;
+const open={calcBlock:false,evBlock:false};
 const st={};
 let cdfArr=[];
 
@@ -466,23 +661,20 @@ function renderPMF(){
     ymax=Math.ceil(top/ys-1e-9)*ys; ({yt,dec}=yAxis(0,ymax));
   }else{ymax=1.06; yt=[0,.2,.4,.6,.8,1]; dec=1;}
   const X=lin(x0,x1,M.l,W-M.r),Y=lin(0,ymax,H-M.b,M.t);
-  const unit=X(1)-X(0),bw=Math.max(1,Math.min(unit*0.7,46));
+  const unit=X(1)-X(0),rad=Math.max(1.4,Math.min(4.5,unit*0.25));
   let s=clip('cpPmf');
-  // event band behind bars
-  const Lc=Math.max(L,xmin),Uc=Math.min(U,xmax);
-  if(L<=U&&Lc<=Uc){
-    const a=X(Lc-0.5),b=X(Uc+0.5);
-    s+=`<g clip-path="url(#cpPmf)"><rect class="evband" x="${r2(a)}" y="${M.t}" width="${r2(b-a)}" height="${H-M.t-M.b}"/></g>`;
-  }
   s+=frame(X,Y,xTicks(x0,x1),yt,v=>v.toFixed(dec),D.v,`P<tspan baseline-shift="sub" font-size="11">${D.rv}</tspan>(${D.v})`);
   s+='<g clip-path="url(#cpPmf)">';
-  ps.forEach((v,i)=>{const k=xmin+i,on=k>=L&&k<=U,hv=k===hoverK,y=Y(v);
-    s+=`<rect class="bar${on?' on':''}${hv?' hov':''}" x="${r2(X(k)-bw/2)}" y="${r2(y)}" width="${r2(bw)}" height="${r2(Y(0)-y)}"/>`;});
+  ps.forEach((v,i)=>{if(v<=0)return;
+    const k=xmin+i,cls=`${k>=L&&k<=U?' on':''}${k===hoverK?' hov':''}`,x=r2(X(k)),y=r2(Y(v));
+    s+=`<line class="stem${cls}" x1="${x}" x2="${x}" y1="${r2(Y(0))}" y2="${y}"/><circle class="sdot${cls}" cx="${x}" cy="${y}" r="${rad}"/>`;});
   s+='</g>';
-  if(L<=U&&Lc<=Uc){const a=X(Lc-0.5),b=X(Uc+0.5);
-    s+=`<rect class="evaxis" x="${r2(Math.max(M.l,a))}" y="${H-M.b-1.5}" width="${r2(Math.min(W-M.r,b)-Math.max(M.l,a))}" height="4"/>`;}
   if(hoverK!==null){const x=r2(X(hoverK)),y=r2(Y(D.pmf(hoverK,P)));
     s+=`<line class="guide" x1="${M.l}" x2="${x}" y1="${y}" y2="${y}"/>`;}
+  if(open.evBlock){const mu=D.mean(P);
+    if(mu>=x0&&mu<=x1){const x=r2(X(mu)),end=x>W-M.r-120;
+      s+=`<line class="evline" x1="${x}" x2="${x}" y1="${H-M.b}" y2="${M.t}"/><path class="evfulcrum" d="M${x} ${H-M.b+1}L${r2(x-7)} ${H-M.b+11}H${r2(x+7)}Z"/>`;
+      s+=`<text class="evlabel" x="${end?x-6:x+6}" y="${M.t+10}" text-anchor="${end?'end':'start'}">E[${D.rv}] = ${fmt(mu)}</text>`;}}
   $('#pmfSvg').innerHTML=s;
   plotInfo.pmf={x0,x1,xmin,xmax,round:true};
 }
@@ -504,10 +696,6 @@ function renderCDF(){
   const X=lin(x0,x1,M.l,W-M.r),Y=lin(y0,y1,H-M.b,M.t);
   const unit=X(1)-X(0),rad=Math.max(1.6,Math.min(3.8,unit*0.22));
   let s=clip('cpCdf',y0>0||y1<1.06?0:6);
-  if(!empty){
-    const yh=Y(hiF),yl=Y(lowF);
-    s+=`<rect class="evband" x="${M.l}" y="${r2(yh)}" width="${W-M.l-M.r}" height="${r2(Math.max(0,yl-yh))}"/>`;
-  }
   s+=frame(X,Y,xTicks(x0,x1),yt,v=>v.toFixed(dec),D.v,`F<tspan baseline-shift="sub" font-size="11">${D.rv}</tspan>(${D.v})`);
   s+='<g clip-path="url(#cpCdf)">';
   if(!empty){
@@ -517,17 +705,22 @@ function renderCDF(){
     if(Number.isFinite(lowK)){const xl=r2(Math.max(M.l,Math.min(W-M.r,X(lowK))));
       s+=`<line class="lvl" x1="${M.l}" x2="${xl}" y1="${yl}" y2="${yl}"/>`;}
   }
-  let d='';
+  // a step k is the segment [k, k+1) at height F(k); it is in the event when k is a support value in [L, U]
+  const inEv=k=>!empty&&k>=L&&k<=U&&k>=S.lo&&k<=S.hi;
+  let d='',dOn='';
   for(let k=Math.floor(x0);k<=Math.ceil(x1);k++){
     const xa=Math.max(x0,k),xb=Math.min(x1,k+1); if(xa>=xb)continue;
-    const y=r2(Y(F(k))); d+=`M${r2(X(xa))} ${y}H${r2(X(xb))}`;
+    const seg=`M${r2(X(xa))} ${r2(Y(F(k)))}H${r2(X(xb))}`;
+    if(inEv(k))dOn+=seg; else d+=seg;
   }
   s+=`<path class="step" d="${d}"/>`;
+  if(dOn)s+=`<path class="step on" d="${dOn}"/>`;
   if(unit>=4){
     for(let k=xmin;k<=xmax;k++){
       if(D.pmf(k,P)<=1e-12)continue;
-      const x=r2(X(k));
-      s+=`<circle class="odot" cx="${x}" cy="${r2(Y(F(k-1)))}" r="${rad}"/><circle class="dot" cx="${x}" cy="${r2(Y(F(k)))}" r="${rad}"/>`;
+      // open dot at k ends step k-1; filled dot at k starts step k
+      const x=r2(X(k)),ya=r2(Y(F(k-1))),yb=r2(Y(F(k)));
+      s+=`<circle class="odot${inEv(k-1)?' on':''}" cx="${x}" cy="${ya}" r="${rad}"/><circle class="dot${inEv(k)?' on':''}" cx="${x}" cy="${yb}" r="${rad}"/>`;
     }
   }
   if(hoverK!==null){const x=r2(X(hoverK)),y=r2(Y(F(hoverK)));
@@ -543,6 +736,10 @@ function renderCDF(){
     const tall=yl-yh>20,ly=tall?(yh+yl)/2:yh-8;
     s+=`<text class="blabel" x="${bx-9}" y="${r2(ly)}" text-anchor="end" dominant-baseline="middle">${fmt(st.prob)}</text>`;
   }
+  if(open.evBlock){const mu=D.mean(P);
+    if(mu>=x0&&mu<=x1){const x=r2(X(mu)),end=x>W-M.r-120;
+      s+=`<line class="evline dash" x1="${x}" x2="${x}" y1="${H-M.b}" y2="${M.t}"/>`;
+      s+=`<text class="evlabel" x="${end?x-6:x+6}" y="${H-M.b-10}" text-anchor="${end?'end':'start'}">E[${D.rv}] = ${fmt(mu)}</text>`;}}
   $('#cdfSvg').innerHTML=s;
   plotInfo.cdf={x0,x1,xmin,xmax,round:false};
 }
@@ -572,7 +769,20 @@ function attachHover(id,name){
 }
 
 /* ---------- result ---------- */
+function renderCalcWhy(){
+  const base='<b>Meaning:</b> In the frequentist view, a probability is a long-run relative frequency: repeat the experiment independently many times, and the fraction of repetitions in which the event occurs settles near its probability.';
+  if(!st.active){setMath($('#calcWhy'),base);return;}
+  const q=st.prob, ev=eventStr(true);
+  const rel=Math.abs(q-Math.round(q*1e4)/1e4)<1e-12?'=':'\\approx';
+  let tail;
+  if(q===0)tail=`Here \\(${ev} = 0\\), so the event never occurs.`;
+  else if(q===1)tail=`Here \\(${ev} = 1\\), so the event occurs in every repetition.`;
+  else if(q<0.001)tail=`Here \\(${ev} \\approx ${fmt(q,true)}\\), so the event occurs in fewer than 1 of every 1,000 repetitions.`;
+  else tail=`Here \\(${ev} ${rel} ${fmt(q,true)}\\), so the event occurs in about ${(100*q).toFixed(1).replace(/\.0$/,'')}% of repetitions.`;
+  setMath($('#calcWhy'),`${base} ${tail}`);
+}
 function renderResult(){
+  renderCalcWhy();
   $('#probLine').hidden=!st.active;
   if(!st.active){
     setMath($('#deriv'),'');
@@ -645,7 +855,8 @@ function renderResult(){
       }
     }
   }
-  const body=lines.map(([rel,tex],i)=>(i?'\\\\ ':'')+`${i?'':eventStr(true)} &${rel} ${tex}`).join(' ');
+  const last=lines.length-1;
+  const body=lines.map(([rel,tex],i)=>(i?'\\\\ ':'')+`${(i===0||i===last)?eventStr(true):''} &${rel} ${tex}`).join(' ');
   setMath($('#deriv'),`\\[\\begin{aligned} ${body} \\end{aligned}\\]`);
   let note='';
   if(t==='eq'&&!Number.isInteger(ev.a))note=`<i>${R}</i> only takes whole-number values, so this probability is 0.`;
@@ -682,12 +893,12 @@ function probOf(L,U){
 
 /* ---------- main update ---------- */
 function update(full){
-  st.active=isActive();
+  st.active=isActive()&&open.calcBlock;
   const [L,U]=st.active?bounds():[1,0]; st.L=L; st.U=U;
   st.prob=probOf(L,U);
   [st.xmin,st.xmax]=computeRange(L,U);
   if(hoverK!==null&&(hoverK<st.xmin||hoverK>st.xmax))hoverK=null;
-  drawPlots(); renderResult();
+  drawPlots(); renderResult(); renderEV();
   if(full)renderDefinition();
 }
 
@@ -702,6 +913,11 @@ buildPicker();
 attachHover('#pmfSvg','pmf');
 attachHover('#cdfSvg','cdf');
 attachZoom();
+document.querySelectorAll('.toggles button').forEach(b=>b.addEventListener('click',()=>{
+  const id=b.dataset.target; open[id]=!open[id];
+  $('#'+id).hidden=!open[id]; b.setAttribute('aria-expanded',open[id]);
+  update(false);
+}));
 syncEventUI();
 selectDist('bernoulli');
 </script>
