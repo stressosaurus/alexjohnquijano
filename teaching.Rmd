@@ -43,6 +43,7 @@ icon_link(
 * Probability and Statistics
 
   - [PMF/CDF Visualizer](learning-tools/pmf-cdf-visualizer.html){target="_blank"}
+  - [PDF/CDF Visualizer](learning-tools/pdf-cdf-visualizer.html){target="_blank"}
   - [Monty Hall Simulator](learning-tools/monty_hall_retro.html){target="_blank"}
   - [Monty Hall Simulator (Four-Door Variant)](learning-tools/monty_hall_4doors_retro.html){target="_blank"}
 

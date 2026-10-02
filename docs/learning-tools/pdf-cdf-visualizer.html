@@ -1,0 +1,971 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PDF/CDF Visualizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F1F6EC; --gridline:rgba(76,154,42,.10); --ink:#1B2A17; --muted:#55664E;
+  --rule:#C5D6B8; --panel:#FCFEFA; --bar:#4C9A2A; --bar-strong:#2D6414; --bar-soft:rgba(76,154,42,.14);
+  --hl:#C2185B; --hl-ink:#8E0F42; --hl-soft:rgba(194,24,91,.16); --hl-area:rgba(194,24,91,.30); --focus:#7B1FA2;
+  --shadow:rgba(27,42,23,.35);
+  --ev:#1E5AA8; --ev-ink:#123E78; --ev-soft:rgba(30,90,168,.16);
+  color-scheme:light;
+}
+:root{font-size:15px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0;color:var(--ink);background-color:var(--paper);
+  background-image:linear-gradient(var(--gridline) 1px,transparent 1px),linear-gradient(90deg,var(--gridline) 1px,transparent 1px);
+  background-size:24px 24px;
+  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:1rem;line-height:1.5;
+}
+.site-footer{max-width:1180px;margin:0 auto;padding:1.25rem 1.25rem 2.5rem;border-top:1px solid var(--rule);color:var(--muted);font-size:.8rem;line-height:1.5}
+.site-footer a{color:var(--bar-strong)}
+main{max-width:1180px;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+h1,h2,h3{font-family:"Newsreader",Georgia,"Times New Roman",serif;font-weight:700;margin:0;line-height:1.15}
+h1{font-size:clamp(1.75rem,3.5vw,2.25rem);font-weight:400;letter-spacing:-.01em}
+h2,h3{font-size:1.25rem}
+.lede{max-width:none;color:var(--muted);margin:.6rem 0 1.6rem;font-size:1rem}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+.dists{display:flex;flex-wrap:wrap;gap:.5rem}
+.dists button{
+  font:inherit;font-size:1rem;padding:.45rem .95rem;border:1px solid var(--rule);
+  background:var(--panel);color:var(--ink);border-radius:6px;cursor:pointer;
+}
+.dists button:hover{border-color:var(--bar)}
+.dists button[aria-checked="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+.define{display:grid;grid-template-columns:minmax(0,1fr) minmax(16rem,20rem);gap:1.25rem;margin:2rem 0;align-items:stretch}
+.story{font-size:1rem;line-height:1.5;margin:.7rem 0 .4rem}
+.story p{margin:0 0 .5rem}
+.story ul{margin:0 0 .4rem;padding-left:1.3em}
+.story li{margin:.15rem 0}
+.notation{overflow-x:auto;overflow-y:hidden}
+.define-params h3{margin-bottom:.8rem}
+.param{margin-bottom:1.1rem}
+.param-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.3rem}
+.param input[type=number]{width:6.2rem}
+.param input[type=range]{width:100%;accent-color:var(--bar)}
+input[type=number],select{
+  font:inherit;font-size:1rem;color:var(--ink);background:var(--panel);
+  border:1px solid var(--rule);border-radius:5px;padding:.3rem .45rem;font-variant-numeric:tabular-nums;
+}
+
+.axesbar{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin:0 0 1rem;font-size:1rem;color:var(--muted)}
+.axesbar button{font:inherit;font-size:1rem;padding:.25rem .7rem;border:1px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:5px;cursor:pointer}
+.axesbar button:hover{border-color:var(--bar)}
+.axesbar button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.axesbar .hint[hidden]{display:none}
+.axesbar .hint{flex-basis:100%;font-size:.9rem;margin:.1rem 0 0}
+.plots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem}
+.sheet{
+  margin:0;background:var(--panel);border:1px solid var(--rule);border-radius:3px;
+  padding:1rem 1.1rem .5rem;box-shadow:0 12px 26px -20px var(--shadow);
+}
+.formula{min-height:4.6rem;overflow-x:auto;overflow-y:hidden;display:flex;align-items:center}
+.formula > *{flex:0 0 auto}
+.sheet > svg{display:block;width:100%;height:auto;touch-action:pan-y}
+.readout{min-height:1.6rem;color:var(--muted);margin:.5rem 0 0;font-variant-numeric:tabular-nums}
+
+.toggles{display:flex;justify-content:center;flex-wrap:wrap;gap:.75rem;margin:1.75rem 0 0}
+.toggles button{font:inherit;font-size:1rem;padding:.55rem 1.2rem;border:1px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:6px;cursor:pointer}
+.toggles button:hover{border-color:var(--bar)}
+.toggles button[aria-expanded="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.analysis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem;align-items:start;margin-top:2rem}
+.analysis > [hidden]{display:none}
+.card{--acc:var(--bar);--tint:rgba(76,154,42,.07);
+  background:linear-gradient(var(--tint),var(--tint)),var(--panel);border:1px solid var(--rule);border-left:4px solid var(--acc);
+  border-radius:6px;padding:1rem 1.25rem;box-shadow:0 12px 26px -22px var(--shadow);min-width:0}
+.card-calc{--acc:var(--hl);--tint:rgba(194,24,91,.05)}
+.card-ev{--acc:var(--ev);--tint:rgba(30,90,168,.05)}
+.card .deriv{margin-bottom:-.5rem}
+.notes{margin-top:.75rem}
+.notes .note{margin:.5rem 0 0}
+.notes .note:empty{display:none}
+.calc{grid-column:1;min-width:0}
+.ev{grid-column:2;min-width:0}
+.ev .prob-line{margin-top:1rem}
+.ev .prob-line output{background:linear-gradient(transparent 58%,var(--ev-soft) 58%)}
+.swatch.ev-swatch{background:var(--ev);border-color:var(--ev-ink)}
+.calc-row{display:flex;flex-wrap:wrap;gap:1rem 1.5rem;align-items:end;margin:.9rem 0 1rem}
+.calc-row label{display:flex;flex-direction:column;gap:.3rem;color:var(--muted)}
+.calc-row input{width:7rem}
+.calc-row [hidden]{display:none}
+.prob-line[hidden]{display:none}
+.prob-line{font-family:"Newsreader",Georgia,serif;font-size:1.35rem;line-height:1.2;margin:0}
+.prob-line output{font-weight:600;font-variant-numeric:tabular-nums;background:linear-gradient(transparent 58%,var(--hl-soft) 58%);padding:0 .15em}
+.deriv{overflow-x:auto;overflow-y:hidden;max-width:100%}
+.deriv mjx-container[display="true"]{text-align:left!important;margin-left:0!important}
+.note{color:var(--muted);margin:.3rem 0 0}
+.swatch{display:inline-block;width:.9em;height:.9em;background:var(--hl);border:1px solid var(--hl-ink);vertical-align:-.1em;margin-right:.35em;border-radius:2px}
+
+/* SVG */
+.grid{stroke:var(--rule);stroke-width:1}
+.axis{stroke:var(--ink);stroke-width:1.2}
+.tickmark{stroke:var(--ink);stroke-width:1}
+.tick{fill:var(--muted);font-size:12px;font-family:"Atkinson Hyperlegible",system-ui,sans-serif}
+.axlab{fill:var(--ink);font-family:"Newsreader",Georgia,serif;font-style:italic;font-size:15px}
+.parea{fill:var(--bar-soft)}
+.curve{stroke:var(--bar);stroke-width:2.2;fill:none;stroke-linejoin:round;stroke-linecap:round}
+.earea{fill:var(--hl-area)}
+.curve.on{stroke:var(--hl);stroke-width:2.8}
+.eqline{stroke:var(--hl);stroke-width:2.5;stroke-linecap:round}
+.lvl{stroke:var(--hl-ink);stroke-width:1.2;stroke-dasharray:4 3}
+.brk{stroke:var(--hl-ink);stroke-width:2;fill:none}
+.blabel{fill:var(--hl-ink);font-weight:700;font-size:13px;font-family:"Atkinson Hyperlegible",system-ui,sans-serif;paint-order:stroke;stroke:var(--panel);stroke-width:5px;stroke-linejoin:round}
+.hdot{fill:var(--hl);stroke:var(--hl-ink);stroke-width:1.6}
+.guide{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 3}
+.hvdot{fill:var(--bar-strong)}
+.evline{stroke:var(--ev);stroke-width:2}
+.evline.dash{stroke-dasharray:6 4}
+.evfulcrum{fill:var(--ev);stroke:var(--ev-ink);stroke-width:1}
+.evlabel{fill:var(--ev-ink);font-weight:700;font-size:13px;font-family:"Atkinson Hyperlegible",system-ui,sans-serif;paint-order:stroke;stroke:var(--panel);stroke-width:5px;stroke-linejoin:round}
+
+@media (max-width:860px){
+  .define,.plots,.analysis{grid-template-columns:minmax(0,1fr)}
+  .define{gap:1.5rem}
+  .analysis > *{grid-column:1}
+}
+@media (max-width:520px){
+  main{padding-top:1.5rem}
+  .card{padding:.85rem 1rem}
+}
+</style>
+<script>
+window.MathJax = {
+  tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},
+  svg:{fontCache:'global'},
+  startup:{typeset:false,ready(){MathJax.startup.defaultReady();MathJax.startup.promise.then(()=>{window.__mj=true;typesetAll();});}}
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" defer></script>
+</head>
+<body>
+<main>
+  <header>
+    <h1>PDF/CDF Visualizer</h1>
+    <p class="lede">Choose a named continuous random variable and adjust its parameters. The plots of its probability density function and cumulative distribution function update as you go, and the buttons below the plots open tools for computing probabilities and the expected value.</p>
+  </header>
+
+  <nav id="dists" class="dists" role="radiogroup" aria-label="Distribution"></nav>
+
+  <section class="define" aria-labelledby="h-def">
+    <div class="card">
+      <h2 id="h-def"><span id="rvName"></span> Random Variable</h2>
+      <div id="story" class="story math"></div>
+      <div id="notation" class="notation math"></div>
+    </div>
+    <div class="card define-params">
+      <h3>Parameters</h3>
+      <div id="params"></div>
+    </div>
+  </section>
+
+  <div class="axesbar" role="group" aria-label="Axis limits">Axis limits: <button type="button" data-a="fixed" aria-pressed="false">Fixed</button><button type="button" data-a="fit" aria-pressed="true">Fit to parameters</button><p id="axesHint" class="hint"></p><p id="axesWarn" class="hint" hidden></p></div>
+  <section class="plots" aria-label="Plots">
+    <figure class="sheet">
+      <figcaption><h2>Probability density function</h2><div id="pdfTex" class="formula math"></div></figcaption>
+      <svg id="pdfSvg" viewBox="0 0 560 330" role="img" aria-label="Curve of the probability density function"></svg>
+    </figure>
+    <figure class="sheet">
+      <figcaption><h2>Cumulative distribution function</h2><div id="cdfTex" class="formula math"></div></figcaption>
+      <svg id="cdfSvg" viewBox="0 0 560 330" role="img" aria-label="Curve of the cumulative distribution function"></svg>
+    </figure>
+  </section>
+  <div class="notes">
+    <p class="note math">The probability density function (PDF), \(f_X(x)\), describes how probability is spread along the number line: the probability that a continuous random variable \(X\) lands in an interval is the area under \(f_X\) over that interval. The cumulative distribution function (CDF), \(F_X(x) = P(X \le x) = \int_{-\infty}^{x} f_X(t)\,dt\), gives the probability that \(X\) is at most \(x\); it is the running area under the PDF. The two plots above update together, and any probability you compute is marked in pink in both.</p>
+    <p id="special" class="note math"></p>
+  </div>
+  <p id="readout" class="readout" aria-live="polite"></p>
+
+  <div class="toggles">
+    <button type="button" data-target="calcBlock" aria-controls="calcBlock" aria-expanded="false">Compute probability</button>
+    <button type="button" data-target="evBlock" aria-controls="evBlock" aria-expanded="false">Expected value</button>
+  </div>
+
+  <div class="analysis">
+  <section id="calcBlock" class="calc" aria-labelledby="h-calc" hidden>
+    <div class="card card-calc">
+    <h2 id="h-calc">Compute probability</h2>
+    <div class="calc-row">
+      <label>Event
+        <select id="evType">
+          <option value="eq">P(X = a)</option>
+          <option value="le">P(X ≤ a)</option>
+          <option value="lt">P(X &lt; a)</option>
+          <option value="ge">P(X ≥ a)</option>
+          <option value="gt">P(X &gt; a)</option>
+          <option value="cc">P(a ≤ X ≤ b)</option>
+          <option value="oc">P(a &lt; X ≤ b)</option>
+          <option value="co">P(a ≤ X &lt; b)</option>
+          <option value="oo">P(a &lt; X &lt; b)</option>
+        </select>
+      </label>
+      <label id="aWrap"><span><i>a</i></span><input id="evA" type="number" step="any" placeholder="a"></label>
+      <label id="bWrap"><span><i>b</i></span><input id="evB" type="number" step="any" placeholder="b"></label>
+    </div>
+    <p id="probLine" class="prob-line" hidden><span id="evHtml"></span> = <output id="prob">0</output></p>
+    <div id="deriv" class="deriv math"></div>
+    </div>
+    <div class="notes">
+    <p id="evNote" class="note math"></p>
+    <p class="note"><span class="swatch" aria-hidden="true"></span>Pink marks the event: on the left, the area under the PDF over the event; on the right, the part of the CDF over the event, which rises from the lower dashed level to the upper one.</p>
+    <p class="note math"><b>Remember:</b> For a continuous random variable, \(P(X = x) = 0\) for every single value \(x\). Probability is area under the density curve, and a single point is an interval of width zero, so it has no area. As a result, endpoints never matter: \(P(a \le X \le b) = P(a < X < b)\). The density \(f_X(x)\) is not itself a probability, so it can be larger than 1.</p>
+    <div id="calcWhy" class="note math"></div>
+    </div>
+  </section>
+  <section id="evBlock" class="ev" aria-labelledby="h-ev" hidden>
+    <div class="card card-ev">
+    <h2 id="h-ev">Expected value</h2>
+    <p id="evLine" class="prob-line"></p>
+    <div id="evDeriv" class="deriv math"></div>
+    </div>
+    <div class="notes">
+    <p id="evNote2" class="note math"></p>
+    <p class="note"><span class="swatch ev-swatch" aria-hidden="true"></span>Blue marks <i>E</i>[<i>X</i>]: on the left, the balance point of the PDF, with a fulcrum under the axis; on the right, a dashed line at the same <i>x</i>.</p>
+    <div id="evWhy" class="note math"></div>
+    </div>
+  </section>
+  </div>
+</main>
+<footer class="site-footer">
+  <p>This application is for personal or educational use only. This was designed by <a href="https://alexjohnquijano.com/" target="_blank" rel="noopener">Alex John Quijano</a> at the University of Portland using HTML and JavaScript, with assistance from Claude AI. Text and figures are licensed under Creative Commons Attribution (CC BY 4.0).</p>
+</footer>
+
+<script>
+/* ---------- special functions ---------- */
+const LZ=[0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+function lgamma(x){
+  if(x<0.5)return Math.log(Math.PI/Math.abs(Math.sin(Math.PI*x)))-lgamma(1-x);
+  x-=1;let a=LZ[0];const t=x+7.5;for(let i=1;i<9;i++)a+=LZ[i]/(x+i);
+  return 0.5*Math.log(2*Math.PI)+(x+0.5)*Math.log(t)-t+Math.log(a);
+}
+const lbeta=(a,b)=>lgamma(a)+lgamma(b)-lgamma(a+b);
+const TINY=1e-300;
+function gser(a,x){let ap=a,sum=1/a,del=sum;for(let n=0;n<1000;n++){ap++;del*=x/ap;sum+=del;if(Math.abs(del)<Math.abs(sum)*1e-16)break;}
+  return sum*Math.exp(-x+a*Math.log(x)-lgamma(a));}
+function gcf(a,x){let b=x+1-a,c=1/TINY,d=1/b,h=d;
+  for(let i=1;i<1000;i++){const an=-i*(i-a);b+=2;d=an*d+b;if(Math.abs(d)<TINY)d=TINY;c=b+an/c;if(Math.abs(c)<TINY)c=TINY;d=1/d;const del=d*c;h*=del;if(Math.abs(del-1)<1e-16)break;}
+  return Math.exp(-x+a*Math.log(x)-lgamma(a))*h;}
+const gammaP=(a,x)=>x<=0?0:(x<a+1?gser(a,x):1-gcf(a,x));
+const gammaQ=(a,x)=>x<=0?1:(x<a+1?1-gser(a,x):gcf(a,x));
+function betacf(a,b,x){
+  const qab=a+b,qap=a+1,qam=a-1;let c=1,d=1-qab*x/qap;if(Math.abs(d)<TINY)d=TINY;d=1/d;let h=d;
+  for(let m=1;m<=1000;m++){const m2=2*m;
+    let aa=m*(b-m)*x/((qam+m2)*(a+m2));d=1+aa*d;if(Math.abs(d)<TINY)d=TINY;c=1+aa/c;if(Math.abs(c)<TINY)c=TINY;d=1/d;h*=d*c;
+    aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<TINY)d=TINY;c=1+aa/c;if(Math.abs(c)<TINY)c=TINY;d=1/d;
+    const del=d*c;h*=del;if(Math.abs(del-1)<1e-16)break;}
+  return h;
+}
+function ibeta(x,a,b){
+  if(x<=0)return 0;if(x>=1)return 1;
+  const bt=Math.exp(a*Math.log(x)+b*Math.log(1-x)-lbeta(a,b));
+  return x<(a+1)/(a+b+2)?bt*betacf(a,b,x)/a:1-bt*betacf(b,a,1-x)/b;
+}
+const Phi=z=>z<0?0.5*gammaQ(0.5,z*z/2):0.5+0.5*gammaP(0.5,z*z/2);
+// density at a boundary point where the formula has a power x^(s-1): infinite if s<1, the given limit if s=1, else 0
+const edge=(s,lim)=>s<1?Infinity:(s===1?lim:0);
+
+/* ---------- formatting ---------- */
+const val=(x,P)=>typeof x==='function'?x(P):x;
+const fn=v=>String(+(+v).toFixed(4));
+const par=v=>v<0?`(${fn(v)})`:fn(v);
+function fmt(v,tex){
+  if(v===Infinity)return tex?'\\infty':'∞';
+  if(v===0)return '0'; if(v===1)return '1';
+  if(Math.abs(v)<1e-4){let [m,e]=v.toExponential(2).split('e');e=+e;
+    return tex?`${m} \\times 10^{${e}}`:`${m} × 10<sup>${e<0?'−'+(-e):e}</sup>`;}
+  return v.toFixed(4);
+}
+const neg=s=>String(s).replace(/^-/,'−');
+const r4=v=>Math.round(v*1e4)/1e4;
+const exact=v=>v===0||v===1||(Math.abs(v)>=1e-4&&Math.abs(v-r4(v))<1e-12);
+
+/* ---------- distributions ---------- */
+const SPECIAL={
+  beta:'Here \\(B(\\alpha,\\beta) = \\int_0^1 t^{\\alpha-1}(1-t)^{\\beta-1}\\,dt\\) is the beta function, and \\(I_x(\\alpha,\\beta) = \\frac{1}{B(\\alpha,\\beta)}\\int_0^x t^{\\alpha-1}(1-t)^{\\beta-1}\\,dt\\) is the regularized incomplete beta function.',
+  gamma:'Here \\(\\Gamma(s) = \\int_0^\\infty t^{s-1}e^{-t}\\,dt\\) is the gamma function, and \\(\\gamma(s,x) = \\int_0^x t^{s-1}e^{-t}\\,dt\\) is the lower incomplete gamma function.',
+  phi:'Here \\(\\Phi(z) = \\int_{-\\infty}^{z} \\frac{1}{\\sqrt{2\\pi}}e^{-t^2/2}\\,dt\\) is the standard normal CDF, which has no elementary closed form.'
+};
+const DISTS={
+  beta:{label:'Beta',
+    params:[{k:'a',label:'Shape <i>α</i>',min:0.01,max:30,step:0.01,val:2},{k:'b',label:'Shape <i>β</i>',min:0.01,max:30,step:0.01,val:5}],
+    support:()=>({lo:0,hi:1}),
+    pdf:(x,P)=>x<0||x>1?0:x===0?edge(P.a,P.b):x===1?edge(P.b,P.a):Math.exp((P.a-1)*Math.log(x)+(P.b-1)*Math.log(1-x)-lbeta(P.a,P.b)),
+    cdf:(x,P)=>ibeta(x,P.a,P.b),
+    sf:(x,P)=>ibeta(1-x,P.b,P.a),
+    mean:P=>P.a/(P.a+P.b),
+    story:'<p>\\(X\\) is a proportion or probability that can be any value between 0 and 1, with a shape set by \\(\\alpha\\) and \\(\\beta\\). \\(X\\) is a continuous random variable with support \\([0, 1]\\), and it applies to a setting that meets these criteria:</p><ul><li>The quantity is continuous and bounded between 0 and 1, such as a proportion, a rate or an unknown probability \\(p\\).</li><li>The shape parameters \\(\\alpha > 0\\) and \\(\\beta > 0\\) are fixed; a larger \\(\\alpha\\) pushes probability toward 1, and a larger \\(\\beta\\) pushes it toward 0.</li><li>With whole-number \\(\\alpha\\) and \\(\\beta\\), \\(X\\) is the \\(\\alpha\\)th smallest of \\(\\alpha+\\beta-1\\) independent Uniform(0, 1) values.</li><li>\\(\\alpha = \\beta = 1\\) gives the Uniform(0, 1) random variable.</li></ul>',
+    notation:P=>`X \\sim \\text{Beta}(\\alpha, \\beta), \\qquad \\alpha = ${fn(P.a)},\\ \\beta = ${fn(P.b)}`,
+    pdfTex:'f_X(x) = \\frac{x^{\\alpha-1}(1-x)^{\\beta-1}}{B(\\alpha,\\beta)}, \\quad 0 \\le x \\le 1',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ I_x(\\alpha, \\beta) & 0 \\le x < 1 \\\\ 1 & x \\ge 1 \\end{cases}',
+    special:'beta',
+    ev:{int:'\\int_0^1 x \\cdot \\frac{x^{\\alpha-1}(1-x)^{\\beta-1}}{B(\\alpha,\\beta)}\\,dx',closed:'\\frac{\\alpha}{\\alpha+\\beta}',num:P=>`\\frac{${fn(P.a)}}{${fn(P.a)} + ${fn(P.b)}}`,
+      why:P=>`A larger \\(\\alpha\\) pushes probability toward 1 and a larger \\(\\beta\\) toward 0, so the balance point is \\(\\alpha\\)'s share of the total, \\(\\alpha/(\\alpha+\\beta)\\).`}},
+  cauchy:{label:'Cauchy',
+    params:[{k:'x0',label:'Location <i>x</i><sub>0</sub>',min:-20,max:20,step:0.01,val:0},{k:'g',label:'Scale <i>γ</i>',min:0.01,max:10,step:0.01,val:1}],
+    support:()=>({lo:-Infinity,hi:Infinity}),
+    pdf:(x,P)=>1/(Math.PI*P.g*(1+((x-P.x0)/P.g)**2)),
+    cdf:(x,P)=>0.5+Math.atan((x-P.x0)/P.g)/Math.PI,
+    sf:(x,P)=>0.5-Math.atan((x-P.x0)/P.g)/Math.PI,
+    cdfAt:(x,P)=>`\\frac{1}{2} + \\frac{1}{\\pi}\\arctan\\left(\\frac{${fn(x)} - ${par(P.x0)}}{${fn(P.g)}}\\right)`,
+    mean:()=>NaN,
+    story:'<p>A light at height \\(\\gamma\\) above the point \\(x_0\\) on a line is aimed at a random angle toward the line. \\(X\\) is where the beam hits the line. \\(X\\) is a continuous random variable with support \\((-\\infty, \\infty)\\), and it applies to a setting that meets these criteria:</p><ul><li>The angle of the beam is uniform between straight left and straight right, \\((-\\pi/2, \\pi/2)\\).</li><li>The location \\(x_0\\) is the peak and the median; the scale \\(\\gamma > 0\\) is the half-width of the peak at half its height.</li><li>Equivalently, \\(X\\) is \\(x_0\\) plus \\(\\gamma\\) times the ratio of two independent standard normal values.</li><li>The tails are so heavy that the mean does not exist; Cauchy is Student\'s \\(t\\) with \\(\\nu = 1\\).</li></ul>',
+    notation:P=>`X \\sim \\text{Cauchy}(x_0, \\gamma), \\qquad x_0 = ${fn(P.x0)},\\ \\gamma = ${fn(P.g)}`,
+    pdfTex:'f_X(x) = \\frac{1}{\\pi\\gamma\\left[1 + \\left(\\frac{x-x_0}{\\gamma}\\right)^2\\right]}, \\quad -\\infty < x < \\infty',
+    cdfTex:'F_X(x) = \\frac{1}{2} + \\frac{1}{\\pi}\\arctan\\left(\\frac{x-x_0}{\\gamma}\\right)',
+    ev:{int:'\\int_{-\\infty}^{\\infty} \\frac{x}{\\pi\\gamma\\left[1 + \\left(\\frac{x-x_0}{\\gamma}\\right)^2\\right]}\\,dx',
+      why:P=>`The density decays like \\(1/x^2\\), so \\(x f_X(x)\\) decays only like \\(1/x\\) and \\(\\int |x|\\,f_X(x)\\,dx\\) diverges; there is no long-run average, and sample averages of Cauchy data never settle down. The center \\(x_0 = ${fn(P.x0)}\\) is a median, not a mean.`}},
+  chisq:{label:'Chi-Square',
+    params:[{k:'k',label:'Degrees of freedom <i>k</i>',min:1,max:100,step:1,int:true,val:4}],
+    support:()=>({lo:0,hi:Infinity}),
+    pdf:(x,P)=>x<0?0:x===0?edge(P.k/2,0.5):Math.exp((P.k/2-1)*Math.log(x)-x/2-(P.k/2)*Math.LN2-lgamma(P.k/2)),
+    cdf:(x,P)=>gammaP(P.k/2,x/2),
+    sf:(x,P)=>gammaQ(P.k/2,x/2),
+    mean:P=>P.k,
+    story:'<p>\\(X\\) is the sum of the squares of \\(k\\) independent standard normal random variables, \\(X = Z_1^2 + Z_2^2 + \\dots + Z_k^2\\). \\(X\\) is a continuous random variable with support \\([0, \\infty)\\), and it applies to a setting that meets these criteria:</p><ul><li>\\(Z_1, \\dots, Z_k\\) are independent, and each is standard normal, \\(N(0, 1)\\).</li><li>The degrees of freedom \\(k\\) is a fixed positive integer: the number of squared terms.</li><li>\\(X\\) is the total of the squares, so it is never negative.</li><li>It is the Gamma random variable with \\(\\alpha = k/2\\) and \\(\\lambda = 1/2\\), and it describes sample variances and goodness-of-fit statistics.</li></ul>',
+    notation:P=>`X \\sim \\chi^2(k), \\qquad k = ${P.k}`,
+    pdfTex:'f_X(x) = \\frac{x^{k/2-1}e^{-x/2}}{2^{k/2}\\,\\Gamma(k/2)}, \\quad x \\ge 0',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ \\dfrac{\\gamma(k/2,\\, x/2)}{\\Gamma(k/2)} & x \\ge 0 \\end{cases}',
+    special:'gamma',
+    ev:{int:'\\int_0^\\infty x \\cdot \\frac{x^{k/2-1}e^{-x/2}}{2^{k/2}\\,\\Gamma(k/2)}\\,dx',closed:'k',num:null,
+      why:P=>`Each squared standard normal \\(Z_i^2\\) averages \\(\\operatorname{Var}(Z_i) = 1\\), so the sum of \\(k = ${P.k}\\) of them averages \\(k\\).`}},
+  exponential:{label:'Exponential',
+    params:[{k:'lam',label:'Rate <i>λ</i>',min:0.01,max:10,step:0.01,val:1}],
+    support:()=>({lo:0,hi:Infinity}),
+    pdf:(x,P)=>x<0?0:P.lam*Math.exp(-P.lam*x),
+    cdf:(x,P)=>x<=0?0:1-Math.exp(-P.lam*x),
+    sf:(x,P)=>x<=0?1:Math.exp(-P.lam*x),
+    cdfAt:(x,P)=>`1 - e^{-${fn(P.lam)}(${fn(x)})}`,
+    mean:P=>1/P.lam,
+    story:'<p>Events happen at random at an average rate of \\(\\lambda\\) per unit time, as in a Poisson process. \\(X\\) is the waiting time until the next event. \\(X\\) is a continuous random variable with support \\([0, \\infty)\\), and it applies to a setting that meets these criteria:</p><ul><li>Events happen one at a time, and counts in non-overlapping time intervals are independent.</li><li>The rate \\(\\lambda > 0\\) is constant over time.</li><li>The wait is memoryless: having waited \\(s\\) already, the chance of waiting \\(t\\) more is the same as at the start, \\(P(X > s + t \\mid X > s) = P(X > t)\\).</li><li>\\(X\\) is the time to the next event; it is the continuous counterpart of the Geometric random variable.</li></ul>',
+    notation:P=>`X \\sim \\text{Exp}(\\lambda), \\qquad \\lambda = ${fn(P.lam)}`,
+    pdfTex:'f_X(x) = \\lambda e^{-\\lambda x}, \\quad x \\ge 0',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ 1 - e^{-\\lambda x} & x \\ge 0 \\end{cases}',
+    ev:{int:'\\int_0^\\infty x\\,\\lambda e^{-\\lambda x}\\,dx',closed:'\\frac{1}{\\lambda}',num:P=>`\\frac{1}{${fn(P.lam)}}`,
+      why:P=>`Events arrive at a constant rate of \\(\\lambda = ${fn(P.lam)}\\) per unit time, so the average wait for the next one is \\(1/\\lambda\\) time units.`}},
+  f:{label:'F',
+    params:[{k:'d1',label:'Numerator df <i>d</i><sub>1</sub>',min:1,max:100,step:1,int:true,val:5},{k:'d2',label:'Denominator df <i>d</i><sub>2</sub>',min:1,max:100,step:1,int:true,val:10}],
+    support:()=>({lo:0,hi:Infinity}),
+    pdf:(x,P)=>{if(x<0)return 0;if(x===0)return P.d1<2?Infinity:P.d1===2?1:0;
+      const{d1,d2}=P;return Math.exp(0.5*(d1*Math.log(d1*x)+d2*Math.log(d2)-(d1+d2)*Math.log(d1*x+d2))-Math.log(x)-lbeta(d1/2,d2/2));},
+    cdf:(x,P)=>x<=0?0:ibeta(P.d1*x/(P.d1*x+P.d2),P.d1/2,P.d2/2),
+    sf:(x,P)=>x<=0?1:ibeta(P.d2/(P.d1*x+P.d2),P.d2/2,P.d1/2),
+    mean:P=>P.d2>2?P.d2/(P.d2-2):Infinity,
+    story:'<p>\\(X\\) is the ratio of two independent chi-square random variables, each divided by its degrees of freedom: \\(X = \\dfrac{U/d_1}{V/d_2}\\). \\(X\\) is a continuous random variable with support \\([0, \\infty)\\), and it applies to a setting that meets these criteria:</p><ul><li>\\(U \\sim \\chi^2(d_1)\\) and \\(V \\sim \\chi^2(d_2)\\) are independent.</li><li>The degrees of freedom \\(d_1\\) and \\(d_2\\) are fixed positive integers.</li><li>\\(X\\) compares two independent variance estimates, which is why it appears in ANOVA and in tests that compare variances.</li><li>If \\(T\\) is Student\'s \\(t\\) with \\(\\nu\\) degrees of freedom, then \\(T^2\\) is \\(F(1, \\nu)\\).</li></ul>',
+    notation:P=>`X \\sim F(d_1, d_2), \\qquad d_1 = ${P.d1},\\ d_2 = ${P.d2}`,
+    pdfTex:'f_X(x) = \\frac{1}{x\\,B\\left(\\frac{d_1}{2},\\frac{d_2}{2}\\right)}\\sqrt{\\frac{(d_1x)^{d_1}\\,d_2^{d_2}}{(d_1x+d_2)^{d_1+d_2}}}, \\quad x \\ge 0',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ I_{\\frac{d_1x}{d_1x+d_2}}\\left(\\frac{d_1}{2}, \\frac{d_2}{2}\\right) & x \\ge 0 \\end{cases}',
+    special:'beta',
+    ev:{int:'\\int_0^\\infty x\\,f_X(x)\\,dx',closed:'\\frac{d_2}{d_2-2}',num:P=>`\\frac{${P.d2}}{${P.d2} - 2}`,
+      why:P=>P.d2>2?`The ratio's numerator and denominator each average 1, but dividing by \\(V/d_2\\) inflates the average to \\(d_2/(d_2-2)\\); it depends only on the denominator's \\(d_2 = ${P.d2}\\), and it approaches 1 as \\(d_2\\) grows.`
+        :`With \\(d_2 = ${P.d2} \\le 2\\), the denominator \\(V/d_2\\) is too often near 0, so the right tail is too heavy and \\(\\int x f_X(x)\\,dx\\) diverges. The mean is finite only when \\(d_2 > 2\\).`}},
+  gamma:{label:'Gamma',
+    params:[{k:'a',label:'Shape <i>α</i>',min:0.01,max:30,step:0.01,val:3},{k:'lam',label:'Rate <i>λ</i>',min:0.01,max:10,step:0.01,val:1}],
+    support:()=>({lo:0,hi:Infinity}),
+    pdf:(x,P)=>x<0?0:x===0?edge(P.a,P.lam):Math.exp(P.a*Math.log(P.lam)+(P.a-1)*Math.log(x)-P.lam*x-lgamma(P.a)),
+    cdf:(x,P)=>gammaP(P.a,P.lam*x),
+    sf:(x,P)=>gammaQ(P.a,P.lam*x),
+    mean:P=>P.a/P.lam,
+    story:'<p>Events happen at random at an average rate of \\(\\lambda\\) per unit time, as in a Poisson process. \\(X\\) is the waiting time until the \\(\\alpha\\)th event. \\(X\\) is a continuous random variable with support \\([0, \\infty)\\), and it applies to a setting that meets these criteria:</p><ul><li>Events happen one at a time, and counts in non-overlapping time intervals are independent.</li><li>The rate \\(\\lambda > 0\\) is constant over time.</li><li>For whole-number \\(\\alpha\\), \\(X\\) is the sum of \\(\\alpha\\) independent Exponential(\\(\\lambda\\)) waits; the shape \\(\\alpha > 0\\) may also be fractional.</li><li>\\(\\alpha = 1\\) gives the Exponential; it is the continuous counterpart of the Negative Binomial.</li></ul>',
+    notation:P=>`X \\sim \\text{Gamma}(\\alpha, \\lambda), \\qquad \\alpha = ${fn(P.a)},\\ \\lambda = ${fn(P.lam)}`,
+    pdfTex:'f_X(x) = \\frac{\\lambda^{\\alpha}x^{\\alpha-1}e^{-\\lambda x}}{\\Gamma(\\alpha)}, \\quad x \\ge 0',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ \\dfrac{\\gamma(\\alpha,\\, \\lambda x)}{\\Gamma(\\alpha)} & x \\ge 0 \\end{cases}',
+    special:'gamma',
+    ev:{int:'\\int_0^\\infty x \\cdot \\frac{\\lambda^{\\alpha}x^{\\alpha-1}e^{-\\lambda x}}{\\Gamma(\\alpha)}\\,dx',closed:'\\frac{\\alpha}{\\lambda}',num:P=>`\\frac{${fn(P.a)}}{${fn(P.lam)}}`,
+      why:P=>`Waiting for \\(\\alpha = ${fn(P.a)}\\) events, each taking \\(1/\\lambda\\) time units on average at rate \\(\\lambda = ${fn(P.lam)}\\), gives an average total wait of \\(\\alpha/\\lambda\\).`}},
+  lognormal:{label:'Lognormal',
+    params:[{k:'mu',label:'Log-mean <i>μ</i>',min:-5,max:5,step:0.01,val:0},{k:'s',label:'Log-SD <i>σ</i>',min:0.01,max:3,step:0.01,val:0.5}],
+    support:()=>({lo:0,hi:Infinity}),
+    pdf:(x,P)=>x<=0?0:Math.exp(-((Math.log(x)-P.mu)**2)/(2*P.s*P.s))/(x*P.s*Math.sqrt(2*Math.PI)),
+    cdf:(x,P)=>x<=0?0:Phi((Math.log(x)-P.mu)/P.s),
+    sf:(x,P)=>x<=0?1:Phi(-(Math.log(x)-P.mu)/P.s),
+    cdfAt:(x,P)=>`\\Phi\\left(\\frac{\\ln ${fn(x)} - ${par(P.mu)}}{${fn(P.s)}}\\right)`,
+    mean:P=>Math.exp(P.mu+P.s*P.s/2),
+    story:'<p>\\(X\\) is a positive quantity whose logarithm is normal: \\(\\ln X \\sim N(\\mu, \\sigma^2)\\). \\(X\\) is a continuous random variable with support \\((0, \\infty)\\), and it applies to a setting that meets these criteria:</p><ul><li>\\(X\\) is positive and arises as the product of many small, independent positive factors, as with incomes, particle sizes or stock prices.</li><li>\\(\\mu\\) and \\(\\sigma > 0\\) are the mean and standard deviation of \\(\\ln X\\), not of \\(X\\) itself.</li><li>\\(X\\) is skewed to the right, with median \\(e^{\\mu}\\).</li></ul>',
+    notation:P=>`X \\sim \\text{Lognormal}(\\mu, \\sigma^2), \\qquad \\mu = ${fn(P.mu)},\\ \\sigma = ${fn(P.s)}`,
+    pdfTex:'f_X(x) = \\frac{1}{x\\sigma\\sqrt{2\\pi}}\\exp\\left(-\\frac{(\\ln x-\\mu)^2}{2\\sigma^2}\\right), \\quad x > 0',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x \\le 0 \\\\ \\Phi\\left(\\dfrac{\\ln x-\\mu}{\\sigma}\\right) & x > 0 \\end{cases}',
+    special:'phi',
+    ev:{int:'\\int_0^\\infty x \\cdot \\frac{1}{x\\sigma\\sqrt{2\\pi}}e^{-\\frac{(\\ln x-\\mu)^2}{2\\sigma^2}}\\,dx',closed:'e^{\\mu+\\sigma^2/2}',num:P=>`e^{${fn(P.mu)} + (${fn(P.s)})^2/2}`,
+      why:P=>`The median is \\(e^{\\mu} = ${fn(Math.exp(P.mu))}\\); because the factors multiply, large values stretch the right tail, which pulls the mean above the median by the factor \\(e^{\\sigma^2/2}\\).`}},
+  normal:{label:'Normal',
+    params:[{k:'mu',label:'Mean <i>μ</i>',min:-20,max:20,step:0.01,val:0},{k:'s',label:'Standard deviation <i>σ</i>',min:0.01,max:10,step:0.01,val:1}],
+    support:()=>({lo:-Infinity,hi:Infinity}),
+    pdf:(x,P)=>Math.exp(-((x-P.mu)**2)/(2*P.s*P.s))/(P.s*Math.sqrt(2*Math.PI)),
+    cdf:(x,P)=>Phi((x-P.mu)/P.s),
+    sf:(x,P)=>Phi(-(x-P.mu)/P.s),
+    cdfAt:(x,P)=>`\\Phi\\left(\\frac{${fn(x)} - ${par(P.mu)}}{${fn(P.s)}}\\right)`,
+    mean:P=>P.mu,
+    story:'<p>\\(X\\) is a measurement that varies symmetrically around a center \\(\\mu\\), with spread \\(\\sigma\\). \\(X\\) is a continuous random variable with support \\((-\\infty, \\infty)\\), and it applies to a setting that meets these criteria:</p><ul><li>\\(X\\) is the sum or average of many small, independent effects, none of which dominates (the central limit theorem).</li><li>The mean \\(\\mu\\) and standard deviation \\(\\sigma > 0\\) are fixed.</li><li>The PDF is a symmetric bell, with about 68%, 95% and 99.7% of the probability within 1, 2 and 3 standard deviations of \\(\\mu\\).</li><li>It approximates the Binomial and Poisson when their counts are large.</li></ul>',
+    notation:P=>`X \\sim N(\\mu, \\sigma^2), \\qquad \\mu = ${fn(P.mu)},\\ \\sigma = ${fn(P.s)}`,
+    pdfTex:'f_X(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}}\\exp\\left(-\\frac{(x-\\mu)^2}{2\\sigma^2}\\right), \\quad -\\infty < x < \\infty',
+    cdfTex:'F_X(x) = \\Phi\\left(\\frac{x-\\mu}{\\sigma}\\right)',
+    special:'phi',
+    ev:{int:'\\int_{-\\infty}^{\\infty} x \\cdot \\frac{1}{\\sigma\\sqrt{2\\pi}}e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}\\,dx',closed:'\\mu',num:null,
+      why:P=>`The many small effects push \\(X\\) up and down equally often, so the PDF is symmetric about \\(\\mu = ${fn(P.mu)}\\) and balances there.`}},
+  pareto:{label:'Pareto',
+    params:[{k:'xm',label:'Minimum <i>x</i><sub>m</sub>',min:0.01,max:10,step:0.01,val:1},{k:'a',label:'Tail index <i>α</i>',min:0.5,max:10,step:0.01,val:3}],
+    support:P=>({lo:P.xm,hi:Infinity}),
+    pdf:(x,P)=>x<P.xm?0:Math.exp(Math.log(P.a)+P.a*Math.log(P.xm)-(P.a+1)*Math.log(x)),
+    cdf:(x,P)=>x<=P.xm?0:1-Math.pow(P.xm/x,P.a),
+    sf:(x,P)=>x<=P.xm?1:Math.pow(P.xm/x,P.a),
+    cdfAt:(x,P)=>`1 - \\left(\\frac{${fn(P.xm)}}{${fn(x)}}\\right)^{${fn(P.a)}}`,
+    mean:P=>P.a>1?P.a*P.xm/(P.a-1):Infinity,
+    story:'<p>\\(X\\) is a size above a minimum \\(x_m\\), such as a fortune, a city population or a file size, with a power-law tail. \\(X\\) is a continuous random variable with support \\([x_m, \\infty)\\), and it applies to a setting that meets these criteria:</p><ul><li>Every value is at least the minimum \\(x_m > 0\\).</li><li>The tail is a power law, \\(P(X > x) = (x_m/x)^{\\alpha}\\), with a fixed tail index \\(\\alpha > 0\\); a smaller \\(\\alpha\\) means more extreme values.</li><li>The shape is scale invariant: above any threshold, values relative to that threshold have the same distribution.</li><li>It is the continuous cousin of the Zipf random variable, and its mean is infinite when \\(\\alpha \\le 1\\).</li></ul>',
+    notation:P=>`X \\sim \\text{Pareto}(x_m, \\alpha), \\qquad x_m = ${fn(P.xm)},\\ \\alpha = ${fn(P.a)}`,
+    pdfTex:'f_X(x) = \\frac{\\alpha x_m^{\\alpha}}{x^{\\alpha+1}}, \\quad x \\ge x_m',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < x_m \\\\ 1 - \\left(\\dfrac{x_m}{x}\\right)^{\\alpha} & x \\ge x_m \\end{cases}',
+    ev:{int:'\\int_{x_m}^{\\infty} x \\cdot \\frac{\\alpha x_m^{\\alpha}}{x^{\\alpha+1}}\\,dx',closed:'\\frac{\\alpha x_m}{\\alpha-1}',num:P=>`\\frac{${fn(P.a)}(${fn(P.xm)})}{${fn(P.a)} - 1}`,
+      why:P=>P.a>1?`With tail index \\(\\alpha = ${fn(P.a)} > 1\\), the power-law tail thins fast enough for a finite average, \\(\\alpha x_m/(\\alpha-1)\\); it sits above the minimum and grows without bound as \\(\\alpha\\) drops toward 1.`
+        :`With tail index \\(\\alpha = ${fn(P.a)} \\le 1\\), \\(x f_X(x)\\) decays no faster than \\(1/x\\), so the integral diverges and the mean is infinite: rare, enormous values dominate any average.`}},
+  t:{label:"Student's t",
+    params:[{k:'nu',label:'Degrees of freedom <i>ν</i>',min:1,max:100,step:1,int:true,val:5}],
+    support:()=>({lo:-Infinity,hi:Infinity}),
+    pdf:(x,P)=>Math.exp(lgamma((P.nu+1)/2)-lgamma(P.nu/2)-0.5*Math.log(P.nu*Math.PI)-((P.nu+1)/2)*Math.log(1+x*x/P.nu)),
+    cdf:(x,P)=>{if(x===0)return 0.5;const ib=ibeta(P.nu/(P.nu+x*x),P.nu/2,0.5);return x>0?1-0.5*ib:0.5*ib;},
+    sf:(x,P)=>DISTS.t.cdf(-x,P),
+    mean:P=>P.nu>1?0:NaN,
+    story:'<p>\\(X = \\dfrac{Z}{\\sqrt{V/\\nu}}\\), where \\(Z\\) is standard normal and \\(V\\) is chi-square with \\(\\nu\\) degrees of freedom. \\(X\\) is a continuous random variable with support \\((-\\infty, \\infty)\\), and it applies to a setting that meets these criteria:</p><ul><li>\\(Z \\sim N(0, 1)\\) and \\(V \\sim \\chi^2(\\nu)\\) are independent.</li><li>The degrees of freedom \\(\\nu\\) is a fixed positive integer.</li><li>Dividing by an estimated spread \\(\\sqrt{V/\\nu}\\) instead of a known one gives a symmetric bell with heavier tails than the normal; this is the standardized sample mean when \\(\\sigma\\) is estimated.</li><li>As \\(\\nu\\) grows, \\(X\\) approaches \\(N(0, 1)\\); \\(\\nu = 1\\) gives the Cauchy.</li></ul>',
+    notation:P=>`X \\sim t(\\nu), \\qquad \\nu = ${P.nu}`,
+    pdfTex:'f_X(x) = \\frac{\\Gamma\\left(\\frac{\\nu+1}{2}\\right)}{\\sqrt{\\nu\\pi}\\,\\Gamma\\left(\\frac{\\nu}{2}\\right)}\\left(1+\\frac{x^2}{\\nu}\\right)^{-\\frac{\\nu+1}{2}}, \\quad -\\infty < x < \\infty',
+    cdfTex:'F_X(x) = \\begin{cases} \\frac{1}{2}I_{\\frac{\\nu}{\\nu+x^2}}\\left(\\frac{\\nu}{2}, \\frac{1}{2}\\right) & x < 0 \\\\ 1 - \\frac{1}{2}I_{\\frac{\\nu}{\\nu+x^2}}\\left(\\frac{\\nu}{2}, \\frac{1}{2}\\right) & x \\ge 0 \\end{cases}',
+    special:'beta',
+    ev:{int:'\\int_{-\\infty}^{\\infty} x\\,f_X(x)\\,dx',closed:'0',num:null,
+      why:P=>P.nu>1?`\\(Z\\) is symmetric about 0 and the divisor \\(\\sqrt{V/\\nu}\\) is positive, so the PDF is symmetric about 0 and balances there; with \\(\\nu = ${P.nu} > 1\\), the tails are light enough for the mean to exist.`
+        :`With \\(\\nu = 1\\) this is the Cauchy: the density decays like \\(1/x^2\\), so \\(\\int |x|\\,f_X(x)\\,dx\\) diverges and the mean does not exist, even though the PDF is symmetric about 0.`}},
+  uniform:{label:'Uniform',
+    params:[{k:'a',label:'Lower bound <i>a</i>',min:-20,max:P=>+(P.b-0.01).toFixed(6),step:0.01,val:0},{k:'b',label:'Upper bound <i>b</i>',min:P=>+(P.a+0.01).toFixed(6),max:20,step:0.01,val:1}],
+    support:P=>({lo:P.a,hi:P.b}),
+    pdf:(x,P)=>x<P.a||x>P.b?0:1/(P.b-P.a),
+    cdf:(x,P)=>x<=P.a?0:x>=P.b?1:(x-P.a)/(P.b-P.a),
+    cdfAt:(x,P)=>`\\frac{${fn(x)} - ${par(P.a)}}{${fn(P.b-P.a)}}`,
+    mean:P=>(P.a+P.b)/2,
+    story:'<p>\\(X\\) is a point chosen at random from the interval \\([a, b]\\), with no part of the interval favored over another. \\(X\\) is a continuous random variable with support \\([a, b]\\), and it applies to a setting that meets these criteria:</p><ul><li>The possible values fill the interval from \\(a\\) to \\(b\\), with \\(a < b\\).</li><li>The probability of landing in a subinterval is proportional to its length, so the density is the constant \\(1/(b-a)\\).</li><li>Exactly one point is chosen, and \\(X\\) is that point.</li></ul>',
+    notation:P=>`X \\sim \\text{Unif}(a, b), \\qquad a = ${fn(P.a)},\\ b = ${fn(P.b)}`,
+    pdfTex:'f_X(x) = \\frac{1}{b-a}, \\quad a \\le x \\le b',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < a \\\\ \\dfrac{x-a}{b-a} & a \\le x < b \\\\ 1 & x \\ge b \\end{cases}',
+    ev:{int:'\\int_a^b \\frac{x}{b-a}\\,dx',closed:'\\frac{a+b}{2}',num:P=>`\\frac{${fn(P.a)} + ${par(P.b)}}{2}`,
+      why:P=>`The density is constant over \\([a, b]\\), so the PDF is a flat rectangle that balances at its midpoint, \\((a+b)/2\\).`}},
+  weibull:{label:'Weibull',
+    params:[{k:'k',label:'Shape <i>k</i>',min:0.1,max:10,step:0.01,val:1.5},{k:'lam',label:'Scale <i>λ</i>',min:0.01,max:10,step:0.01,val:1}],
+    support:()=>({lo:0,hi:Infinity}),
+    pdf:(x,P)=>x<0?0:x===0?edge(P.k,1/P.lam):(P.k/P.lam)*Math.pow(x/P.lam,P.k-1)*Math.exp(-Math.pow(x/P.lam,P.k)),
+    cdf:(x,P)=>x<=0?0:1-Math.exp(-Math.pow(x/P.lam,P.k)),
+    sf:(x,P)=>x<=0?1:Math.exp(-Math.pow(x/P.lam,P.k)),
+    cdfAt:(x,P)=>`1 - e^{-(${fn(x)}/${fn(P.lam)})^{${fn(P.k)}}}`,
+    mean:P=>P.lam*Math.exp(lgamma(1+1/P.k)),
+    story:'<p>\\(X\\) is the lifetime of a component whose failure rate changes as a power of its age. \\(X\\) is a continuous random variable with support \\([0, \\infty)\\), and it applies to a setting that meets these criteria:</p><ul><li>\\(X\\) is a time to failure, so it is never negative.</li><li>The failure rate at age \\(x\\) is \\(\\frac{k}{\\lambda}\\left(\\frac{x}{\\lambda}\\right)^{k-1}\\), with a fixed shape \\(k > 0\\) and scale \\(\\lambda > 0\\).</li><li>\\(k < 1\\) means early failures (the rate falls with age), \\(k = 1\\) a constant rate (the Exponential), and \\(k > 1\\) wear-out (the rate rises with age).</li><li>About 63.2% of components fail by time \\(\\lambda\\), whatever the shape.</li></ul>',
+    notation:P=>`X \\sim \\text{Weibull}(k, \\lambda), \\qquad k = ${fn(P.k)},\\ \\lambda = ${fn(P.lam)}`,
+    pdfTex:'f_X(x) = \\frac{k}{\\lambda}\\left(\\frac{x}{\\lambda}\\right)^{k-1}e^{-(x/\\lambda)^{k}}, \\quad x \\ge 0',
+    cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ 1 - e^{-(x/\\lambda)^{k}} & x \\ge 0 \\end{cases}',
+    special:'gamma',
+    ev:{int:'\\int_0^\\infty x \\cdot \\frac{k}{\\lambda}\\left(\\frac{x}{\\lambda}\\right)^{k-1}e^{-(x/\\lambda)^{k}}\\,dx',closed:'\\lambda\\,\\Gamma\\left(1 + \\frac{1}{k}\\right)',
+      num:P=>({rel:'=',tex:`${fn(P.lam)}\\,\\Gamma(${fn(1+1/P.k)})`}),
+      why:P=>`The average lifetime is the scale \\(\\lambda = ${fn(P.lam)}\\) times a factor \\(\\Gamma(1 + 1/k)\\) set by how the failure rate changes with age; with \\(k = 1\\) (a constant rate), it reduces to the Exponential mean \\(\\lambda\\).`}}
+};
+const ORDER=['beta','cauchy','chisq','exponential','f','gamma','lognormal','normal','pareto','t','uniform','weibull'];
+
+/* ---------- state ---------- */
+let key, D, P={}, S={lo:0,hi:1};
+const saved={};
+const ev={type:'cc',a:NaN,b:NaN};
+let hoverX=null;
+const st={};
+const open={calcBlock:false,evBlock:false};
+const Sc=x=>x===-Infinity?1:x===Infinity?0:Math.min(1,Math.max(0,D.sf?D.sf(x,P):1-D.cdf(x,P)));
+function prOf(L,U){if(L>=U)return 0;if(L===-Infinity)return Fc(U);if(U===Infinity)return Sc(L);
+  return Math.max(0,Fc(L)>0.5?Sc(L)-Sc(U):Fc(U)-Fc(L));}
+const Fc=x=>x===-Infinity?0:x===Infinity?1:Math.min(1,Math.max(0,D.cdf(x,P)));
+
+/* ---------- MathJax plumbing ---------- */
+const $=s=>document.querySelector(s);
+let texTimer=null; const texPending=new Set(); let mjChain=Promise.resolve();
+function setMath(el,html){
+  if(el.dataset.cur===html&&!texPending.has(el))return;
+  el._next=html; texPending.add(el);
+  clearTimeout(texTimer); texTimer=setTimeout(flushTex,70);
+}
+function flushTex(){
+  const els=[...texPending]; texPending.clear();
+  if(window.__mj)MathJax.typesetClear(els);
+  els.forEach(el=>{el.innerHTML=el._next;el.dataset.cur=el._next;});
+  if(window.__mj)mjChain=mjChain.then(()=>MathJax.typesetPromise(els)).catch(()=>{});
+}
+function typesetAll(){
+  const els=[...document.querySelectorAll('.math')];
+  mjChain=mjChain.then(()=>MathJax.typesetPromise(els)).catch(()=>{});
+}
+
+/* ---------- UI: distribution picker & params ---------- */
+function buildPicker(){
+  const w=$('#dists');
+  w.innerHTML=ORDER.map(k=>`<button type="button" role="radio" data-d="${k}" aria-checked="false">${DISTS[k].label}</button>`).join('');
+  w.addEventListener('click',e=>{const b=e.target.closest('button');if(b)selectDist(b.dataset.d);});
+  w.addEventListener('keydown',e=>{
+    if(!['ArrowRight','ArrowLeft'].includes(e.key))return;
+    const i=ORDER.indexOf(key),j=(i+(e.key==='ArrowRight'?1:-1)+ORDER.length)%ORDER.length;
+    selectDist(ORDER[j]); w.querySelector(`[data-d="${ORDER[j]}"]`).focus(); e.preventDefault();
+  });
+}
+function selectDist(k){
+  key=k; D=DISTS[k];
+  $('#rvName').textContent=D.label;
+  P=saved[k]?{...saved[k]}:Object.fromEntries(D.params.map(p=>[p.k,p.val]));
+  document.querySelectorAll('#dists button').forEach(b=>{
+    const on=b.dataset.d===k; b.setAttribute('aria-checked',on); b.tabIndex=on?0:-1;});
+  buildParams(); S=D.support(P); hoverX=null;
+  resetEvent(); update(true);
+}
+function clampParam(p,v){
+  const mn=val(p.min,P),mx=val(p.max,P);
+  v=Math.min(mx,Math.max(mn,v));
+  v=p.int?Math.round(v):Math.round(v/p.step)*p.step;
+  return +v.toFixed(6);
+}
+function buildParams(){
+  const box=$('#params'); box.innerHTML='';
+  D.params.forEach(p=>{
+    const row=document.createElement('div'); row.className='param';
+    row.innerHTML=`<div class="param-head"><label for="pn-${p.k}">${p.label}</label><input type="number" id="pn-${p.k}" step="${p.step}"></div><input type="range" id="pr-${p.k}" step="${p.step}" aria-label="${p.label.replace(/<[^>]+>/g,'')}">`;
+    const num=row.querySelector('input[type=number]'),rng=row.querySelector('input[type=range]');
+    rng.addEventListener('input',()=>{P[p.k]=+rng.value;onParam(p.k);});
+    num.addEventListener('input',()=>{const v=parseFloat(num.value);
+      if(!isNaN(v)&&v>=val(p.min,P)&&v<=val(p.max,P)){P[p.k]=v;onParam(p.k,true);}});
+    num.addEventListener('change',()=>{const v=parseFloat(num.value);
+      P[p.k]=isNaN(v)?P[p.k]:v;onParam(p.k);});
+    box.appendChild(row);
+  });
+  syncParams();
+}
+function syncParams(skipFocused){
+  D.params.forEach(p=>{
+    const num=$(`#pn-${p.k}`),rng=$(`#pr-${p.k}`),mn=val(p.min,P),mx=val(p.max,P);
+    rng.min=mn;rng.max=mx;rng.value=P[p.k];num.min=mn;num.max=mx;
+    if(!(skipFocused&&document.activeElement===num))num.value=P[p.k];
+  });
+}
+function onParam(k,typing){
+  D.params.forEach(p=>{P[p.k]=clampParam(p,P[p.k]);});
+  saved[key]={...P};
+  syncParams(typing);
+  S=D.support(P);
+  update(true);
+}
+
+/* ---------- event ---------- */
+function resetEvent(){
+  ev.a=NaN; ev.b=NaN;
+  $('#evA').value=''; $('#evB').value=''; $('#evType').value=ev.type;
+}
+const isPair=()=>['cc','oc','co','oo'].includes(ev.type);
+const isActive=()=>!isNaN(ev.a)&&(!isPair()||!isNaN(ev.b));
+function bounds(){
+  const a=ev.a,b=ev.b;
+  switch(ev.type){
+    case 'eq':return [a,a];
+    case 'le':case 'lt':return [-Infinity,a];
+    case 'ge':case 'gt':return [a,Infinity];
+    default:return [a,b];
+  }
+}
+const STRICT={lt:'le',gt:'ge',oc:'cc',co:'cc',oo:'cc'};
+function eventStr(tex,type=ev.type){
+  const a=tex?fn(ev.a):neg(fn(ev.a)),b=tex?fn(ev.b):neg(fn(ev.b));
+  const X=tex?'X':'<i>X</i>',le=tex?'\\le ':'≤ ',ge=tex?'\\ge ':'≥ ',lt=tex?'< ':'&lt; ',gt=tex?'> ':'&gt; ';
+  const inner={eq:`${X} = ${a}`,le:`${X} ${le}${a}`,lt:`${X} ${lt}${a}`,ge:`${X} ${ge}${a}`,gt:`${X} ${gt}${a}`,
+    cc:`${a} ${le}${X} ${le}${b}`,oc:`${a} ${lt}${X} ${le}${b}`,co:`${a} ${le}${X} ${lt}${b}`,oo:`${a} ${lt}${X} ${lt}${b}`}[type];
+  return tex?`P(${inner})`:`<i>P</i>(${inner})`;
+}
+
+/* ---------- range & sampling ---------- */
+function quantile(q){
+  let a=S.lo,b=S.hi,g=0;
+  if(!Number.isFinite(a)){a=-1;while(D.cdf(a,P)>q&&g++<1100)a*=2;}
+  if(!Number.isFinite(b)){b=Math.max(1,Math.abs(a)*2,a+1);g=0;while(D.cdf(b,P)<q&&g++<1100)b*=2;}
+  for(let i=0;i<100;i++){const m=(a+b)/2;if(D.cdf(m,P)<q)a=m;else b=m;}
+  return (a+b)/2;
+}
+function computeRange(L,U){
+  if(axesMode==='fixed'){const F=fixedWin(key);return [F.x0,F.x1];}
+  const {lo,hi}=S;
+  const med=quantile(.5),iqr=Math.max(quantile(.75)-quantile(.25),1e-9);
+  let x0=Number.isFinite(lo)?lo:Math.max(quantile(.001),Math.min(quantile(.05),med-10*iqr));
+  let x1=Number.isFinite(hi)?hi:Math.min(quantile(.999),Math.max(quantile(.95),med+10*iqr));
+  const w=x1-x0;
+  [L,U].forEach(c=>{if(!Number.isFinite(c))return;
+    if(c<x0&&c>=x0-2*w)x0=c; if(c>x1&&c<=x1+2*w)x1=c;});
+  const pad=0.04*(x1-x0); return [x0-pad,x1+pad];
+}
+function sample(x0,x1,extra){
+  const n=400,xs=[];
+  for(let i=0;i<=n;i++)xs.push(x0+(x1-x0)*i/n);
+  const eps=(x1-x0)*1e-6;
+  [S.lo,S.hi,...extra].forEach(c=>{if(Number.isFinite(c)&&c>x0&&c<x1)xs.push(c,c-eps,c+eps);});
+  xs.sort((p,q)=>p-q);
+  return xs.filter((v,i)=>i===0||v!==xs[i-1]);
+}
+
+/* ---------- fixed axis windows ---------- */
+/* In Fixed mode each random variable keeps one window: the union of the fit-mode windows,
+   and the largest fit-mode peak height, over a grid of parameter settings spanning the slider
+   limits. WIN narrows those limits for sizing the window only: the sliders reach far past the
+   settings a single readable window can hold (very heavy tails, very narrow spikes, far shifts),
+   which would otherwise squash every other curve
+   (ok filters settings; ymax sets the peak height directly);
+   the sliders still reach the full range, and a note says when the curve leaves the window. */
+const WIN={
+  beta:{a:{min:0.1,max:10},b:{min:0.1,max:10}},
+  cauchy:{x0:{min:-5,max:5},g:{min:0.5,max:1}},
+  chisq:{k:{max:20}},
+  exponential:{lam:{min:0.5,max:3}},
+  f:{d1:{max:30},d2:{min:5,max:30}},
+  gamma:{a:{min:1,max:5},lam:{min:0.5,max:2}},
+  lognormal:{mu:{min:-0.5,max:0.5},s:{min:0.4,max:0.75}},
+  normal:{mu:{min:-5,max:5},s:{min:0.5,max:3}},
+  pareto:{xm:{min:1,max:3},a:{min:2,max:5}},
+  t:{nu:{min:3,max:30}},
+  uniform:{a:{min:-5},b:{max:5},ok:P=>P.b-P.a>=1,ymax:1},
+  weibull:{k:{min:1,max:5},lam:{min:0.5,max:3}}
+};
+let axesMode='fit';   // 'fit' (default) or 'fixed'
+function quantileOf(Dk,Pk,Sk,q){
+  let a=Sk.lo,b=Sk.hi,g=0;
+  if(!Number.isFinite(a)){a=-1;while(Dk.cdf(a,Pk)>q&&g++<1100)a*=2;}
+  if(!Number.isFinite(b)){b=Math.max(1,Math.abs(a)*2,a+1);g=0;while(Dk.cdf(b,Pk)<q&&g++<1100)b*=2;}
+  for(let i=0;i<100;i++){const m=(a+b)/2;if(Dk.cdf(m,Pk)<q)a=m;else b=m;}
+  return (a+b)/2;
+}
+function fitWindow(Dk,Pk,Sk){        // the fit-mode window, before padding
+  const Q=q=>quantileOf(Dk,Pk,Sk,q),med=Q(.5),iqr=Math.max(Q(.75)-Q(.25),1e-9);
+  return [Number.isFinite(Sk.lo)?Sk.lo:Math.max(Q(.001),Math.min(Q(.05),med-10*iqr)),
+          Number.isFinite(Sk.hi)?Sk.hi:Math.min(Q(.999),Math.max(Q(.95),med+10*iqr))];
+}
+function peakOf(fs){                 // plotted peak height; ignores an infinite spike at an endpoint
+  const fin=fs.filter(v=>Number.isFinite(v)&&v>0).sort((p,q)=>p-q);
+  if(!fin.length)return 1;
+  const mx=fin[fin.length-1],q95=fin[Math.floor(0.95*(fin.length-1))];
+  return fs.some(v=>v===Infinity)||mx>1.6*q95?Math.min(mx,1.6*q95):mx;
+}
+const _fixed={};
+function fixedWin(k){
+  if(_fixed[k])return _fixed[k];
+  const Dk=DISTS[k],w=WIN[k]||{};
+  const ps=Dk.params.map(p=>({...p,...(w[p.k]||{})}));
+  const base=Object.fromEntries(ps.map(p=>[p.k,typeof p.min==='number'?p.min:p.max]));
+  const num=(p,m)=>typeof p[m]==='number'?p[m]:val(p[m],base);
+  const grids=ps.map(p=>{const a=num(p,'min'),b=num(p,'max'),g=[];
+    for(let i=0;i<=6;i++){let v=a+(b-a)*i/6;v=p.int?Math.round(v):+v.toFixed(6);g.push(v);}return [...new Set(g)];});
+  let x0=Infinity,x1=-Infinity,y=0;
+  const walk=(i,Pk)=>{
+    if(i<ps.length){grids[i].forEach(v=>walk(i+1,{...Pk,[ps[i].k]:v}));return;}
+    if(Dk.params.some(p=>Pk[p.k]<val(p.min,Pk)-1e-9||Pk[p.k]>val(p.max,Pk)+1e-9))return;
+    if(w.ok&&!w.ok(Pk))return;
+    const Sk=Dk.support(Pk),[a,b]=fitWindow(Dk,Pk,Sk);
+    x0=Math.min(x0,a);x1=Math.max(x1,b);
+    const fs=[];for(let j=1;j<400;j++)fs.push(Dk.pdf(a+(b-a)*j/400,Pk));
+    y=Math.max(y,peakOf(fs));
+  };
+  walk(0,{});
+  if(w.ymax)y=w.ymax;
+  const pad=0.04*(x1-x0);
+  return _fixed[k]={x0:x0-pad,x1:x1+pad,ymax:+(y*1.04).toPrecision(3)};   // just above the tallest peak
+}
+function renderOffWindow(){
+  const w=$('#axesWarn');
+  if(axesMode!=='fixed'){w.hidden=true;return;}
+  const F=fixedWin(key),out=Fc(F.x0)+Sc(F.x1),high=peakOf(st.fs)>F.ymax*1.02,bits=[];
+  if(out>=5e-4)bits.push(`<i>P</i>(<i>X</i> &lt; ${neg(fn(F.x0))} or <i>X</i> &gt; ${neg(fn(F.x1))}) ≈ ${fmt(out)} lies outside the fixed window`);
+  if(high)bits.push(`the density rises above the top of the window`);
+  w.hidden=!bits.length;
+  if(bits.length){const t=bits.join(', and ');w.innerHTML=`At these parameters, ${t}. Choose Fit to parameters to see the whole curve.`;}
+}
+
+/* ---------- plotting ---------- */
+const W=560,H=330,M={l:58,r:18,t:16,b:46};
+const lin=(d0,d1,r0,r1)=>v=>r0+(v-d0)/(d1-d0)*(r1-r0);
+const r2=v=>Math.round(v*100)/100;
+function niceStep(range,target){
+  const raw=range/target,mag=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/mag;
+  return (f<1.5?1:f<3?2:f<7?5:10)*mag;
+}
+const decOf=step=>Math.max(0,-Math.floor(Math.log10(step)+1e-9));
+function ticks(lo,hi,target){
+  const s=niceStep(hi-lo,target),dec=decOf(s),out=[];
+  for(let v=Math.ceil(lo/s-1e-9)*s;v<=hi+1e-9*s;v+=s)out.push(+v.toFixed(10));
+  return {t:out,dec};
+}
+function frame(X,Y,xt,yt,xlab,ylab){
+  let s='';
+  yt.t.forEach(v=>{const y=r2(Y(v));
+    s+=`<line class="grid" x1="${M.l}" x2="${W-M.r}" y1="${y}" y2="${y}"/><text class="tick" x="${M.l-8}" y="${y}" text-anchor="end" dominant-baseline="middle">${yt.dec>4?(v?v.toExponential(1).replace('e-','e−'):'0'):v.toFixed(yt.dec)}</text>`;});
+  xt.t.forEach(v=>{const x=r2(X(v));
+    s+=`<line class="tickmark" x1="${x}" x2="${x}" y1="${H-M.b}" y2="${H-M.b+5}"/><text class="tick" x="${x}" y="${H-M.b+19}" text-anchor="middle">${neg(v.toFixed(xt.dec))}</text>`;});
+  s+=`<line class="axis" x1="${M.l}" x2="${W-M.r}" y1="${H-M.b}" y2="${H-M.b}"/><line class="axis" x1="${M.l}" x2="${M.l}" y1="${M.t}" y2="${H-M.b}"/>`;
+  s+=`<text class="axlab" x="${(M.l+W-M.r)/2}" y="${H-6}" text-anchor="middle">${xlab}</text>`;
+  s+=`<text class="axlab" transform="translate(16 ${(M.t+H-M.b)/2}) rotate(-90)" text-anchor="middle">${ylab}</text>`;
+  return s;
+}
+const clip=(id,ex=6)=>`<defs><clipPath id="${id}"><rect x="${M.l}" y="${M.t-ex}" width="${W-M.l-M.r}" height="${H-M.t-M.b+ex}"/></clipPath></defs>`;
+function linePath(pts,X,Y,cap){
+  return pts.map(([x,y],i)=>`${i?'L':'M'}${r2(X(x))} ${r2(Math.max(cap,Y(y)))}`).join('');
+}
+function evMarker(X,x0,x1,pdf){
+  if(!open.evBlock)return '';
+  const mu=D.mean(P); if(!Number.isFinite(mu)||mu<x0||mu>x1)return '';
+  const x=r2(X(mu)),end=x>W-M.r-120;
+  let s=`<line class="evline${pdf?'':' dash'}" x1="${x}" x2="${x}" y1="${H-M.b}" y2="${M.t}"/>`;
+  if(pdf)s+=`<path class="evfulcrum" d="M${x} ${H-M.b+1}L${r2(x-7)} ${H-M.b+11}H${r2(x+7)}Z"/>`;
+  s+=`<text class="evlabel" x="${end?x-6:x+6}" y="${pdf?M.t+10:H-M.b-10}" text-anchor="${end?'end':'start'}">E[X] = ${fmt(mu)}</text>`;
+  return s;
+}
+const plotInfo={};
+
+function renderPDF(){
+  const {x0,x1,xs,fs,L,U,active}=st;
+  const fin=fs.filter(v=>Number.isFinite(v)&&v>0).sort((p,q)=>p-q);
+  const mx=fin.length?fin[fin.length-1]:1,q95=fin.length?fin[Math.floor(0.95*(fin.length-1))]:1;
+  const top=(fs.some(v=>v===Infinity)?Math.min(mx,1.6*q95):mx)*1.08||1,ys=niceStep(top,5),ymax=axesMode==='fixed'?fixedWin(key).ymax:Math.ceil(top/ys-1e-9)*ys;
+  const X=lin(x0,x1,M.l,W-M.r),Y=lin(0,ymax,H-M.b,M.t),cap=M.t-40;
+  const pts=xs.map((x,i)=>[x,fs[i]]);
+  let s=clip('cpPdf');
+  s+=frame(X,Y,ticks(x0,x1,8),ticks(0,ymax,5),'x','f<tspan baseline-shift="sub" font-size="11">X</tspan>(x)');
+  s+='<g clip-path="url(#cpPdf)">';
+  s+=`<path class="parea" d="${linePath(pts,X,Y,cap)}L${r2(X(x1))} ${H-M.b}L${r2(X(x0))} ${H-M.b}Z"/>`;
+  let on='';
+  if(active&&L<U){
+    const a=Math.max(L,x0),b=Math.min(U,x1);
+    if(a<b){
+      const seg=[[a,D.pdf(a,P)],...pts.filter(([x])=>x>a&&x<b),[b,D.pdf(b,P)]];
+      s+=`<path class="earea" d="${linePath(seg,X,Y,cap)}L${r2(X(b))} ${H-M.b}L${r2(X(a))} ${H-M.b}Z"/>`;
+      on=`<path class="curve on" d="${linePath(seg,X,Y,cap)}"/>`;
+    }
+  }
+  s+=`<path class="curve" d="${linePath(pts,X,Y,cap)}"/>`+on;
+  if(active&&ev.type==='eq'&&ev.a>=x0&&ev.a<=x1){
+    const x=r2(X(ev.a)),y=r2(Math.max(cap,Y(D.pdf(ev.a,P))));
+    s+=`<line class="eqline" x1="${x}" x2="${x}" y1="${H-M.b}" y2="${y}"/><circle class="hdot" cx="${x}" cy="${y}" r="4"/>`;
+  }
+  if(hoverX!==null){const v=D.pdf(hoverX,P),x=r2(X(hoverX)),y=r2(Math.max(cap,Y(v)));
+    s+=`<line class="guide" x1="${x}" x2="${x}" y1="${H-M.b}" y2="${y}"/><line class="guide" x1="${M.l}" x2="${x}" y1="${y}" y2="${y}"/><circle class="hvdot" cx="${x}" cy="${y}" r="4"/>`;}
+  s+='</g>';
+  s+=evMarker(X,x0,x1,true);
+  $('#pdfSvg').innerHTML=s;
+}
+
+function renderCDF(){
+  const {x0,x1,xs,Fs,L,U,active}=st;
+  const X=lin(x0,x1,M.l,W-M.r),Y=lin(0,1.06,H-M.b,M.t);
+  const pts=xs.map((x,i)=>[x,Fs[i]]);
+  let s=clip('cpCdf');
+  s+=frame(X,Y,ticks(x0,x1,8),{t:[0,.2,.4,.6,.8,1],dec:1},'x','F<tspan baseline-shift="sub" font-size="11">X</tspan>(x)');
+  s+='<g clip-path="url(#cpCdf)">';
+  const show=active&&L<=U;
+  let lowF,hiF;
+  if(show){
+    lowF=Fc(L); hiF=Fc(U);
+    const yh=r2(Y(hiF)),yl=r2(Y(lowF));
+    if(Number.isFinite(U))s+=`<line class="lvl" x1="${M.l}" x2="${r2(Math.min(W-M.r,X(U)))}" y1="${yh}" y2="${yh}"/>`;
+    if(Number.isFinite(L)&&L!==U)s+=`<line class="lvl" x1="${M.l}" x2="${r2(Math.max(M.l,Math.min(W-M.r,X(L))))}" y1="${yl}" y2="${yl}"/>`;
+  }
+  s+=`<path class="curve" d="${linePath(pts,X,Y,-1e9)}"/>`;
+  if(show&&L<U){
+    const a=Math.max(L,x0),b=Math.min(U,x1);
+    if(a<b){const seg=[[a,Fc(a)],...pts.filter(([x])=>x>a&&x<b),[b,Fc(b)]];
+      s+=`<path class="curve on" d="${linePath(seg,X,Y,-1e9)}"/>`;}
+  }
+  if(show){
+    if(Number.isFinite(L)&&L>=x0&&L<=x1)s+=`<circle class="hdot" cx="${r2(X(L))}" cy="${r2(Y(lowF))}" r="4.5"/>`;
+    if(Number.isFinite(U)&&U>=x0&&U<=x1&&U!==L)s+=`<circle class="hdot" cx="${r2(X(U))}" cy="${r2(Y(hiF))}" r="4.5"/>`;
+  }
+  if(hoverX!==null){const x=r2(X(hoverX)),y=r2(Y(Fc(hoverX)));
+    s+=`<line class="guide" x1="${x}" x2="${x}" y1="${H-M.b}" y2="${y}"/><line class="guide" x1="${M.l}" x2="${x}" y1="${y}" y2="${y}"/><circle class="hvdot" cx="${x}" cy="${y}" r="4"/>`;}
+  s+='</g>';
+  if(show){
+    const yh=Y(hiF),yl=Y(lowF),bx=W-M.r-10;
+    s+=`<path class="brk" d="M${bx-5} ${r2(yh)}H${bx}V${r2(yl)}H${bx-5}"/>`;
+    const tall=yl-yh>20,ly=tall?(yh+yl)/2:yh-8;
+    s+=`<text class="blabel" x="${bx-9}" y="${r2(ly)}" text-anchor="end" dominant-baseline="middle">${fmt(st.prob)}</text>`;
+  }
+  s+=evMarker(X,x0,x1,false);
+  $('#cdfSvg').innerHTML=s;
+}
+
+function renderReadout(){
+  const r=$('#readout');
+  if(hoverX===null){r.innerHTML='Hover over or tap either plot to read off values.';return;}
+  const k=neg(+hoverX.toFixed(st.hdec));
+  r.innerHTML=`At <i>x</i> = ${k}: &nbsp;<i>f<sub>X</sub></i>(${k}) = ${fmt(D.pdf(hoverX,P))} &nbsp;&nbsp; <i>F<sub>X</sub></i>(${k}) = ${fmt(Fc(hoverX))}`;
+}
+function drawPlots(){renderPDF();renderCDF();renderReadout();}
+
+function attachHover(id){
+  const svg=$(id);
+  const onMove=e=>{
+    const r=svg.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*W;
+    let x=null;
+    if(px>=M.l&&px<=W-M.r){x=st.x0+(px-M.l)/(W-M.r-M.l)*(st.x1-st.x0);x=Math.round(x/st.hstep)*st.hstep;}
+    if(x!==hoverX){hoverX=x;drawPlots();}
+  };
+  svg.addEventListener('pointermove',onMove);
+  svg.addEventListener('pointerdown',onMove);
+  svg.addEventListener('pointerleave',()=>{if(hoverX!==null){hoverX=null;drawPlots();}});
+}
+
+/* ---------- result ---------- */
+function renderCalcWhy(){
+  const base='<b>Meaning:</b> In the frequentist view, a probability is a long-run relative frequency: repeat the experiment independently many times, and the fraction of repetitions in which the event occurs settles near its probability.';
+  if(!st.active){setMath($('#calcWhy'),base);return;}
+  const q=st.prob,e=eventStr(true),rel=exact(q)?'=':'\\approx';
+  let tail;
+  if(ev.type==='eq')tail=`Here \\(${e} = 0\\): values near ${neg(fn(ev.a))} occur, but the fraction of repetitions landing exactly on it shrinks to 0.`;
+  else if(q===0)tail=`Here \\(${e} = 0\\), so the event never occurs.`;
+  else if(q===1)tail=`Here \\(${e} = 1\\), so the event occurs in every repetition.`;
+  else if(q<0.001)tail=`Here \\(${e} ${rel} ${fmt(q,true)}\\), so the event occurs in fewer than 1 of every 1,000 repetitions.`;
+  else tail=`Here \\(${e} ${rel} ${fmt(q,true)}\\), so the event occurs in about ${(100*q).toFixed(1).replace(/\.0$/,'')}% of repetitions.`;
+  setMath($('#calcWhy'),`${base} ${tail}`);
+}
+function renderResult(){
+  renderCalcWhy();
+  $('#probLine').hidden=!st.active;
+  if(!st.active){
+    setMath($('#deriv'),'');
+    setMath($('#evNote'),isPair()?'Enter values for <i>a</i> and <i>b</i> to compute the probability.':'Enter a value for <i>a</i> to compute the probability.');
+    return;
+  }
+  const {L,U,prob}=st,t=ev.type;
+  $('#evHtml').innerHTML=eventStr(false);
+  $('#prob').innerHTML=fmt(prob);
+  const lines=[],add=(rel,tex)=>lines.push([rel,tex]);
+  const Fx=v=>`F_X(${fn(v)})`,num=v=>fmt(Fc(v),true);
+  const lim=v=>v===-Infinity?'-\\infty':v===Infinity?'\\infty':fn(v);
+  const Ftex=v=>v<=S.lo?'0':v>=S.hi?'1':D.cdfAt(v,P);
+  const wrap=s=>s==='0'||s==='1'?s:`\\left(${s}\\right)`;
+  const interior=v=>Number.isFinite(v)&&v>S.lo&&v<S.hi;
+  const kind=STRICT[t]||t;                  // le, ge, cc (or eq)
+  if(STRICT[t])add('=',eventStr(true,kind));
+  if(t==='eq'){add('=',`\\int_{${fn(ev.a)}}^{${fn(ev.a)}} f_X(x)\\,dx`);add('=','0');}
+  else if(L>U)add('=','0');
+  else{
+    const lo=Math.max(L,S.lo),up=Math.min(U,S.hi);
+    if(lo>=up){add('=',`\\int_{${lim(L)}}^{${lim(U)}} f_X(x)\\,dx`);add('=','0');}
+    else{
+      add('=',`\\int_{${lim(lo)}}^{${lim(up)}} f_X(x)\\,dx`);
+      let vals;
+      if(kind==='le'){add('=',Fx(U));if(D.cdfAt&&interior(U))add('=',Ftex(U));vals=[Fc(U)];}
+      else if(kind==='ge'){add('=',`1 - ${Fx(L)}`);if(D.cdfAt&&interior(L))add('=',`1 - ${wrap(Ftex(L))}`);
+        vals=[1,Fc(L)];if(prob===0||prob>=1e-4)add(exact(Fc(L))?'=':'\\approx',`1 - ${num(L)}`);}
+      else{add('=',`${Fx(U)} - ${Fx(L)}`);if(D.cdfAt&&(interior(U)||interior(L)))add('=',`${wrap(Ftex(U))} - ${wrap(Ftex(L))}`);
+        vals=[Fc(U),Fc(L)];if(prob===0||prob>=1e-4)add(exact(Fc(U))&&exact(Fc(L))?'=':'\\approx',`${num(U)} - ${num(L)}`);}
+      const ok=exact(prob)&&vals.every(exact)&&Math.abs((vals.length===1?r4(vals[0]):r4(vals[0])-r4(vals[1]))-r4(prob))<5e-9;
+      add(ok?'=':'\\approx',fmt(prob,true));
+    }
+  }
+  const last=lines.length-1;
+  const body=lines.map(([rel,tex],i)=>(i?'\\\\ ':'')+`${(i===0||i===last)?eventStr(true):''} &${rel} ${tex}`).join(' ');
+  setMath($('#deriv'),`\\[\\begin{aligned} ${body} \\end{aligned}\\]`);
+  let note;
+  if(t==='eq'){const d=D.pdf(ev.a,P);
+    note=`A single value has zero width, so \\(${eventStr(true)} = 0\\)`+(d>0&&Number.isFinite(d)?`, even though the density there is \\(f_X(${fn(ev.a)}) ${exact(d)?'=':'\\approx'} ${fmt(d,true)}\\).`:'.');}
+  else if(isPair()&&ev.a>ev.b)note='<i>a</i> is larger than <i>b</i>, so no value satisfies the event.';
+  else if(Math.max(L,S.lo)>=Math.min(U,S.hi))note='The event lies outside the support of <i>X</i>, so its probability is 0.';
+  else{const open_l=['gt','oc','oo'].includes(t),open_r=['lt','co','oo'].includes(t);
+    const l=kind==='le'?'(-\\infty':`${open_l?'(':'['}${fn(L)}`,r=kind==='ge'?'\\infty)':`${fn(U)}${open_r?')':']'}`;
+    note=`The event is the interval \\(${l}, ${r}\\)`+(STRICT[t]?'; leaving out its endpoints does not change the probability.':'.');}
+  setMath($('#evNote'),note);
+}
+
+/* ---------- expected value ---------- */
+function renderEV(){
+  const mu=D.mean(P),E=D.ev,EX='E[X]';
+  const lo=S.lo,hi=S.hi,lim=v=>v===-Infinity?'-\\infty':v===Infinity?'\\infty':(v===P.a&&key==='uniform'?'a':v===P.b&&key==='uniform'?'b':fn(v));
+  const lines=[`${EX} &= \\int_{${key==='pareto'?'x_m':lim(lo)}}^{${lim(hi)}} x\\,f_X(x)\\,dx`,`&= ${E.int}`];
+  const med=quantile(.5);
+  let lineHtml,note;
+  if(Number.isNaN(mu)){
+    lines.push(`${EX} & \\ \\text{does not exist}`);
+    lineHtml='<i>E</i>[<i>X</i>] does not exist';
+    note=`Because \\(E[X]\\) does not exist, no blue marker is drawn. The median, \\(${exact(med)?'':'\\approx '}${fn(med)}\\), still describes the center.`;
+  }else if(mu===Infinity){
+    lines.push(`${EX} &= \\infty`);
+    lineHtml='<i>E</i>[<i>X</i>] = <output>∞</output>';
+    note=`Because \\(E[X]\\) is infinite, no blue marker is drawn. The median, \\(${exact(med)?'':'\\approx '}${fn(med)}\\), still describes the center.`;
+  }else{
+    const rel=exact(mu)?'=':'\\approx';
+    lines.push(`&= ${E.closed}`);
+    const n=E.num?E.num(P):null;
+    if(n)lines.push(typeof n==='string'?`&= ${n}`:`&${n.rel} ${n.tex}`);
+    lines.push(`${EX} &${rel} ${fmt(mu,true)}`);
+    lineHtml=`<i>E</i>[<i>X</i>] = <output>${fmt(mu)}</output>`;
+    const scale=Math.max(1e-9,Math.abs(quantile(.75)-quantile(.25)));
+    note=Math.abs(mu-med)<1e-7*scale?`The mean equals the median here, as it does whenever the PDF is symmetric.`
+      :`The median is \\(${exact(med)?'':'\\approx '}${fn(med)}\\); the mean is ${mu>med?'larger, because the longer right tail pulls the balance point to the right':'smaller, because the longer left tail pulls the balance point to the left'}.`;
+  }
+  $('#evLine').innerHTML=lineHtml;
+  setMath($('#evDeriv'),`\\[\\begin{aligned} ${lines.join(' \\\\ ')} \\end{aligned}\\]`);
+  setMath($('#evNote2'),note);
+  setMath($('#evWhy'),`<b>Meaning:</b> \\(E[X]\\) is the long-run average of \\(X\\) over many repetitions, and the balance point of the PDF. ${E.why(P)}`);
+}
+
+/* ---------- definition ---------- */
+function renderDefinition(){
+  setMath($('#story'),D.story);
+  setMath($('#notation'),`\\[${D.notation(P)}\\]`);
+  setMath($('#pdfTex'),`\\[${D.pdfTex}\\]`);
+  setMath($('#cdfTex'),`\\[${D.cdfTex}\\]`);
+  setMath($('#special'),D.special?SPECIAL[D.special]:'');
+}
+
+/* ---------- main update ---------- */
+function update(full){
+  st.active=isActive()&&open.calcBlock;
+  const [L,U]=st.active?bounds():[1,0]; st.L=L; st.U=U;
+  st.prob=st.active?prOf(L,U):0;
+  [st.x0,st.x1]=computeRange(st.active?L:NaN,st.active?U:NaN);
+  st.xs=sample(st.x0,st.x1,st.active?[L,U]:[]);
+  st.fs=st.xs.map(x=>D.pdf(x,P)); st.Fs=st.xs.map(Fc);
+  st.hstep=niceStep(st.x1-st.x0,8)/100; st.hdec=decOf(st.hstep);
+  if(hoverX!==null&&(hoverX<st.x0||hoverX>st.x1))hoverX=null;
+  drawPlots(); renderResult(); renderEV(); renderOffWindow();
+  if(full)renderDefinition();
+}
+
+/* ---------- wiring ---------- */
+function syncEventUI(){$('#bWrap').hidden=!isPair();}
+$('#evType').addEventListener('change',e=>{ev.type=e.target.value;syncEventUI();update(false);});
+['A','B'].forEach(c=>{
+  const inp=$('#ev'+c);
+  inp.addEventListener('input',()=>{ev[c.toLowerCase()]=parseFloat(inp.value);update(false);});
+});
+function syncAxesUI(){
+  document.querySelectorAll('.axesbar button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.a===axesMode));
+  $('#axesHint').textContent=axesMode==='fixed'
+    ?'Both plots keep one window for every parameter setting of this random variable, so moving a slider shows the shape itself changing.'
+    :'Both plots rescale to the current parameters, so the distribution always fills the window.';
+}
+document.querySelector('.axesbar').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  axesMode=b.dataset.a; syncAxesUI(); update(false);
+});
+syncAxesUI();
+buildPicker();
+attachHover('#pdfSvg');
+attachHover('#cdfSvg');
+document.querySelectorAll('.toggles button').forEach(b=>b.addEventListener('click',()=>{
+  const id=b.dataset.target; open[id]=!open[id];
+  $('#'+id).hidden=!open[id]; b.setAttribute('aria-expanded',open[id]);
+  update(false);
+}));
+syncEventUI();
+selectDist('normal');
+</script>
+</body>
+</html>

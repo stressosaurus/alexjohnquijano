@@ -82,6 +82,15 @@ input[type=number],select{
 .zoom button:hover:not(:disabled){border-color:var(--bar)}
 .zoom button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .zoom button:disabled{opacity:.45;cursor:not-allowed}
+.zoom[hidden]{display:none}
+.axesbar .zoom{margin:0 0 0 1.25rem;padding-left:1.25rem;border-left:1px solid var(--rule)}
+@media (max-width:520px){.axesbar .zoom{margin:.3rem 0 0;padding-left:0;border-left:0}}
+.axesbar{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin:0 0 1rem;font-size:1rem;color:var(--muted)}
+.axesbar button{font:inherit;font-size:1rem;padding:.25rem .7rem;border:1px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:5px;cursor:pointer}
+.axesbar button:hover{border-color:var(--bar)}
+.axesbar button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.axesbar .hint[hidden]{display:none}
+.axesbar .hint{flex-basis:100%;font-size:.9rem;margin:.1rem 0 0}
 .sheet > svg{display:block;width:100%;height:auto;touch-action:pan-y}
 .readout{min-height:1.6rem;color:var(--muted);margin:.5rem 0 0;font-variant-numeric:tabular-nums}
 .readout b{color:var(--ink);font-weight:400}
@@ -196,9 +205,10 @@ window.MathJax = {
   </section>
 
 
+  <div class="axesbar" role="group" aria-label="Axis limits">Axis limits: <button type="button" data-a="fixed" aria-pressed="false">Fixed</button><button type="button" data-a="fit" aria-pressed="true">Fit to parameters</button><div class="zoom" role="group" aria-label="PMF vertical axis" data-plot="pmf">PMF vertical axis: <button type="button" data-z="full" aria-pressed="true">0 to 1</button><button type="button" data-z="fit" aria-pressed="false">Zoom in</button></div><p id="axesHint" class="hint"></p><p id="axesWarn" class="hint" hidden></p></div>
   <section class="plots" aria-label="Plots">
     <figure class="sheet">
-      <figcaption><h2>Probability mass function</h2><div id="pmfTex" class="formula math"></div><div class="zoom" role="group" aria-label="PMF vertical axis" data-plot="pmf">Vertical axis: <button type="button" data-z="full" aria-pressed="true">0 to 1</button><button type="button" data-z="fit" aria-pressed="false">Zoom in</button></div></figcaption>
+      <figcaption><h2>Probability mass function</h2><div id="pmfTex" class="formula math"></div></figcaption>
       <svg id="pmfSvg" viewBox="0 0 560 330" role="img" aria-label="Bar chart of the probability mass function"></svg>
     </figure>
     <figure class="sheet">
@@ -318,7 +328,7 @@ const DISTS={
     pmfTex:'P_X(x) = (1-p)^{x-1}p, \\quad x = 1, 2, 3, \\dots',
     cdfTex:'F_X(x) = \\begin{cases} 0 & x < 1 \\\\ 1-(1-p)^{\\lfloor x \\rfloor} & x \\ge 1 \\end{cases}'},
   binomial:{label:'Binomial',rv:'X',v:'x',
-    params:[{k:'n',label:'Number of trials <i>n</i>',min:1,max:300,step:1,int:true,val:10},{...PP,val:0.3}],
+    params:[{k:'n',label:'Number of trials <i>n</i>',min:1,max:100,step:1,int:true,val:10},{...PP,val:0.3}],
     support:P=>({lo:0,hi:P.n}),
     pmf:(k,P)=>(k<0||k>P.n)?0:Math.exp(lchoose(P.n,k)+xlog(k,P.p)+xlog(P.n-k,1-P.p)),
     mean:P=>P.n*P.p,variance:P=>P.n*P.p*(1-P.p),
@@ -328,7 +338,7 @@ const DISTS={
     pmfTex:'P_X(x) = \\binom{n}{x} p^{x}(1-p)^{n-x}, \\quad x = 0, 1, \\dots, n',
     cdfTex:'F_X(x) = \\begin{cases} 0 & x < 0 \\\\ \\displaystyle\\sum_{i=0}^{\\lfloor x \\rfloor} \\binom{n}{i} p^{i}(1-p)^{n-i} & 0 \\le x < n \\\\ 1 & x \\ge n \\end{cases}'},
   hypergeometric:{label:'Hypergeometric',rv:'X',v:'x',
-    params:[{k:'N',label:'Population size <i>N</i>',min:1,max:500,step:1,int:true,val:50},
+    params:[{k:'N',label:'Population size <i>N</i>',min:1,max:200,step:1,int:true,val:50},
             {k:'K',label:'Successes in population <i>K</i>',min:0,max:P=>P.N,step:1,int:true,val:15},
             {k:'n',label:'Number of draws <i>n</i>',min:1,max:P=>P.N,step:1,int:true,val:10}],
     support:P=>({lo:Math.max(0,P.n-(P.N-P.K)),hi:Math.min(P.n,P.K)}),
@@ -342,7 +352,7 @@ const DISTS={
     pmfTex:'P_X(x) = \\frac{\\binom{K}{x}\\binom{N-K}{n-x}}{\\binom{N}{n}}, \\quad \\max(0,\\, n-N+K) \\le x \\le \\min(n, K)',
     cdfTex:'F_X(x) = \\begin{cases} 0 & x < \\max(0,\\, n-N+K) \\\\ \\displaystyle\\sum_{i \\le \\lfloor x \\rfloor} \\frac{\\binom{K}{i}\\binom{N-K}{n-i}}{\\binom{N}{n}} & \\max(0,\\, n-N+K) \\le x < \\min(n, K) \\\\ 1 & x \\ge \\min(n, K) \\end{cases}'},
   poisson:{label:'Poisson',rv:'X',v:'x',
-    params:[{k:'lam',label:'Rate <i>λ</i>',min:0.1,max:100,step:0.1,val:4}],
+    params:[{k:'lam',label:'Rate <i>λ</i>',min:0.01,max:50,step:0.01,val:4}],
     support:()=>({lo:0,hi:Infinity}),
     pmf:(k,P)=>(k<0||!Number.isInteger(k))?0:Math.exp(-P.lam+k*Math.log(P.lam)-lf(k)),
     mean:P=>P.lam,variance:P=>P.lam,
@@ -364,7 +374,7 @@ const DISTS={
     pmfTex:'P_X(x) = \\frac{1}{b-a+1}, \\quad x = a, a+1, \\dots, b',
     cdfTex:'F_X(x) = \\begin{cases} 0 & x < a \\\\ \\dfrac{\\lfloor x \\rfloor - a + 1}{b-a+1} & a \\le x < b \\\\ 1 & x \\ge b \\end{cases}'},
   negbinomial:{label:'Negative Binomial',rv:'X',v:'x',
-    params:[{k:'r',label:'Number of successes <i>r</i>',min:1,max:50,step:1,int:true,val:3},{...PP,min:0.01,val:0.4}],
+    params:[{k:'r',label:'Number of successes <i>r</i>',min:1,max:20,step:1,int:true,val:3},{...PP,min:0.01,val:0.4}],
     support:P=>({lo:P.r,hi:P.p>=1?P.r:Infinity}),
     pmf:(k,P)=>(k<P.r||!Number.isInteger(k))?0:Math.exp(lchoose(k-1,P.r-1)+xlog(P.r,P.p)+xlog(k-P.r,1-P.p)),
     mean:P=>P.r/P.p,variance:P=>P.r*(1-P.p)/(P.p*P.p),
@@ -374,7 +384,7 @@ const DISTS={
     pmfTex:'P_X(x) = \\binom{x-1}{r-1} p^{r}(1-p)^{x-r}, \\quad x = r, r+1, r+2, \\dots',
     cdfTex:'F_X(x) = \\begin{cases} 0 & x < r \\\\ \\displaystyle\\sum_{i=r}^{\\lfloor x \\rfloor} \\binom{i-1}{r-1} p^{r}(1-p)^{i-r} & x \\ge r \\end{cases}'},
   zipf:{label:'Zipf',rv:'X',v:'x',
-    params:[{k:'s',label:'Exponent <i>s</i>',min:0,max:4,step:0.01,val:1},{k:'N',label:'Number of ranks <i>N</i>',min:1,max:1000,step:1,int:true,val:10}],
+    params:[{k:'s',label:'Exponent <i>s</i>',min:0,max:5,step:0.01,val:1},{k:'N',label:'Number of ranks <i>N</i>',min:1,max:100,step:1,int:true,val:10}],
     support:P=>({lo:1,hi:P.N}),
     pmf:(k,P)=>(k<1||k>P.N||!Number.isInteger(k))?0:Math.pow(k,-P.s)/genHc(P.N,0,P.s),
     cdf:(x,P)=>x<1?0:x>=P.N?1:zmCum(P.N,0,P.s)[Math.floor(x)],
@@ -385,7 +395,7 @@ const DISTS={
     pmfTex:'P_X(x) = \\frac{x^{-s}}{H_{N,s}}, \\quad x = 1, 2, \\dots, N, \\qquad H_{N,s} = \\sum_{k=1}^{N} k^{-s}',
     cdfTex:'F_X(x) = \\begin{cases} 0 & x < 1 \\\\ \\dfrac{H_{\\lfloor x \\rfloor, s}}{H_{N,s}} & 1 \\le x < N \\\\ 1 & x \\ge N \\end{cases}'},
   zipfmandelbrot:{label:'Zipf–Mandelbrot',rv:'X',v:'x',
-    params:[{k:'N',label:'Number of ranks <i>N</i>',min:1,max:1000,step:1,int:true,val:10},{k:'q',label:'Shift <i>q</i>',min:0,max:20,step:0.1,val:2.7},{k:'s',label:'Exponent <i>s</i>',min:0.01,max:4,step:0.01,val:1}],
+    params:[{k:'N',label:'Number of ranks <i>N</i>',min:1,max:100,step:1,int:true,val:10},{k:'q',label:'Shift <i>q</i>',min:0,max:50,step:0.01,val:2.7},{k:'s',label:'Exponent <i>s</i>',min:0.01,max:5,step:0.01,val:1}],
     support:P=>({lo:1,hi:P.N}),
     pmf:(k,P)=>(k<1||k>P.N||!Number.isInteger(k))?0:Math.pow(k+P.q,-P.s)/genHc(P.N,P.q,P.s),
     cdf:(x,P)=>x<1?0:x>=P.N?1:zmCum(P.N,P.q,P.s)[Math.floor(x)],
@@ -407,6 +417,40 @@ const DISTS={
     pmfTex:'P_X(x) = \\log_b\\left(1 + \\frac{1}{x}\\right), \\quad x = 1, 2, \\dots, b-1',
     cdfTex:'F_X(x) = \\begin{cases} 0 & x < 1 \\\\ \\log_b(\\lfloor x \\rfloor + 1) & 1 \\le x < b-1 \\\\ 1 & x \\ge b-1 \\end{cases}'}
 };
+/* Fixed axis windows: one window per random variable, wide enough for every PMF the parameters
+   in WIN_X can produce (unbounded supports are cut where the far tail drops below 0.0005, as in fit
+   mode). WIN_X is a narrower box than the sliders: they reach settings (hundreds of trials, p near 0,
+   far shifts) that no single readable window can hold. Outside WIN_X the PMF can run off an edge,
+   and the note under the axis control says how much probability is out of view. */
+const WIN_X={
+  geometric:{p:{min:0.15}},
+  binomial:{n:{max:40}},
+  hypergeometric:{N:{max:50}},
+  poisson:{lam:{max:20}},
+  uniform:{a:{min:-10},b:{max:10}},
+  negbinomial:{r:{max:5},p:{min:0.25}},
+  zipf:{N:{max:30}},
+  zipfmandelbrot:{N:{max:30}},
+  benford:{b:{max:20}}
+};
+const lim=(d,k,m)=>WIN_X[d]?.[k]?.[m]??DISTS[d].params.find(q=>q.k===k)[m];
+function upperQ(pmf,lo,t=5e-4){let c=0,k=lo;while(c<1-t&&k<lo+1e5){c+=pmf(k);k++;}return k-1;}
+const FIXEDX={
+  bernoulli:()=>[0,1],
+  geometric:()=>{const p=lim('geometric','p','min');return [1,upperQ(k=>DISTS.geometric.pmf(k,{p}),1)];},
+  binomial:()=>[0,lim('binomial','n','max')],
+  hypergeometric:()=>[0,lim('hypergeometric','N','max')],
+  poisson:()=>{const lam=lim('poisson','lam','max');return [0,upperQ(k=>DISTS.poisson.pmf(k,{lam}),0)];},
+  uniform:()=>[lim('uniform','a','min'),lim('uniform','b','max')],
+  negbinomial:()=>{const r=lim('negbinomial','r','max'),p=lim('negbinomial','p','min');
+    return [lim('negbinomial','r','min'),upperQ(k=>DISTS.negbinomial.pmf(k,{r,p}),r)];},
+  zipf:()=>[1,lim('zipf','N','max')],
+  zipfmandelbrot:()=>[1,lim('zipfmandelbrot','N','max')],
+  benford:()=>[1,lim('benford','b','max')-1]
+};
+const _fx={};
+const fixedRange=k=>_fx[k]||(_fx[k]=FIXEDX[k]());
+let axesMode='fit';   // 'fit' (default) or 'fixed'
 const ORDER=['benford','bernoulli','binomial','geometric','hypergeometric','negbinomial','poisson','uniform','zipf','zipfmandelbrot'];
 
 const EVX={
@@ -589,6 +633,7 @@ function eventStr(tex){
 
 /* ---------- axis range ---------- */
 function computeRange(L,U){
+  if(axesMode==='fixed')return fixedRange(key);
   const {lo,hi}=S; let xmin=lo,xmax=hi; const t=5e-4;
   if(hi===Infinity||hi-lo>40){
     let k=lo,g=0; while(F(k)<t&&k<hi&&g++<1e5)k++; xmin=k;
@@ -655,8 +700,9 @@ function renderPMF(){
   const ps=[];let maxP=0;
   for(let k=xmin;k<=xmax;k++){const v=D.pmf(k,P);ps.push(v);if(v>maxP)maxP=v;}
   syncZoomButtons('pmf',true);
+  document.querySelector('.zoom[data-plot="pmf"]').hidden=axesMode==='fixed';
   let ymax,yt,dec;
-  if(zoom.pmf){
+  if(zoom.pmf&&axesMode!=='fixed'){
     const top=(maxP||1)*1.1,ys=niceStep(top,5);
     ymax=Math.ceil(top/ys-1e-9)*ys; ({yt,dec}=yAxis(0,ymax));
   }else{ymax=1.06; yt=[0,.2,.4,.6,.8,1]; dec=1;}
@@ -891,6 +937,19 @@ function probOf(L,U){
   return Math.max(0,Math.min(1,F(U)-F(L-1)));
 }
 
+/* ---------- fixed window: mass beyond the right edge ---------- */
+function renderOffEdge(){
+  const w=$('#axesWarn');
+  const fixed=axesMode==='fixed',left=fixed?F(st.xmin-1):0,right=fixed&&S.hi>st.xmax?1-F(st.xmax):0,off=left+right;
+  w.hidden=!(off>=5e-4);
+  if(w.hidden)return;
+  const R=`<i>${D.rv}</i>`,mu=D.mean(P);
+  const ev=left>=5e-4&&right>=5e-4?`<i>P</i>(${R} &lt; ${neg(st.xmin)} or ${R} &gt; ${neg(st.xmax)})`
+    :left>=5e-4?`<i>P</i>(${R} &lt; ${neg(st.xmin)})`:`<i>P</i>(${R} &gt; ${neg(st.xmax)})`;
+  w.innerHTML=`At these parameters, ${ev} ≈ ${fmt(off)} lies outside the fixed window`+
+    (mu>st.xmax||mu<st.xmin?`, including <i>E</i>[${R}] ≈ ${fmt(mu)}`:'')+`. Choose Fit to parameters to see the whole distribution.`;
+}
+
 /* ---------- main update ---------- */
 function update(full){
   st.active=isActive()&&open.calcBlock;
@@ -898,7 +957,7 @@ function update(full){
   st.prob=probOf(L,U);
   [st.xmin,st.xmax]=computeRange(L,U);
   if(hoverK!==null&&(hoverK<st.xmin||hoverK>st.xmax))hoverK=null;
-  drawPlots(); renderResult(); renderEV();
+  drawPlots(); renderResult(); renderEV(); renderOffEdge();
   if(full)renderDefinition();
 }
 
@@ -913,6 +972,17 @@ buildPicker();
 attachHover('#pmfSvg','pmf');
 attachHover('#cdfSvg','cdf');
 attachZoom();
+function syncAxesUI(){
+  document.querySelectorAll('.axesbar button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.a===axesMode));
+  $('#axesHint').textContent=axesMode==='fixed'
+    ?'Both plots keep one window for every parameter setting of this random variable, so moving a slider shows the shape itself changing. The PMF axis runs from 0 to 1.'
+    :'Both plots rescale to the current parameters, so the distribution always fills the window.';
+}
+document.querySelector('.axesbar').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  axesMode=b.dataset.a; syncAxesUI(); update(false);
+});
+syncAxesUI();
 document.querySelectorAll('.toggles button').forEach(b=>b.addEventListener('click',()=>{
   const id=b.dataset.target; open[id]=!open[id];
   $('#'+id).hidden=!open[id]; b.setAttribute('aria-expanded',open[id]);
