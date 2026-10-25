@@ -14,6 +14,10 @@
   --hl:#C2185B; --hl-ink:#8E0F42; --hl-soft:rgba(194,24,91,.16); --focus:#7B1FA2;
   --shadow:rgba(27,42,23,.35);
   --ev:#1E5AA8; --ev-ink:#123E78; --ev-soft:rgba(30,90,168,.16);
+  --var:#B45309; --var-ink:#7C3A06; --var-soft:rgba(217,119,6,.17);
+  --skew:#0F766E; --skew-ink:#0B4F4A; --skew-soft:rgba(15,118,110,.16);
+  --kurt:#6D28D9; --kurt-ink:#4C1D95; --kurt-soft:rgba(109,40,217,.14);
+  --mom:#475569; --mom-ink:#1E293B; --mom-soft:rgba(71,85,105,.16);
   color-scheme:light;
 }
 :root{font-size:15px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper)}
@@ -99,21 +103,60 @@ input[type=number],select{
 .toggles button{font:inherit;font-size:1rem;padding:.55rem 1.2rem;border:1px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:6px;cursor:pointer}
 .toggles button:hover{border-color:var(--bar)}
 .toggles button[aria-expanded="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.analysis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem;align-items:start;margin-top:2rem}
+.analysis{display:grid;grid-template-columns:minmax(0,1fr);gap:2rem;align-items:start;margin-top:2rem}
 .analysis > [hidden]{display:none}
 .card{--acc:var(--bar);--tint:rgba(76,154,42,.07);
   background:linear-gradient(var(--tint),var(--tint)),var(--panel);border:1px solid var(--rule);border-left:4px solid var(--acc);
   border-radius:6px;padding:1rem 1.25rem;box-shadow:0 12px 26px -22px var(--shadow);min-width:0}
 .card-calc{--acc:var(--hl);--tint:rgba(194,24,91,.05)}
 .card-ev{--acc:var(--ev);--tint:rgba(30,90,168,.05)}
+.card-var{--acc:var(--var);--tint:rgba(180,83,9,.05)}
 .card .deriv{margin-bottom:-.5rem}
 .notes{margin-top:.75rem}
 .notes .note{margin:.5rem 0 0}
-.calc{grid-column:1;min-width:0}
-.ev{grid-column:2;min-width:0}
-.ev .prob-line{margin-top:1rem}
-.ev .prob-line output{background:linear-gradient(transparent 58%,var(--ev-soft) 58%)}
+.card-skew{--acc:var(--skew);--tint:rgba(15,118,110,.05)}
+.card-kurt{--acc:var(--kurt);--tint:rgba(109,40,217,.045)}
+.card-mom{--acc:var(--mom);--tint:rgba(71,85,105,.05)}
+.calc,.ablock{min-width:0}
+.ablock .prob-line{margin-top:.9rem}
+.ablock .prob-line output{background:linear-gradient(transparent 58%,var(--acc-soft) 58%)}
+.card-ev{--acc-soft:var(--ev-soft)} .card-var{--acc-soft:var(--var-soft)} .card-skew{--acc-soft:var(--skew-soft)}
+.card-kurt{--acc-soft:var(--kurt-soft)} .card-mom{--acc-soft:var(--mom-soft)}
+.card-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.25rem 2.25rem;align-items:start;margin-top:.2rem}
+.col-math{min-width:0}
+.card-cols .sweep{margin-top:.35rem;padding-top:0;border-top:0}
+.card-params.rows{grid-template-columns:max-content minmax(0,1fr);gap:.1rem 1rem;align-items:center;padding-bottom:.45rem}
+.card-params.rows .param{display:contents}
+.card-params.rows .param-ctl{margin:.2rem 0}
+.card-params.tctl{margin-top:.5rem}
+.mom-table{margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--rule);overflow-x:auto}
+.mom-table table{border-collapse:collapse;font-variant-numeric:tabular-nums}
+.mom-table th,.mom-table td{padding:.3rem .9rem .3rem 0;text-align:left;border-bottom:1px solid var(--rule);white-space:nowrap}
+.mom-table th{font-weight:400;color:var(--muted);font-size:.95rem}
+.mom-table .note{white-space:normal}
+.prob-line .sep{display:inline-block;width:1.4rem}
 .swatch.ev-swatch{background:var(--ev);border-color:var(--ev-ink)}
+.swatch.var-swatch{background:var(--var-soft);border-color:var(--var)}
+.card-def{margin:.35rem 0 0;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding-bottom:.1rem}
+.card-params{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:.2rem 1.5rem;
+  margin:.9rem 0 .4rem;padding:.6rem .9rem .1rem;background:var(--panel);border:1px solid var(--rule);border-radius:5px}
+.card-params .cp-head{grid-column:1/-1;margin:0 0 .1rem}
+.cp-head,.det-head{color:var(--muted);font-size:.92rem;font-weight:700}
+.det-head{margin:1rem 0 -.2rem}
+.det-head[hidden]{display:none}
+.mom-table .det-head{margin:0 0 .35rem}
+.card-params .param{margin-bottom:.6rem;min-width:0}
+.card-params label{font-size:.95rem}
+.card-params .param-ctl{display:flex;align-items:center;gap:.6rem;margin-top:.15rem}
+.card-params input[type=range]{flex:1 1 auto;min-width:0;width:auto;accent-color:var(--acc)}
+.card-params input[type=number]{width:5.2rem;flex:0 0 auto}
+.card-calc .card-params{margin-top:.75rem}
+.xtag{display:inline-block;font-size:.72rem;line-height:1.3;padding:0 .4em;margin-left:.2em;border:1px solid var(--acc);color:var(--acc);border-radius:3px;vertical-align:.1em;white-space:nowrap}
+.sweep{margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--rule)}
+.sweep h3{font-size:1.1rem;margin:0 0 .5rem}
+.sweep svg{display:block;width:100%;height:auto;touch-action:pan-y}
+.sweep .readout{margin-top:.35rem}
+.sweep .note{font-size:.95rem}
 .calc-row{display:flex;flex-wrap:wrap;gap:1rem 1.5rem;align-items:end;margin:.9rem 0 1rem}
 .calc-row label{display:flex;flex-direction:column;gap:.3rem;font-size:1rem;color:var(--muted)}
 .calc-row input{width:7rem}
@@ -124,6 +167,20 @@ input[type=number],select{
 .deriv{overflow-x:auto;overflow-y:hidden;max-width:100%}
 .deriv mjx-container[display="true"]{text-align:left!important;margin-left:0!important}
 .note{color:var(--muted);max-width:none;margin:.3rem 0 0}
+.note.math{line-height:1.85}
+.nowrap{white-space:nowrap}
+.tag{display:inline-block;margin-left:.6rem;padding:.08rem .55rem;border-radius:999px;font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:.85rem;font-weight:700;line-height:1.35;color:var(--acc);border:1px solid var(--acc);vertical-align:.2em}
+.tag:empty{display:none}
+.det-btn{display:block;text-align:left;margin:1rem 0 0;padding:0;border:0;background:none;font:inherit;font-size:.92rem;font-weight:700;color:var(--muted);cursor:pointer}
+.det-btn:hover{color:var(--ink)}
+.det-btn::before{content:"▸";display:inline-block;margin-right:.4rem;transition:transform .15s}
+.det-btn[aria-expanded="true"]::before{transform:rotate(90deg)}
+.det-btn[hidden]{display:none}
+.det-body{overflow:hidden}
+.det-body:not(.open){height:0;visibility:hidden}
+.det-body .det-def{margin:.5rem 0 0}
+.note:empty{display:none}
+
 .swatch{display:inline-block;width:.9em;height:.9em;background:var(--hl);border:1px solid var(--hl-ink);vertical-align:-.1em;margin-right:.35em;border-radius:2px}
 
 /* SVG */
@@ -162,12 +219,38 @@ input[type=number],select{
 .evline.dash{stroke-dasharray:6 4}
 .evfulcrum{fill:var(--ev);stroke:var(--ev-ink);stroke-width:1}
 .evlabel{fill:var(--ev-ink);font-weight:700;font-size:13px;font-family:"Atkinson Hyperlegible",system-ui,sans-serif;paint-order:stroke;stroke:var(--panel);stroke-width:5px;stroke-linejoin:round}
+.varband{fill:var(--var-soft)}
+.varedge{stroke:var(--var);stroke-width:1.2;stroke-dasharray:4 3}
+.varlabel{fill:var(--var-ink);font-weight:700;font-size:13px;font-family:"Atkinson Hyperlegible",system-ui,sans-serif;paint-order:stroke;stroke:var(--panel);stroke-width:5px;stroke-linejoin:round}
+.sw-line{fill:none;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
+.sw-line.sw-mean{stroke:var(--ev)}
+.sw-line.sw-var{stroke:var(--var)}
+.sw-pt{opacity:.5}
+.sw-pt.sw-mean{fill:var(--ev)}
+.sw-pt.sw-var{fill:var(--var)}
+.sw-cur{stroke-width:1.6}
+.sw-cur.sw-mean{fill:var(--ev);stroke:var(--ev-ink)}
+.sw-cur.sw-var{fill:var(--var);stroke:var(--var-ink)}
+.sw-line.sw-skew{stroke:var(--skew)} .sw-pt.sw-skew{fill:var(--skew)} .sw-cur.sw-skew{fill:var(--skew);stroke:var(--skew-ink)}
+.sw-line.sw-kurt{stroke:var(--kurt)} .sw-pt.sw-kurt{fill:var(--kurt)} .sw-cur.sw-kurt{fill:var(--kurt);stroke:var(--kurt-ink)}
+.sw-line.sw-mom{stroke:var(--mom)} .sw-cur.sw-mom{fill:var(--mom);stroke:var(--mom-ink)}
+.sw-zero{stroke:var(--ink);stroke-width:1;stroke-dasharray:5 3;opacity:.55}
+.sw-reflab{fill:var(--muted);font-size:12px;font-family:"Atkinson Hyperlegible",system-ui,sans-serif;paint-order:stroke;stroke:var(--panel);stroke-width:4px}
+.mgf-tan{stroke:var(--ev);stroke-width:1.6;stroke-dasharray:6 4}
+.mgf-asym{stroke:var(--hl-ink);stroke-width:1.3;stroke-dasharray:3 3}
+.mgf-one{fill:var(--panel);stroke:var(--ev-ink);stroke-width:1.6}
+.sw-hov{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 3}
+.sw-ring{fill:var(--panel);stroke:var(--ink);stroke-width:1.5}
 
 @media (max-width:860px){
   .define,.plots{grid-template-columns:minmax(0,1fr)}
   .define{gap:1.5rem}
-  .analysis{grid-template-columns:minmax(0,1fr)}
-  .analysis > *{grid-column:1}
+  .card-cols{grid-template-columns:minmax(0,1fr)}
+  .card-cols .sweep{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--rule)}
+}
+@media (max-width:520px){
+  .card-params.rows{grid-template-columns:minmax(0,1fr)}
+  .card-params.rows .param-ctl{margin:0 0 .45rem}
 }
 @media (max-width:520px){
   main{padding-top:1.5rem}
@@ -187,7 +270,7 @@ window.MathJax = {
 <main>
   <header>
     <h1>PMF/CDF Visualizer</h1>
-    <p class="lede">Choose a named discrete random variable and adjust its parameters. The plots of its probability mass function and cumulative distribution function update as you go, and the buttons below the plots open tools for computing probabilities and the expected value.</p>
+    <p class="lede">Pick a random variable and move its sliders; the PMF and CDF update together. The buttons below the plots open more tools, each with its own sliders.</p>
   </header>
 
   <nav id="dists" class="dists" role="radiogroup" aria-label="Distribution"></nav>
@@ -217,19 +300,26 @@ window.MathJax = {
     </figure>
   </section>
   <div class="notes">
-    <p class="note math">The probability mass function (PMF), \(P_X(x) = P(X = x)\), gives the probability that a discrete random variable \(X\) takes exactly the value \(x\). The cumulative distribution function (CDF), \(F_X(x) = P(X \le x)\), gives the probability that \(X\) is at most \(x\); it is the running sum of the PMF. The two plots above update together, and any probability you compute is highlighted in both.</p>
+    <p class="note math">PMF: \(P_X(x) = P(X = x)\). CDF: \(F_X(x) = P(X \le x)\), the running sum of the PMF.</p>
   </div>
   <p id="readout" class="readout" aria-live="polite"></p>
 
   <div class="toggles">
     <button type="button" data-target="calcBlock" aria-controls="calcBlock" aria-expanded="false">Compute probability</button>
     <button type="button" data-target="evBlock" aria-controls="evBlock" aria-expanded="false">Expected value</button>
+    <button type="button" data-target="varBlock" aria-controls="varBlock" aria-expanded="false">Variance</button>
+    <button type="button" data-target="skewBlock" aria-controls="skewBlock" aria-expanded="false">Skewness</button>
+    <button type="button" data-target="kurtBlock" aria-controls="kurtBlock" aria-expanded="false">Kurtosis</button>
+    <button type="button" data-target="momBlock" aria-controls="momBlock" aria-expanded="false">Moments</button>
   </div>
 
   <div class="analysis">
   <section id="calcBlock" class="calc" aria-labelledby="h-calc" hidden>
     <div class="card card-calc">
     <h2 id="h-calc">Compute probability</h2>
+    <div class="card-cols">
+      <div class="col-math">
+    <div id="calcDef" class="card-def math"></div>
     <div class="calc-row">
       <label>Event
         <select id="evType">
@@ -247,26 +337,157 @@ window.MathJax = {
       <label id="aWrap"><span><i>a</i></span><input id="evA" type="number" step="any" placeholder="a"></label>
       <label id="bWrap"><span><i>b</i></span><input id="evB" type="number" step="any" placeholder="b"></label>
     </div>
-    <p id="probLine" class="prob-line" hidden><span id="evHtml"></span> = <output id="prob">0</output></p>
-    <div id="deriv" class="deriv math"></div>
+    <p id="probLine" class="prob-line" hidden><span id="evHtml"></span> = <output id="prob">0</output><span class="tag" id="probTag"></span></p>
+    <div id="calcParams" class="card-params" role="group" aria-label="Parameters"></div>
+    <button type="button" class="det-btn" id="calcDetHead" aria-expanded="false" aria-controls="calcDet" hidden>Details of computing the probability</button>
+    <div id="calcDet" class="det-body"><div id="deriv" class="deriv math"></div></div>
+      </div>
+      <div class="sweep">
+        <h3>PMF with the event highlighted</h3>
+        <svg id="calcPmf" viewBox="0 0 560 330" role="img" aria-label="Probability mass function with the event highlighted"></svg>
+        <p id="calcPmfOut" class="readout" aria-live="polite"></p>
+        <p id="calcPmfCap" class="note"></p>
+      </div>
+    </div>
     </div>
     <div class="notes">
     <p id="evNote" class="note"></p>
-    <p class="note"><span class="swatch" aria-hidden="true"></span>Pink marks the event: on the left, the PMF values it adds up; on the right, the steps of the CDF for those same values, between the two dashed levels.</p>
-    <p class="note math"><b>Remember:</b> \(X\) is discrete, so \(P_X(x) = 0\) for every \(x\) outside its integer support, while \(F_X(x)\) is defined for every real \(x\), with \(F_X(x) = F_X(\lfloor x \rfloor)\). Non-integer \(a\) and \(b\) are fine: the event keeps only the integers it contains, so \(P(X \le 2.7) = P(X \le 2)\).</p>
+    <p class="note math"><b>Remember:</b> Only whole numbers count, so \(P(X \le 2.7) = P(X \le 2)\).</p>
     <div id="calcWhy" class="note math"></div>
     </div>
   </section>
-  <section id="evBlock" class="ev" aria-labelledby="h-ev" hidden>
+  <section id="evBlock" class="ablock" aria-labelledby="h-ev" hidden>
     <div class="card card-ev">
     <h2 id="h-ev">Expected value</h2>
-    <p class="prob-line"><i>E</i>[<i>X</i>] = <output id="evVal">0</output></p>
-    <div id="evDeriv" class="deriv math"></div>
+    <div class="card-cols">
+      <div class="col-math">
+      <div id="evDef" class="card-def math"></div>
+      <p class="prob-line"><i>E</i>[<i>X</i>] = <output id="evVal">0</output><span class="tag" id="evTag"></span></p>
+      <div id="evParams" class="card-params rows" role="group" aria-label="Parameters"></div>
+      <button type="button" class="det-btn" aria-expanded="false" aria-controls="evDet">Details of computing <i>E</i>[<i>X</i>]</button>
+      <div id="evDet" class="det-body">
+      <div id="evDeriv" class="deriv math"></div>
+      </div>
+      </div>
+      <div class="sweep">
+        <h3 id="evSweepTitle"></h3>
+        <svg id="evSweep" viewBox="0 0 560 300" role="img"></svg>
+        <p id="evSweepOut" class="readout" aria-live="polite"></p>
+        <p id="evSweepCap" class="note"></p>
+      </div>
+    </div>
     </div>
     <div class="notes">
-    <p id="evNote2" class="note math"></p>
-    <p class="note"><span class="swatch ev-swatch" aria-hidden="true"></span>Blue marks <i>E</i>[<i>X</i>]: on the left, the balance point of the PMF, with a fulcrum under the axis; on the right, a dashed line at the same <i>x</i>.</p>
     <div id="evWhy" class="note math"></div>
+    </div>
+  </section>
+  <section id="varBlock" class="ablock" aria-labelledby="h-var" hidden>
+    <div class="card card-var">
+    <h2 id="h-var">Variance</h2>
+    <div class="card-cols">
+      <div class="col-math">
+      <div id="varDef" class="card-def math"></div>
+      <p class="prob-line">Var(<i>X</i>) = <output id="varVal">0</output><span class="sep"></span><i>σ</i> = <output id="sdVal">0</output><span class="tag" id="varTag"></span></p>
+      <div id="varParams" class="card-params rows" role="group" aria-label="Parameters"></div>
+      <button type="button" class="det-btn" aria-expanded="false" aria-controls="varDet">Details of computing Var(<i>X</i>) and <i>σ</i></button>
+      <div id="varDet" class="det-body">
+      <div id="varDeriv" class="deriv math"></div>
+      </div>
+      </div>
+      <div class="sweep">
+        <h3 id="varSweepTitle"></h3>
+        <svg id="varSweep" viewBox="0 0 560 300" role="img"></svg>
+        <p id="varSweepOut" class="readout" aria-live="polite"></p>
+        <p id="varSweepCap" class="note"></p>
+      </div>
+    </div>
+    </div>
+    <div class="notes">
+    <div id="varWhy" class="note math"></div>
+    </div>
+  </section>
+  <section id="skewBlock" class="ablock" aria-labelledby="h-skew" hidden>
+    <div class="card card-skew">
+    <h2 id="h-skew">Skewness</h2>
+    <div class="card-cols">
+      <div class="col-math">
+      <div id="skewDef" class="card-def math"></div>
+      <p class="prob-line">Skewness <i>γ</i><sub>1</sub> = <output id="skewVal">0</output><span class="tag" id="skewTag"></span></p>
+      <div id="skewParams" class="card-params rows" role="group" aria-label="Parameters"></div>
+      <button type="button" class="det-btn" aria-expanded="false" aria-controls="skewDet">Details of computing <i>γ</i><sub>1</sub></button>
+      <div id="skewDet" class="det-body">
+      <p class="note math det-def">Cubing keeps the sign of each deviation, and dividing by \(\sigma^{3}\) removes the units.</p>
+      <div id="skewDeriv" class="deriv math"></div>
+      </div>
+      </div>
+      <div class="sweep">
+        <h3 id="skewSweepTitle"></h3>
+        <svg id="skewSweep" viewBox="0 0 560 300" role="img"></svg>
+        <p id="skewSweepOut" class="readout" aria-live="polite"></p>
+        <p id="skewSweepCap" class="note"></p>
+      </div>
+    </div>
+    </div>
+    <div class="notes">
+    <div id="skewWhy" class="note math"></div>
+    </div>
+  </section>
+  <section id="kurtBlock" class="ablock" aria-labelledby="h-kurt" hidden>
+    <div class="card card-kurt">
+    <h2 id="h-kurt">Kurtosis</h2>
+    <div class="card-cols">
+      <div class="col-math">
+      <div id="kurtDef" class="card-def math"></div>
+      <p class="prob-line">Excess kurtosis <i>γ</i><sub>2</sub> = <output id="kurtVal">0</output><span class="sep"></span>Kurt(<i>X</i>) = <output id="kurtRaw">0</output><span class="tag" id="kurtTag"></span></p>
+      <div id="kurtParams" class="card-params rows" role="group" aria-label="Parameters"></div>
+      <button type="button" class="det-btn" aria-expanded="false" aria-controls="kurtDet">Details of computing <i>γ</i><sub>2</sub> and Kurt(<i>X</i>)</button>
+      <div id="kurtDet" class="det-body">
+      <p class="note math det-def">The fourth power makes values far from the mean count heavily, so kurtosis is mostly about the tails.</p>
+      <div id="kurtDeriv" class="deriv math"></div>
+      </div>
+      </div>
+      <div class="sweep">
+        <h3 id="kurtSweepTitle"></h3>
+        <svg id="kurtSweep" viewBox="0 0 560 300" role="img"></svg>
+        <p id="kurtSweepOut" class="readout" aria-live="polite"></p>
+        <p id="kurtSweepCap" class="note"></p>
+      </div>
+    </div>
+    </div>
+    <div class="notes">
+    <div id="kurtWhy" class="note math"></div>
+    <p class="note math"><b>Why “excess”:</b> every normal distribution has kurtosis 3, so \(\gamma_2 = \operatorname{Kurt}(X) - 3\) puts the normal at zero.</p>
+    </div>
+  </section>
+  <section id="momBlock" class="ablock" aria-labelledby="h-mom" hidden>
+    <div class="card card-mom">
+    <h2 id="h-mom">Moments</h2>
+    <div class="card-cols">
+      <div class="col-math">
+      <div id="momDef" class="card-def math"></div>
+      <p class="prob-line"><i>M<sub>X</sub></i>(<i>t</i>) = <output id="momVal">0</output></p>
+      <div id="momParams" class="card-params rows" role="group" aria-label="Parameters"></div>
+      <div class="card-params rows tctl" role="group" aria-label="Value of t">
+        <p class="cp-head">Evaluate the MGF at</p>
+        <div class="param"><label for="tNum"><i>t</i> <span class="xtag">x-axis</span></label><div class="param-ctl"><input type="range" id="tRng" aria-label="t"><input type="number" id="tNum"></div></div>
+      </div>
+      <button type="button" class="det-btn" aria-expanded="false" aria-controls="momDet">Details of computing <i>M<sub>X</sub></i>(<i>t</i>)</button>
+      <div id="momDet" class="det-body">
+      <div id="momDeriv" class="deriv math"></div>
+      </div>
+      </div>
+      <div class="sweep">
+        <h3 id="momSweepTitle"></h3>
+        <svg id="momSweep" viewBox="0 0 560 300" role="img"></svg>
+        <p id="momSweepOut" class="readout" aria-live="polite"></p>
+        <p id="momSweepCap" class="note"></p>
+      </div>
+    </div>
+    <div id="momTable" class="mom-table math"></div>
+    </div>
+    <div class="notes">
+    <p id="momNote2" class="note math"></p>
+    <div id="momWhy" class="note math"></div>
     </div>
   </section>
   </div>
@@ -302,7 +523,10 @@ function zmCum(N,q,s){
 }
 function genH(N,q,s){let t=0;for(let k=1;k<=N;k++)t+=Math.pow(k+q,-s);return t;}
 const _gh=new Map();
-const genHc=(N,q,s)=>{const k=N+'|'+q+'|'+s;if(!_gh.has(k)){if(_gh.size>200)_gh.clear();_gh.set(k,genH(N,q,s));}return _gh.get(k);};
+const genHc=(N,q,s)=>{const k=N+'|'+q+'|'+s;if(!_gh.has(k)){if(_gh.size>3000)_gh.clear();_gh.set(k,genH(N,q,s));}return _gh.get(k);};
+/* Var(X) = Var(X+q) = H_{N,q,s-2}/H_{N,q,s} - (H_{N,q,s-1}/H_{N,q,s})^2 */
+function zmVar(N,q,s){const h=genHc(N,q,s),m=genHc(N,q,s-1)/h;return Math.max(0,genHc(N,q,s-2)/h-m*m);}
+function benfordEX2(b){let t=0;for(let x=1;x<b;x++)t+=x*x*Math.log(1+1/x);return t/Math.log(b);}
 const PP={k:'p',label:'Success probability <i>p</i>',min:0,max:1,step:0.01};
 const DISTS={
   bernoulli:{label:'Bernoulli',rv:'X',v:'x',
@@ -310,7 +534,7 @@ const DISTS={
     support:()=>({lo:0,hi:1}),
     pmf:(k,P)=>k===0?1-P.p:k===1?P.p:0,
     mean:P=>P.p,variance:P=>P.p*(1-P.p),
-    story:'<p>A single trial has success probability \\(p\\) and failure probability \\(1-p\\). \\(X\\) is 1 on a success and 0 on a failure. \\(X\\) is a discrete random variable with support \\(\\{0, 1\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>There is exactly one trial.</li><li>The trial has exactly two outcomes, labeled success and failure.</li><li>The success probability \\(p\\) is fixed, with \\(0 \\le p \\le 1\\).</li><li>\\(X\\) indicates whether that one trial is a success.</li></ul>',
+    story:'<p>One trial ends in success, with probability \\(p\\), or failure. \\(X = 1\\) on a success and \\(X = 0\\) on a failure, so the support is \\(\\{0, 1\\}\\).</p><ul><li>Exactly one trial, with two outcomes.</li><li>A fixed success probability \\(0 \\le p \\le 1\\).</li></ul>',
     notation:P=>`X \\sim \\text{Bern}(p), \\qquad p = ${fn(P.p)}`,
     pmfAt:(k,P)=>`(${fn(P.p)})^{${k}}(${fn(1-P.p)})^{${1-k}}`,
     pmfTex:'P_X(x) = p^{x}(1-p)^{1-x}, \\quad x \\in \\{0, 1\\}',
@@ -320,7 +544,7 @@ const DISTS={
     support:P=>({lo:1,hi:P.p>=1?1:Infinity}),
     pmf:(k,P)=>k<1?0:P.p*Math.pow(1-P.p,k-1),
     mean:P=>1/P.p,variance:P=>(1-P.p)/(P.p*P.p),
-    story:'<p>Repeat independent trials, each with success probability \\(p\\) and failure probability \\(1-p\\), until the first success. \\(X\\) is the number of trials needed, including that success. \\(X\\) is a discrete random variable with support \\(\\{1, 2, 3, \\dots\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>The trials are independent Bernoulli trials, each with exactly two outcomes.</li><li>The success probability \\(p\\) is fixed and the same on every trial, with \\(0 < p \\le 1\\).</li><li>The number of trials is not fixed in advance; trials continue until the first success.</li><li>\\(X\\) counts the trials up to and including the first success.</li></ul>',
+    story:'<p>Repeat independent trials until the first success. \\(X\\) is the number of trials, including that success; the support is \\(\\{1, 2, 3, \\dots\\}\\).</p><ul><li>Independent trials with the same success probability \\(0 < p \\le 1\\).</li><li>No fixed number of trials: stop at the first success.</li></ul>',
     notation:P=>`X \\sim \\text{Geom}(p), \\qquad p = ${fn(P.p)}`,
     cdf:(x,P)=>x<1?0:1-Math.pow(1-P.p,Math.floor(x)),
     sf:(x,P)=>x<1?1:Math.pow(1-P.p,Math.floor(x)),
@@ -332,7 +556,7 @@ const DISTS={
     support:P=>({lo:0,hi:P.n}),
     pmf:(k,P)=>(k<0||k>P.n)?0:Math.exp(lchoose(P.n,k)+xlog(k,P.p)+xlog(P.n-k,1-P.p)),
     mean:P=>P.n*P.p,variance:P=>P.n*P.p*(1-P.p),
-    story:'<p>Run \\(n\\) independent trials, each with success probability \\(p\\) and failure probability \\(1-p\\). \\(X\\) is the number of successes. \\(X\\) is a discrete random variable with support \\(\\{0, 1, \\dots, n\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>The number of trials \\(n\\) is fixed in advance.</li><li>The trials are independent Bernoulli trials, each with exactly two outcomes.</li><li>The success probability \\(p\\) is fixed and the same on every trial, with \\(0 \\le p \\le 1\\).</li><li>\\(X\\) counts the successes among the \\(n\\) trials, regardless of order.</li></ul>',
+    story:'<p>Run \\(n\\) independent trials and count the successes. \\(X\\) is that count; the support is \\(\\{0, 1, \\dots, n\\}\\).</p><ul><li>A fixed number of trials \\(n\\).</li><li>Independent trials with the same success probability \\(p\\).</li></ul>',
     notation:P=>`X \\sim \\text{Bin}(n, p), \\qquad n = ${P.n},\\ p = ${fn(P.p)}`,
     pmfAt:(k,P)=>`\\binom{${P.n}}{${k}}(${fn(P.p)})^{${k}}(${fn(1-P.p)})^{${P.n-k}}`,
     pmfTex:'P_X(x) = \\binom{n}{x} p^{x}(1-p)^{n-x}, \\quad x = 0, 1, \\dots, n',
@@ -346,7 +570,7 @@ const DISTS={
       return (k<lo||k>hi)?0:Math.exp(lchoose(P.K,k)+lchoose(P.N-P.K,P.n-k)-lchoose(P.N,P.n));},
     mean:P=>P.n*P.K/P.N,
     variance:P=>P.N>1?P.n*(P.K/P.N)*(1-P.K/P.N)*(P.N-P.n)/(P.N-1):0,
-    story:'<p>A population of \\(N\\) objects contains \\(K\\) successes and \\(N-K\\) failures. Draw \\(n\\) objects without replacement. \\(X\\) is the number of successes drawn. \\(X\\) is a discrete random variable with support \\(\\max(0,\\, n-N+K) \\le x \\le \\min(n, K)\\), and it applies to a setting that meets these criteria:</p><ul><li>The population is finite, with a fixed size \\(N\\) and exactly \\(K\\) successes.</li><li>A fixed number \\(n\\) of objects is drawn without replacement, so the draws are not independent and the chance of a success changes from draw to draw.</li><li>Every group of \\(n\\) objects is equally likely to be the one drawn.</li><li>\\(X\\) counts the successes among the \\(n\\) objects drawn.</li></ul>',
+    story:'<p>Draw \\(n\\) objects without replacement from \\(N\\), of which \\(K\\) are successes. \\(X\\) is the number of successes drawn; the support is \\(\\max(0,\\, n-N+K) \\le x \\le \\min(n, K)\\).</p><ul><li>A finite population with exactly \\(K\\) successes.</li><li>Draws without replacement, so they are not independent.</li></ul>',
     notation:P=>`X \\sim \\text{Hypergeom}(N, K, n), \\qquad N = ${P.N},\\ K = ${P.K},\\ n = ${P.n}`,
     pmfAt:(k,P)=>`\\frac{\\binom{${P.K}}{${k}}\\binom{${P.N-P.K}}{${P.n-k}}}{\\binom{${P.N}}{${P.n}}}`,
     pmfTex:'P_X(x) = \\frac{\\binom{K}{x}\\binom{N-K}{n-x}}{\\binom{N}{n}}, \\quad \\max(0,\\, n-N+K) \\le x \\le \\min(n, K)',
@@ -356,7 +580,7 @@ const DISTS={
     support:()=>({lo:0,hi:Infinity}),
     pmf:(k,P)=>(k<0||!Number.isInteger(k))?0:Math.exp(-P.lam+k*Math.log(P.lam)-lf(k)),
     mean:P=>P.lam,variance:P=>P.lam,
-    story:'<p>Events happen at random over a fixed interval of time or space, at an average rate of \\(\\lambda\\) per interval. \\(X\\) is the number of events in the interval. \\(X\\) is a discrete random variable with support \\(\\{0, 1, 2, \\dots\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>Events are counted over one fixed interval, such as an hour, a page or a square meter.</li><li>Events happen one at a time, and counts in non-overlapping intervals are independent.</li><li>The average rate \\(\\lambda > 0\\) is constant across the interval.</li><li>There is no fixed maximum; \\(X\\) counts the events in the interval.</li></ul>',
+    story:'<p>Count random events in a fixed interval of time or space. \\(X\\) is the count; the support is \\(\\{0, 1, 2, \\dots\\}\\).</p><ul><li>Events happen one at a time, independently in non-overlapping intervals.</li><li>A constant average rate \\(\\lambda > 0\\) per interval.</li></ul>',
     notation:P=>`X \\sim \\text{Pois}(\\lambda), \\qquad \\lambda = ${fn(P.lam)}`,
     pmfAt:(k,P)=>`\\frac{e^{-${fn(P.lam)}}(${fn(P.lam)})^{${k}}}{${k}!}`,
     pmfTex:'P_X(x) = \\frac{e^{-\\lambda}\\lambda^{x}}{x!}, \\quad x = 0, 1, 2, \\dots',
@@ -368,7 +592,7 @@ const DISTS={
     pmf:(k,P)=>(k<P.a||k>P.b||!Number.isInteger(k))?0:1/(P.b-P.a+1),
     cdf:(x,P)=>x<P.a?0:x>=P.b?1:(Math.floor(x)-P.a+1)/(P.b-P.a+1),
     mean:P=>(P.a+P.b)/2,variance:P=>((P.b-P.a+1)**2-1)/12,
-    story:'<p>Pick one integer from \\(a\\) to \\(b\\), with every integer equally likely. \\(X\\) is the integer picked. \\(X\\) is a discrete random variable with support \\(\\{a, a+1, \\dots, b\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>The possible values are the consecutive integers \\(a, a+1, \\dots, b\\), with \\(a \\le b\\).</li><li>Each of the \\(b-a+1\\) values has the same probability.</li><li>Exactly one value is picked, and \\(X\\) is that value.</li></ul>',
+    story:'<p>Pick one integer from \\(a\\) to \\(b\\), each equally likely. \\(X\\) is the integer picked; the support is \\(\\{a, a+1, \\dots, b\\}\\).</p><ul><li>Consecutive integers, with \\(a \\le b\\).</li><li>All \\(b-a+1\\) values have the same probability.</li></ul>',
     notation:P=>`X \\sim \\text{Unif}\\{a, \\dots, b\\}, \\qquad a = ${P.a},\\ b = ${P.b}`,
     pmfAt:(k,P)=>`\\frac{1}{${P.b-P.a+1}}`,
     pmfTex:'P_X(x) = \\frac{1}{b-a+1}, \\quad x = a, a+1, \\dots, b',
@@ -378,7 +602,7 @@ const DISTS={
     support:P=>({lo:P.r,hi:P.p>=1?P.r:Infinity}),
     pmf:(k,P)=>(k<P.r||!Number.isInteger(k))?0:Math.exp(lchoose(k-1,P.r-1)+xlog(P.r,P.p)+xlog(k-P.r,1-P.p)),
     mean:P=>P.r/P.p,variance:P=>P.r*(1-P.p)/(P.p*P.p),
-    story:'<p>Repeat independent trials, each with success probability \\(p\\) and failure probability \\(1-p\\), until the \\(r\\)th success. \\(X\\) is the number of trials needed, including that success. \\(X\\) is a discrete random variable with support \\(\\{r, r+1, r+2, \\dots\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>The trials are independent Bernoulli trials, each with exactly two outcomes.</li><li>The success probability \\(p\\) is fixed and the same on every trial, with \\(0 < p \\le 1\\).</li><li>The number of successes \\(r\\) is fixed in advance; the number of trials is not.</li><li>\\(X\\) counts the trials up to and including the \\(r\\)th success. With \\(r = 1\\), this is the geometric random variable.</li></ul>',
+    story:'<p>Repeat independent trials until the \\(r\\)th success. \\(X\\) is the number of trials needed; the support is \\(\\{r, r+1, r+2, \\dots\\}\\).</p><ul><li>Independent trials with the same success probability \\(0 < p \\le 1\\).</li><li>A fixed number of successes \\(r\\); \\(r = 1\\) gives the Geometric.</li></ul>',
     notation:P=>`X \\sim \\text{NegBin}(r, p), \\qquad r = ${P.r},\\ p = ${fn(P.p)}`,
     pmfAt:(k,P)=>`\\binom{${k-1}}{${P.r-1}}(${fn(P.p)})^{${P.r}}(${fn(1-P.p)})^{${k-P.r}}`,
     pmfTex:'P_X(x) = \\binom{x-1}{r-1} p^{r}(1-p)^{x-r}, \\quad x = r, r+1, r+2, \\dots',
@@ -389,7 +613,8 @@ const DISTS={
     pmf:(k,P)=>(k<1||k>P.N||!Number.isInteger(k))?0:Math.pow(k,-P.s)/genHc(P.N,0,P.s),
     cdf:(x,P)=>x<1?0:x>=P.N?1:zmCum(P.N,0,P.s)[Math.floor(x)],
     mean:P=>genHc(P.N,0,P.s-1)/genHc(P.N,0,P.s),
-    story:'<p>Rank \\(N\\) items from most to least common, as with words in a text or cities by size. The item of rank \\(x\\) is chosen with probability proportional to \\(1/x^{s}\\). \\(X\\) is the rank of the chosen item. \\(X\\) is a discrete random variable with support \\(\\{1, 2, \\dots, N\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>There are finitely many items, \\(N\\), ranked 1 to \\(N\\) by how common they are.</li><li>The probability of rank \\(x\\) is proportional to \\(x^{-s}\\), with a fixed exponent \\(s \\ge 0\\); a larger \\(s\\) puts more probability on the top ranks.</li><li>One item is chosen, and \\(X\\) is its rank.</li></ul>',
+    variance:P=>zmVar(P.N,0,P.s),
+    story:'<p>Rank \\(N\\) items from most to least common, and choose rank \\(x\\) with probability proportional to \\(\\dfrac{1}{x^{s}}\\). \\(X\\) is the chosen rank; the support is \\(\\{1, \\dots, N\\}\\).</p><ul><li>Finitely many ranked items, such as words in a text.</li><li>A fixed exponent \\(s \\ge 0\\); a larger \\(s\\) favors the top ranks.</li></ul>',
     notation:P=>`X \\sim \\text{Zipf}(s, N), \\qquad s = ${fn(P.s)},\\ N = ${P.N}`,
     pmfAt:(k,P)=>`\\frac{${k}^{-${fn(P.s)}}}{H_{${P.N},\\,${fn(P.s)}}}`,
     pmfTex:'P_X(x) = \\frac{x^{-s}}{H_{N,s}}, \\quad x = 1, 2, \\dots, N, \\qquad H_{N,s} = \\sum_{k=1}^{N} k^{-s}',
@@ -400,7 +625,8 @@ const DISTS={
     pmf:(k,P)=>(k<1||k>P.N||!Number.isInteger(k))?0:Math.pow(k+P.q,-P.s)/genHc(P.N,P.q,P.s),
     cdf:(x,P)=>x<1?0:x>=P.N?1:zmCum(P.N,P.q,P.s)[Math.floor(x)],
     mean:P=>genHc(P.N,P.q,P.s-1)/genHc(P.N,P.q,P.s)-P.q,
-    story:'<p>Rank \\(N\\) items from most to least common. The item of rank \\(x\\) is chosen with probability proportional to \\(1/(x+q)^{s}\\), a Zipf law with the ranks shifted by \\(q\\). \\(X\\) is the rank of the chosen item. \\(X\\) is a discrete random variable with support \\(\\{1, 2, \\dots, N\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>There are finitely many items, \\(N\\), ranked 1 to \\(N\\) by how common they are.</li><li>The probability of rank \\(x\\) is proportional to \\((x+q)^{-s}\\), with a fixed exponent \\(s > 0\\) and shift \\(q \\ge 0\\).</li><li>The shift \\(q\\) flattens the top ranks, which fits data where the most common items are less dominant than Zipf predicts; \\(q = 0\\) gives the Zipf random variable.</li><li>One item is chosen, and \\(X\\) is its rank.</li></ul>',
+    variance:P=>zmVar(P.N,P.q,P.s),
+    story:'<p>A Zipf law with the ranks shifted by \\(q\\): rank \\(x\\) has probability proportional to \\(\\dfrac{1}{(x+q)^{s}}\\). \\(X\\) is the chosen rank; the support is \\(\\{1, \\dots, N\\}\\).</p><ul><li>The shift \\(q \\ge 0\\) flattens the top ranks; \\(q = 0\\) gives Zipf.</li><li>A fixed exponent \\(s > 0\\).</li></ul>',
     notation:P=>`X \\sim \\text{ZM}(N, q, s), \\qquad N = ${P.N},\\ q = ${fn(P.q)},\\ s = ${fn(P.s)}`,
     pmfAt:(k,P)=>`\\frac{(${k} + ${fn(P.q)})^{-${fn(P.s)}}}{H_{${P.N},\\,${fn(P.q)},\\,${fn(P.s)}}}`,
     pmfTex:'P_X(x) = \\frac{(x+q)^{-s}}{H_{N,q,s}}, \\quad x = 1, 2, \\dots, N, \\qquad H_{N,q,s} = \\sum_{k=1}^{N} (k+q)^{-s}',
@@ -411,7 +637,8 @@ const DISTS={
     pmf:(k,P)=>(k<1||k>P.b-1||!Number.isInteger(k))?0:Math.log(1+1/k)/Math.log(P.b),
     cdf:(x,P)=>x<1?0:x>=P.b-1?1:Math.log(Math.floor(x)+1)/Math.log(P.b),
     mean:P=>(P.b-1)-lf(P.b-1)/Math.log(P.b),
-    story:'<p>Take a number from a data set that spans several orders of magnitude, such as city populations, prices or physical constants, written in base \\(b\\). \\(X\\) is its leading (first nonzero) digit. \\(X\\) is a discrete random variable with support \\(\\{1, 2, \\dots, b-1\\}\\), and it applies to a setting that meets these criteria:</p><ul><li>The data are positive numbers spread over several orders of magnitude.</li><li>The data are scale invariant: changing units does not change the pattern of leading digits, which happens when the logarithms of the numbers are spread evenly.</li><li>\\(X\\) is the leading digit in base \\(b\\) (base 10 by default).</li><li>Smaller digits are more likely; in base 10, about 30.1% of leading digits are 1.</li></ul>',
+    variance:P=>{const m=(P.b-1)-lf(P.b-1)/Math.log(P.b);return Math.max(0,benfordEX2(P.b)-m*m);},
+    story:'<p>Take a number from data that span several orders of magnitude, written in base \\(b\\). \\(X\\) is its leading digit; the support is \\(\\{1, \\dots, b-1\\}\\).</p><ul><li>Positive, scale-invariant data, such as populations or prices.</li><li>Small digits are more likely: in base 10, about 30.1% of leading digits are 1.</li></ul>',
     notation:P=>`X \\sim \\text{Benford}(b), \\qquad b = ${P.b}`,
     pmfAt:(k,P)=>`\\log_{${P.b}}\\left(1 + \\frac{1}{${k}}\\right)`,
     pmfTex:'P_X(x) = \\log_b\\left(1 + \\frac{1}{x}\\right), \\quad x = 1, 2, \\dots, b-1',
@@ -455,28 +682,77 @@ const ORDER=['benford','bernoulli','binomial','geometric','hypergeometric','negb
 
 const EVX={
   negbinomial:{sum:'\\sum_{x=r}^{\\infty} x\\binom{x-1}{r-1}p^{r}(1-p)^{x-r}',closed:'\\frac{r}{p}',num:P=>`\\frac{${P.r}}{${fn(P.p)}}`,
-    why:P=>`The wait for each of the \\(r = ${P.r}\\) successes is a geometric wait of \\(1/p\\) trials on average, since the independent trials share the same \\(p = ${fn(P.p)}\\); adding the \\(r\\) waits gives \\(r/p\\).`},
+    why:P=>`The wait for each of the \\(r = ${P.r}\\) successes is a geometric wait of \\(\\dfrac{1}{p}\\) trials on average, since the independent trials share the same \\(p = ${fn(P.p)}\\); adding the \\(r\\) waits gives \\(\\dfrac{r}{p}\\).`},
   zipf:{sum:'\\sum_{x=1}^{N} x \\cdot \\frac{x^{-s}}{H_{N,s}}',closed:'\\frac{H_{N,s-1}}{H_{N,s}}',
     num:P=>({rel:'\\approx',tex:`\\frac{${fmt(genHc(P.N,0,P.s-1),true)}}{${fmt(genHc(P.N,0,P.s),true)}}`}),
-    why:P=>`Ranks are weighted by \\(x^{-s}\\), so with \\(s = ${fn(P.s)}\\) the top ranks get extra weight and the average rank sits below the middle rank \\((N+1)/2 = ${fn((P.N+1)/2)}\\); \\(s = 0\\) makes every rank equally likely.`},
+    why:P=>`Ranks are weighted by \\(x^{-s}\\), so with \\(s = ${fn(P.s)}\\) the top ranks get extra weight and the average rank sits below the middle rank \\(\\dfrac{N+1}{2} = ${fn((P.N+1)/2)}\\); \\(s = 0\\) makes every rank equally likely.`},
   zipfmandelbrot:{sum:'\\sum_{x=1}^{N} x \\cdot \\frac{(x+q)^{-s}}{H_{N,q,s}}',closed:'\\frac{H_{N,q,s-1}}{H_{N,q,s}} - q',
     num:P=>({rel:'\\approx',tex:`\\frac{${fmt(genHc(P.N,P.q,P.s-1),true)}}{${fmt(genHc(P.N,P.q,P.s),true)}} - ${fn(P.q)}`}),
     why:P=>`Ranks are weighted by \\((x+q)^{-s}\\); the shift \\(q = ${fn(P.q)}\\) flattens the top ranks, so the average rank is higher than for Zipf with the same \\(s\\) and \\(N\\), and \\(q = 0\\) gives Zipf exactly.`},
   benford:{sum:'\\sum_{x=1}^{b-1} x \\log_b\\left(1 + \\frac{1}{x}\\right)',closed:'(b-1) - \\log_b\\big((b-1)!\\big)',num:P=>`${P.b-1} - \\log_{${P.b}}(${P.b-1}!)`,
-    why:P=>`Scale-invariant data have evenly spread logarithms, which favors small leading digits, so the average leading digit is below the middle digit \\(b/2 = ${fn(P.b/2)}\\).`},
+    why:P=>`Scale-invariant data have evenly spread logarithms, which favors small leading digits, so the average leading digit is below the middle digit \\(\\dfrac{b}{2} = ${fn(P.b/2)}\\).`},
   bernoulli:{sum:'0 \\cdot (1-p) + 1 \\cdot p',closed:'p',num:P=>null,
     why:P=>`With one trial and a fixed \\(p = ${fn(P.p)}\\), \\(X\\) averages to the long-run fraction of successes, \\(p\\).`},
   geometric:{sum:'\\sum_{x=1}^{\\infty} x\\,(1-p)^{x-1}p',closed:'\\frac{1}{p}',num:P=>`\\frac{1}{${fn(P.p)}}`,
-    why:P=>`With independent trials that each succeed with probability \\(p = ${fn(P.p)}\\), a success comes about once every \\(1/p\\) trials, so that is the average wait.`},
+    why:P=>`With independent trials that each succeed with probability \\(p = ${fn(P.p)}\\), a success comes about once every \\(\\dfrac{1}{p}\\) trials, so that is the average wait.`},
   binomial:{sum:'\\sum_{x=0}^{n} x\\binom{n}{x}p^{x}(1-p)^{n-x}',closed:'np',num:P=>`${P.n}(${fn(P.p)})`,
     why:P=>`Each of the \\(n = ${P.n}\\) independent trials adds \\(p = ${fn(P.p)}\\) successes on average, for \\(np\\) in total.`},
   hypergeometric:{sum:'\\sum_{x} x\\,\\frac{\\binom{K}{x}\\binom{N-K}{n-x}}{\\binom{N}{n}}',closed:'n\\,\\frac{K}{N}',num:P=>`${P.n}\\cdot\\frac{${P.K}}{${P.N}}`,
-    why:P=>`Each draw is a success with probability \\(K/N = ${fn(P.K/P.N)}\\); drawing without replacement makes the draws dependent but does not change the average, \\(nK/N\\).`},
+    why:P=>`Each draw is a success with probability \\(\\dfrac{K}{N} = ${fn(P.K/P.N)}\\); drawing without replacement makes the draws dependent but does not change the average, \\(\\dfrac{nK}{N}\\).`},
   poisson:{sum:'\\sum_{x=0}^{\\infty} x\\,\\frac{e^{-\\lambda}\\lambda^{x}}{x!}',closed:'\\lambda',num:P=>null,
     why:P=>`The rate \\(\\lambda = ${fn(P.lam)}\\) is, by definition, the average count per interval, so it is the expected value.`},
   uniform:{sum:'\\sum_{x=a}^{b} x \\cdot \\frac{1}{b-a+1}',closed:'\\frac{a+b}{2}',num:P=>`\\frac{${P.a} + ${P.b<0?`(${P.b})`:P.b}}{2}`,
-    why:P=>`The \\(b-a+1 = ${P.b-P.a+1}\\) values are equally likely, so the PMF balances at their midpoint, \\((a+b)/2\\).`}
+    why:P=>`The \\(b-a+1 = ${P.b-P.a+1}\\) values are equally likely, so the PMF balances at their midpoint, \\(\\dfrac{a+b}{2}\\).`}
 };
+
+/* ---------- short "Meaning" sentences, one per random variable ---------- */
+const WHY={
+ ev:{
+  bernoulli:P=>`\\(X\\) averages to the long-run fraction of successes, \\(p = ${fn(P.p)}\\).`,
+  geometric:P=>`A success comes about once every \\(\\dfrac{1}{p}\\) trials, so that is the average wait.`,
+  binomial:P=>`Each of the \\(n = ${P.n}\\) trials adds \\(p = ${fn(P.p)}\\) successes on average.`,
+  hypergeometric:P=>`Each draw is a success with probability \\(\\dfrac{K}{N} = ${fn(P.K/P.N)}\\); dependence between draws does not change the average.`,
+  poisson:P=>`The rate \\(\\lambda = ${fn(P.lam)}\\) is, by definition, the average count.`,
+  uniform:P=>`The values are equally likely, so the PMF balances at the midpoint \\(\\dfrac{a+b}{2}\\).`,
+  negbinomial:P=>`\\(X\\) adds \\(r = ${P.r}\\) geometric waits of \\(\\dfrac{1}{p}\\) trials each, on average.`,
+  zipf:P=>`The top ranks get extra weight, so the average rank sits below the middle rank \\(\\dfrac{N+1}{2} = ${fn((P.N+1)/2)}\\).`,
+  zipfmandelbrot:P=>`The shift \\(q\\) flattens the top ranks, so the average rank is higher than for Zipf.`,
+  benford:P=>`Small leading digits dominate, so the average digit is below the middle digit \\(\\dfrac{b}{2} = ${fn(P.b/2)}\\).`},
+ var:{
+  bernoulli:P=>`The spread \\(p(1-p)\\) is largest at \\(p = \\dfrac{1}{2}\\), when the outcome is hardest to predict.`,
+  geometric:P=>`Long waits stay possible, so the spread grows like \\(\\dfrac{1}{p^{2}}\\) as \\(p \\to 0\\).`,
+  binomial:P=>`The \\(n = ${P.n}\\) independent trials each add \\(p(1-p) = ${fn(P.p*(1-P.p))}\\).`,
+  hypergeometric:P=>P.N===1?`With \\(N = 1\\), \\(X\\) is constant, so there is no spread.`:`Drawing without replacement shrinks the binomial variance by the factor \\(\\dfrac{N-n}{N-1} = ${fn((P.N-P.n)/(P.N-1))}\\).`,
+  poisson:P=>`For a Poisson count, the variance equals the mean, \\(\\lambda = ${fn(P.lam)}\\).`,
+  uniform:P=>`Only the number of values, \\(b-a+1 = ${P.b-P.a+1}\\), matters, not where they sit.`,
+  negbinomial:P=>`The \\(r = ${P.r}\\) independent geometric waits each add \\(\\dfrac{1-p}{p^{2}}\\).`,
+  zipf:P=>`A larger \\(s\\) piles probability onto the top ranks and shrinks the spread.`,
+  zipfmandelbrot:P=>`A larger \\(q\\) flattens the ranks, so the spread rises toward the uniform value \\(\\dfrac{N^{2}-1}{12} = ${fn((P.N*P.N-1)/12)}\\).`,
+  benford:P=>`It comes from \\(E[X^{2}] = \\sum x^{2}\\log_b\\left(1 + \\dfrac{1}{x}\\right)\\), added up digit by digit.`},
+ skew:{
+  bernoulli:P=>`Below \\(p = \\dfrac{1}{2}\\), the rare value 1 sits far above the mean, so \\(\\gamma_1 > 0\\); above it, \\(\\gamma_1 < 0\\).`,
+  binomial:P=>`For a binomial, the sign follows \\(1-2p\\), and the skew fades as \\(n\\) grows.`,
+  geometric:P=>`Rare long waits make a long right tail, so \\(\\gamma_1\\) is always at least 2.`,
+  negbinomial:P=>`Adding \\(r\\) geometric waits evens out the right tail; the skew shrinks like \\(\\dfrac{1}{\\sqrt{r}}\\).`,
+  poisson:P=>`Counts cannot go below 0 but have no upper limit, so the right tail is longer; the skew fades as \\(\\lambda\\) grows.`,
+  uniform:P=>`Every value is equally likely, so the PMF is symmetric and \\(\\gamma_1 = 0\\).`,
+  hypergeometric:P=>`The sign follows \\((N-2K)(N-2n)\\); the skew is 0 when \\(K = \\dfrac{N}{2}\\) or \\(n = \\dfrac{N}{2}\\).`,
+  zipf:P=>`Most probability sits on the top ranks, with a long tail of rare ranks, so \\(\\gamma_1 > 0\\).`,
+  zipfmandelbrot:P=>`A larger shift \\(q\\) flattens the PMF toward uniform, and \\(\\gamma_1\\) falls toward 0.`,
+  benford:P=>`Small digits dominate, with a tail of rarer large digits, so \\(\\gamma_1 > 0\\).`},
+ kurt:{
+  bernoulli:P=>`\\(\\gamma_2\\) is smallest, \\(-2\\), at \\(p = \\dfrac{1}{2}\\), and grows without bound as the rare outcome becomes an outlier.`,
+  binomial:P=>`For a binomial, \\(\\gamma_2\\) shrinks toward 0 as \\(n\\) grows.`,
+  geometric:P=>`Rare long waits make a heavy right tail, so \\(\\gamma_2\\) is always at least 6.`,
+  negbinomial:P=>`This is the geometric value divided by \\(r\\), so it shrinks toward 0 as \\(r\\) grows.`,
+  poisson:P=>`\\(\\gamma_2 = \\dfrac{1}{\\lambda}\\) shrinks toward 0 as \\(\\lambda\\) grows.`,
+  uniform:P=>`A flat PMF has no tails, so \\(\\gamma_2 < 0\\), approaching \\(-\\dfrac{6}{5}\\) as the number of values grows.`,
+  hypergeometric:P=>`It behaves like a binomial with \\(p = \\dfrac{K}{N}\\), and is added up directly over the PMF.`,
+  zipf:P=>`A larger \\(s\\) leaves a long, thin tail of rare ranks and raises \\(\\gamma_2\\).`,
+  zipfmandelbrot:P=>`A larger \\(q\\) flattens the PMF toward uniform, so \\(\\gamma_2\\) moves toward the flat uniform value.`,
+  benford:P=>`It is added up digit by digit over the PMF.`}
+};
+const pctOf=q=>(100*q).toFixed(1).replace(/\.0$/,'');
 function renderEV(){
   const mu=D.mean(P),E=EVX[key],R=D.rv;
   const r4=v=>Math.round(v*1e4)/1e4, rel=Math.abs(mu-r4(mu))<1e-12?'=':'\\approx';
@@ -486,9 +762,385 @@ function renderEV(){
   setMath($('#evDeriv'),`\\[\\begin{aligned} ${lines.join(' \\\\ ')} \\end{aligned}\\]`);
   $('#evVal').innerHTML=fmt(mu);
   let possible=Number.isInteger(r4(mu))&&D.pmf(Math.round(mu),P)>0;
-  setMath($('#evNote2'),possible?`\\(E[${R}] = ${fn(mu)}\\) is a value \\(${R}\\) can take.`
-    :`\\(E[${R}] ${rel} ${fn(mu)}\\) is not a value \\(${R}\\) can take; an average need not be a possible outcome.`);
-  setMath($('#evWhy'),`<b>Meaning:</b> \\(E[${R}]\\) is the long-run average of \\(${R}\\) over many repetitions, and the balance point of the PMF. ${E.why(P)}`);
+  $('#evTag').innerHTML=possible?`a value <i>${R}</i> can take`:`not a value <i>${R}</i> can take`;
+  setMath($('#evWhy'),`<b>Meaning:</b> \\(E[${R}]\\) is the long-run average of \\(${R}\\), and the balance point of the PMF (the blue fulcrum). ${WHY.ev[key](P)}`);
+  if(open.evBlock)renderSweep('mean');
+}
+
+/* ---------- variance ---------- */
+const VARX={
+  bernoulli:{closed:'p(1-p)',num:P=>`${fn(P.p)}(${fn(1-P.p)})`,
+    why:P=>`The spread \\(p(1-p)\\) is largest at \\(p = \\dfrac{1}{2}\\), when the outcome is hardest to predict, and is 0 at \\(p = 0\\) or \\(p = 1\\), when the outcome is certain.`},
+  geometric:{closed:'\\frac{1-p}{p^{2}}',num:P=>`\\frac{${fn(1-P.p)}}{(${fn(P.p)})^{2}}`,
+    why:P=>`With \\(p = ${fn(P.p)}\\), short waits are the most likely, but long waits stay possible. As \\(p \\to 0\\) the waits spread out without bound, and the variance grows like \\(\\dfrac{1}{p^{2}}\\), faster than the mean \\(\\dfrac{1}{p}\\).`},
+  binomial:{closed:'np(1-p)',num:P=>`${P.n}(${fn(P.p)})(${fn(1-P.p)})`,
+    why:P=>`The \\(n = ${P.n}\\) trials are independent, so their variances add, and each trial contributes \\(p(1-p) = ${fn(P.p*(1-P.p))}\\). For a fixed \\(n\\), the variance is largest at \\(p = \\dfrac{1}{2}\\).`},
+  hypergeometric:{closed:'n\\,\\frac{K}{N}\\cdot\\frac{N-K}{N}\\cdot\\frac{N-n}{N-1}',
+    num:P=>P.N>1?`${P.n}\\cdot\\frac{${P.K}}{${P.N}}\\cdot\\frac{${P.N-P.K}}{${P.N}}\\cdot\\frac{${P.N-P.n}}{${P.N-1}}`:null,
+    why:P=>P.N===1?`With \\(N = 1\\), the single draw always takes the one object, so \\(X\\) is constant and its variance is 0.`
+      :`Compared with a binomial count with \\(p = \\dfrac{K}{N} = ${fn(P.K/P.N)}\\), the factor \\(\\dfrac{N-n}{N-1} = ${fn((P.N-P.n)/(P.N-1))}\\) shrinks the variance: drawing without replacement uses up the population, so the count varies less, and drawing all \\(N\\) objects leaves no randomness at all.`},
+  poisson:{closed:'\\lambda',num:P=>null,
+    why:P=>`For a Poisson count, the variance equals the mean; both are \\(\\lambda = ${fn(P.lam)}\\).`},
+  uniform:{closed:'\\frac{(b-a+1)^{2}-1}{12}',num:P=>`\\frac{${P.b-P.a+1}^{2}-1}{12}`,
+    why:P=>`The variance depends only on how many values there are, \\(b-a+1 = ${P.b-P.a+1}\\), and not on where they sit; sliding \\(a\\) and \\(b\\) together moves the PMF without changing its spread.`},
+  negbinomial:{closed:'\\frac{r(1-p)}{p^{2}}',num:P=>`\\frac{${P.r}(${fn(1-P.p)})}{(${fn(P.p)})^{2}}`,
+    why:P=>`The \\(r = ${P.r}\\) geometric waits are independent, so their variances \\(\\dfrac{1-p}{p^{2}}\\) add, giving \\(\\dfrac{r(1-p)}{p^{2}}\\).`},
+  zipf:{closed:'\\frac{H_{N,s-2}}{H_{N,s}} - \\left(\\frac{H_{N,s-1}}{H_{N,s}}\\right)^{2}',
+    num:P=>{const h=genHc(P.N,0,P.s);return {rel:'\\approx',tex:`\\frac{${fmt(genHc(P.N,0,P.s-2),true)}}{${fmt(h,true)}} - \\left(\\frac{${fmt(genHc(P.N,0,P.s-1),true)}}{${fmt(h,true)}}\\right)^{2}`};},
+    why:P=>`Here \\(E[X^{2}] = \\dfrac{H_{N,s-2}}{H_{N,s}}\\), since \\(x^{2} \\cdot x^{-s} = x^{-(s-2)}\\). A larger \\(s\\) piles probability onto the top ranks and shrinks the variance; \\(s = 0\\) gives the uniform variance \\(\\dfrac{N^{2}-1}{12} = ${fn((P.N*P.N-1)/12)}\\).`},
+  zipfmandelbrot:{closed:'\\frac{H_{N,q,s-2}}{H_{N,q,s}} - \\left(\\frac{H_{N,q,s-1}}{H_{N,q,s}}\\right)^{2}',
+    num:P=>{const h=genHc(P.N,P.q,P.s);return {rel:'\\approx',tex:`\\frac{${fmt(genHc(P.N,P.q,P.s-2),true)}}{${fmt(h,true)}} - \\left(\\frac{${fmt(genHc(P.N,P.q,P.s-1),true)}}{${fmt(h,true)}}\\right)^{2}`};},
+    why:P=>`Adding the constant \\(q\\) does not change the spread, so \\(\\operatorname{Var}(X) = \\operatorname{Var}(X+q)\\), and \\(E[(X+q)^{k}] = \\dfrac{H_{N,q,s-k}}{H_{N,q,s}}\\). A larger shift \\(q\\) flattens the top ranks, so the variance rises toward the uniform value \\(\\dfrac{N^{2}-1}{12} = ${fn((P.N*P.N-1)/12)}\\).`},
+  benford:{closed:'\\sum_{x=1}^{b-1} x^{2}\\log_b\\left(1 + \\frac{1}{x}\\right) - \\Big((b-1) - \\log_b\\big((b-1)!\\big)\\Big)^{2}',
+    num:P=>({rel:'\\approx',tex:`${fmt(benfordEX2(P.b),true)} - (${fmt(D.mean(P),true)})^{2}`}),
+    why:P=>`Here \\(E[X^{2}] = \\sum_{x=1}^{b-1} x^{2}\\log_b\\left(1 + \\dfrac{1}{x}\\right) \\approx ${fmt(benfordEX2(P.b),true)}\\), added up term by term because it has no simpler closed form.`}
+};
+function renderVar(){
+  const V=VARX[key],R=D.rv,mu=D.mean(P),v=D.variance(P),sd=Math.sqrt(v);
+  const r4=x=>Math.round(x*1e4)/1e4, rel=x=>Math.abs(x-r4(x))<1e-12?'=':'\\approx';
+  const VX=`\\operatorname{Var}(${R})`;
+  const lines=[`${VX} &= E\\big[(${R}-\\mu)^{2}\\big]`,`&= E[${R}^{2}] - (E[${R}])^{2}`,`&= ${V.closed}`];
+  const n=V.num(P); if(n)lines.push(typeof n==='string'?`&= ${n}`:`&${n.rel} ${n.tex}`);
+  lines.push(`${VX} &${rel(v)} ${fmt(v,true)}`);
+  lines.push(`\\sigma &= \\sqrt{${VX}} ${rel(sd)} ${fmt(sd,true)}`);
+  setMath($('#varDeriv'),`\\[\\begin{aligned} ${lines.join(' \\\\ ')} \\end{aligned}\\]`);
+  $('#varVal').innerHTML=fmt(v); $('#sdVal').innerHTML=fmt(sd);
+  if(v<1e-12)$('#varTag').innerHTML='no spread';
+  else{const a=Math.ceil(mu-sd-1e-9),b=Math.floor(mu+sd+1e-9),q=a<=b?probOf(a,b):0;
+    $('#varTag').innerHTML=`${pctOf(q)}% within <i>μ</i> ± <i>σ</i>`;}
+  setMath($('#varWhy'),`<b>Meaning:</b> \\(${VX}\\) is the average squared distance from the mean, and \\(\\sigma\\) is that spread in the units of \\(${R}\\) (the amber band, \\(\\mu \\pm \\sigma\\)). ${WHY.var[key](P)}`);
+  if(open.varBlock)renderSweep('var');
+}
+
+/* ---------- E[X] and Var(X) as functions of one parameter ---------- */
+// k: the swept parameter; the others stay at their current slider values.
+// cap: for curves that blow up, the vertical axis stops at max(cap, 1.15 × current value).
+const SWEEP={
+  bernoulli:{k:'p',sym:'p'},
+  geometric:{k:'p',sym:'p',cap:{mean:10,var:40}},
+  binomial:{k:'p',sym:'p'},
+  hypergeometric:{k:'K',sym:'K'},
+  poisson:{k:'lam',sym:'λ'},
+  uniform:{k:'b',sym:'b'},
+  negbinomial:{k:'r',sym:'r'},
+  zipf:{k:'s',sym:'s'},
+  zipfmandelbrot:{k:'q',sym:'q'},
+  benford:{k:'b',sym:'b'}
+};
+const SG={W:560,H:300,M:{l:62,r:18,t:16,b:46}};
+const sweepHover={mean:null,var:null,skew:null,kurt:null,mom:null};
+const sweepInfo={};
+function sweepTicks(x0,x1,int){
+  let step=niceStep(Math.max(x1-x0,1e-9),6); if(int)step=Math.max(1,Math.round(step));
+  const out=[];for(let i=Math.ceil(x0/step-1e-9);i*step<=x1+1e-9;i++)out.push(+(i*step).toFixed(10));
+  return out;
+}
+const symOf=p=>(p.label.match(/<i>.*?<\/i>/)||[p.k])[0];
+const subT=(c,n)=>`${c}<tspan baseline-shift="sub" font-size="11">${n}</tspan>`;
+// One entry per parameter plot: what it plots and how its axis label reads.
+const SWK={
+  mean:{id:'ev',f:Q=>D.mean(Q),svg:()=>`E[${D.rv}]`,html:()=>`<i>E</i>[<i>${D.rv}</i>]`,plain:()=>`E[${D.rv}]`,title:''},
+  var:{id:'var',f:Q=>D.variance(Q),svg:()=>`<tspan font-style="normal">Var</tspan>(${D.rv})`,html:()=>`Var(<i>${D.rv}</i>)`,plain:()=>`Var(${D.rv})`,title:''},
+  skew:{id:'skew',f:Q=>shape(Q).skew,svg:()=>subT('γ','1'),html:()=>'<i>γ</i><sub>1</sub>',plain:()=>'skewness',title:'Skewness ',auto:4},
+  kurt:{id:'kurt',f:Q=>shape(Q).exk,svg:()=>subT('γ','2'),html:()=>'<i>γ</i><sub>2</sub>',plain:()=>'excess kurtosis',title:'Excess kurtosis ',auto:8,ref:'normal distribution'}
+};
+function renderSweep(kind){
+  const K=SWK[kind],svg=$(`#${K.id}Sweep`);
+  const sw=SWEEP[key],p=D.params.find(q=>q.k===sw.k),{W,H,M}=SG;
+  const lo=val(p.min,P),hi=val(p.max,P),int=!!p.int;
+  const at=x=>K.f({...P,[sw.k]:x});
+  const xs=[];
+  if(int)for(let v=lo;v<=hi;v++)xs.push(v); else for(let i=0;i<=240;i++)xs.push(lo+(hi-lo)*i/240);
+  const ys=xs.map(at),cur=P[sw.k],cy=at(cur),cyOK=Number.isFinite(cy),fin=ys.filter(Number.isFinite);
+  const gaps=fin.length<ys.length;
+  if(cyOK)fin.push(cy);
+  let ymin=fin.length?Math.min(0,...fin):0,ymax=fin.length?Math.max(0,...fin):1,clipTop=false,clipBot=false;
+  const cap=sw.cap&&sw.cap[kind];
+  if(cap){const top=Math.max(cap,cy*1.15);if(ymax>top){ymax=top;clipTop=true;}}
+  if(K.auto){const L=Math.max(K.auto,cyOK?1.3*Math.abs(cy):0);
+    if(ymax>L){ymax=L;clipTop=true;} if(ymin<-L){ymin=-L;clipBot=true;}}
+  if(ymax-ymin<1e-9)ymax=ymin+1;
+  const ystep=niceStep(ymax-ymin,5),dec=Math.max(0,-Math.floor(Math.log10(ystep)+1e-9));
+  const y0=clipBot?ymin:Math.floor(ymin/ystep+1e-9)*ystep;
+  const y1=clipTop?ymax:Math.ceil(ymax/ystep-1e-9)*ystep;
+  const yt=[];for(let i=Math.ceil(y0/ystep-1e-9);i*ystep<=y1+1e-9;i++)yt.push(+(i*ystep).toFixed(10));
+  let x0=lo,x1=hi;
+  if(int){const pad=Math.max(0.5,(hi-lo)*0.03);x0=lo-pad;x1=hi+pad;}
+  else if(hi===lo){x0=lo-1;x1=hi+1;}
+  const X=lin(x0,x1,M.l,W-M.r),Y=lin(y0,y1,H-M.b,M.t);
+  const Yc=v=>r2(Math.max(-3000,Math.min(H+3000,Y(v))));
+  let s=clip(`cpSw-${kind}`,8,SG)+frame(X,Y,sweepTicks(x0,x1,int),yt,v=>neg(v.toFixed(dec)),sw.sym,K.svg(),SG);
+  const zeroLine=K.auto&&y0<0&&y1>0;
+  if(zeroLine){const yz=r2(Y(0));
+    s+=`<line class="sw-zero" x1="${M.l}" x2="${W-M.r}" y1="${yz}" y2="${yz}"/>`;
+    if(K.ref)s+=`<text class="sw-reflab" x="${W-M.r-4}" y="${yz-6}" text-anchor="end">${K.ref}</text>`;}
+  s+=`<g clip-path="url(#cpSw-${kind})">`;
+  if(int){
+    const rad=r2(Math.max(1.6,Math.min(4,(X(1)-X(0))*0.3)));
+    xs.forEach((x,i)=>{if(Number.isFinite(ys[i]))s+=`<circle class="sw-pt sw-${kind}" cx="${r2(X(x))}" cy="${Yc(ys[i])}" r="${rad}"/>`;});
+  }else{
+    let d='',pen=false;
+    xs.forEach((x,i)=>{if(Number.isFinite(ys[i])){d+=`${pen?'L':'M'}${r2(X(x))} ${Yc(ys[i])}`;pen=true;}else pen=false;});
+    s+=`<path class="sw-line sw-${kind}" d="${d}"/>`;
+  }
+  let hv=sweepHover[kind]; if(hv!==null&&(hv<lo||hv>hi))hv=sweepHover[kind]=null;
+  if(hv!==null){const hx=r2(X(hv)),hy=at(hv);
+    s+=`<line class="sw-hov" x1="${hx}" x2="${hx}" y1="${H-M.b}" y2="${M.t}"/>`;
+    if(Number.isFinite(hy))s+=`<circle class="sw-ring" cx="${hx}" cy="${Yc(hy)}" r="4.5"/>`;}
+  if(cyOK){const cx=r2(X(cur)),cyp=Yc(cy);
+    s+=`<line class="guide" x1="${cx}" x2="${cx}" y1="${H-M.b}" y2="${cyp}"/><line class="guide" x1="${M.l}" x2="${cx}" y1="${cyp}" y2="${cyp}"/>`;
+    s+=`<circle class="sw-cur sw-${kind}" cx="${cx}" cy="${cyp}" r="6.5"/>`;}
+  s+='</g>';
+  svg.innerHTML=s;
+  sweepInfo[kind]={x0,x1,lo,hi,int,step:p.step};
+  const symH=`<i>${sw.sym}</i>`,yH=K.html(),show=v=>Number.isFinite(v)?neg(fmt(v)):'undefined (<i>σ</i> = 0)';
+  svg.setAttribute('aria-label',`${int?'Dot plot':'Line plot'} of ${K.plain()} against ${sw.sym}`);
+  $(`#${K.id}SweepTitle`).innerHTML=`${K.title}${yH} as a function of ${symH}`;
+  $(`#${K.id}SweepOut`).innerHTML=hv===null
+    ?`${symH} = <b>${neg(fn(cur))}</b>, ${yH} = <b>${show(cy)}</b>`
+    :`At ${symH} = <b>${neg(fn(hv))}</b>: &nbsp;${yH} = <b>${show(at(hv))}</b>`;
+  const held=D.params.filter(q=>q.k!==sw.k).map(q=>`${symOf(q)} = ${neg(fn(P[q.k]))}`);
+  const bits=[];
+  if(held.length)bits.push(`Held fixed: ${held.join(', ')}.`);
+  if(K.ref&&zeroLine)bits.push('Dashed line: normal.');
+  if(!cyOK)bits.push('No dot: undefined at this setting.');
+  if(gaps)bits.push('Gaps: undefined where <i>σ</i> = 0.');
+  if(clipTop||clipBot)bits.push('Axis cut off: the curve continues.');
+  const cap2=bits.join(' ');
+  $(`#${K.id}SweepCap`).innerHTML=cap2;
+}
+function attachPlotHover(kind,sel,redraw){
+  const svg=$(sel),{W,M}=SG;
+  const onMove=e=>{
+    const I=sweepInfo[kind];if(!I)return;
+    const r=svg.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*W;
+    let v=null;
+    if(px>=M.l&&px<=W-M.r){
+      v=I.x0+(px-M.l)/(W-M.r-M.l)*(I.x1-I.x0);
+      v=I.int?Math.round(v):Math.round(v/I.step)*I.step;
+      v=+Math.min(I.hi,Math.max(I.lo,v)).toFixed(8);
+    }
+    if(v!==sweepHover[kind]){sweepHover[kind]=v;redraw();}
+  };
+  svg.addEventListener('pointermove',onMove);
+  svg.addEventListener('pointerdown',onMove);
+  svg.addEventListener('pointerleave',()=>{if(sweepHover[kind]!==null){sweepHover[kind]=null;redraw();}});
+}
+
+/* ---------- third and fourth central moments: skewness and excess kurtosis ---------- */
+// Closed forms, used when Var(X) > 0; the other random variables are summed over their finite support.
+const SHAPE={
+  bernoulli:{g1:Q=>(1-2*Q.p)/Math.sqrt(Q.p*(1-Q.p)),g2:Q=>(1-6*Q.p*(1-Q.p))/(Q.p*(1-Q.p))},
+  binomial:{g1:Q=>(1-2*Q.p)/Math.sqrt(Q.n*Q.p*(1-Q.p)),g2:Q=>(1-6*Q.p*(1-Q.p))/(Q.n*Q.p*(1-Q.p))},
+  geometric:{g1:Q=>(2-Q.p)/Math.sqrt(1-Q.p),g2:Q=>6+Q.p*Q.p/(1-Q.p)},
+  negbinomial:{g1:Q=>(2-Q.p)/Math.sqrt(Q.r*(1-Q.p)),g2:Q=>6/Q.r+Q.p*Q.p/(Q.r*(1-Q.p))},
+  poisson:{g1:Q=>1/Math.sqrt(Q.lam),g2:Q=>1/Q.lam},
+  uniform:{g1:Q=>0,g2:Q=>{const m=Q.b-Q.a+1;return -6*(m*m+1)/(5*(m*m-1));}}
+};
+function central(Q){
+  const mu=D.mean(Q),v=D.variance(Q);
+  if(!(v>1e-12))return {mu,v:Math.max(0,v),m3:0,m4:0};
+  const C=SHAPE[key];
+  if(C){const sd=Math.sqrt(v);return {mu,v,m3:C.g1(Q)*sd*v,m4:(C.g2(Q)+3)*v*v};}
+  const s=D.support(Q);let m3=0,m4=0;
+  for(let x=s.lo;x<=s.hi;x++){const q=D.pmf(x,Q);if(q>0){const d=x-mu,d2=d*d;m3+=q*d2*d;m4+=q*d2*d2;}}
+  return {mu,v,m3,m4};
+}
+function shape(Q){
+  const c=central(Q);
+  if(!(c.v>1e-12))return {...c,skew:NaN,exk:NaN};
+  let g1=c.m3/(c.v*Math.sqrt(c.v)),g2=c.m4/(c.v*c.v)-3;
+  if(Math.abs(g1)<1e-10)g1=0; if(Math.abs(g2)<1e-10)g2=0;
+  return {...c,skew:g1,exk:g2};
+}
+// big numbers in scientific notation, otherwise as fmt
+function fmtM(v,tex){
+  if(Math.abs(v)<1e6)return fmt(v,tex);
+  let [m,e]=v.toExponential(3).split('e');e=+e;
+  return tex?`${m} \\times 10^{${e}}`:`${m} × 10<sup>${e}</sup>`;
+}
+const SKX={
+  bernoulli:{g1:'\\frac{1-2p}{\\sqrt{p(1-p)}}',g1n:Q=>`\\frac{1-2(${fn(Q.p)})}{\\sqrt{${fn(Q.p)}(${fn(1-Q.p)})}}`,
+    g2:'\\frac{1-6p(1-p)}{p(1-p)}',g2n:Q=>`\\frac{1-6(${fn(Q.p)})(${fn(1-Q.p)})}{${fn(Q.p)}(${fn(1-Q.p)})}`,
+    w1:Q=>`With \\(p < \\dfrac{1}{2}\\), the rare value 1 sits far above the mean, which makes \\(\\gamma_1 > 0\\); with \\(p > \\dfrac{1}{2}\\), the rare value is 0, below the mean, and \\(\\gamma_1 < 0\\). At \\(p = \\dfrac{1}{2}\\) the two values balance.`,
+    w2:Q=>`The excess kurtosis is smallest, \\(-2\\), at \\(p = \\dfrac{1}{2}\\): two equal spikes, one standard deviation on each side of the mean, with no tails at all. As \\(p \\to 0\\) or \\(1\\), the rare outcome becomes an extreme outlier and \\(\\gamma_2\\) grows without bound. No random variable has \\(\\gamma_2 < -2\\).`},
+  binomial:{g1:'\\frac{1-2p}{\\sqrt{np(1-p)}}',g1n:Q=>`\\frac{1-2(${fn(Q.p)})}{\\sqrt{${Q.n}(${fn(Q.p)})(${fn(1-Q.p)})}}`,
+    g2:'\\frac{1-6p(1-p)}{np(1-p)}',g2n:Q=>`\\frac{1-6(${fn(Q.p)})(${fn(1-Q.p)})}{${Q.n}(${fn(Q.p)})(${fn(1-Q.p)})}`,
+    w1:Q=>`The sign follows \\(1-2p\\): a small \\(p\\) gives a longer right tail and a large \\(p\\) a longer left tail. The \\(\\sqrt{n}\\) in the denominator means the skew fades as \\(n = ${Q.n}\\) grows, which is why the binomial PMF looks more and more like a normal curve.`,
+    w2:Q=>`This is the Bernoulli excess kurtosis divided by \\(n = ${Q.n}\\), so it shrinks toward 0, the normal value, as \\(n\\) grows.`},
+  geometric:{g1:'\\frac{2-p}{\\sqrt{1-p}}',g1n:Q=>`\\frac{2-${fn(Q.p)}}{\\sqrt{${fn(1-Q.p)}}}`,
+    g2:'6 + \\frac{p^{2}}{1-p}',g2n:Q=>`6 + \\frac{(${fn(Q.p)})^{2}}{${fn(1-Q.p)}}`,
+    w1:Q=>`The geometric PMF always has a long right tail of rare long waits, so \\(\\gamma_1 \\ge 2\\) for every \\(p\\).`,
+    w2:Q=>`The excess kurtosis is at least 6 for every \\(p\\): the rare long waits form a heavy right tail.`},
+  negbinomial:{g1:'\\frac{2-p}{\\sqrt{r(1-p)}}',g1n:Q=>`\\frac{2-${fn(Q.p)}}{\\sqrt{${Q.r}(${fn(1-Q.p)})}}`,
+    g2:'\\frac{6}{r} + \\frac{p^{2}}{r(1-p)}',g2n:Q=>`\\frac{6}{${Q.r}} + \\frac{(${fn(Q.p)})^{2}}{${Q.r}(${fn(1-Q.p)})}`,
+    w1:Q=>`\\(X\\) adds \\(r = ${Q.r}\\) independent geometric waits, each with a long right tail, so \\(\\gamma_1 > 0\\); adding more waits evens things out, and the skew shrinks like \\(\\dfrac{1}{\\sqrt{r}}\\).`,
+    w2:Q=>`This is the geometric excess kurtosis divided by \\(r = ${Q.r}\\), so it shrinks toward the normal value 0 as \\(r\\) grows.`},
+  poisson:{g1:'\\frac{1}{\\sqrt{\\lambda}}',g1n:Q=>`\\frac{1}{\\sqrt{${fn(Q.lam)}}}`,g2:'\\frac{1}{\\lambda}',g2n:Q=>`\\frac{1}{${fn(Q.lam)}}`,
+    w1:Q=>`Counts cannot go below 0 but have no upper limit, so the right tail is longer and \\(\\gamma_1 > 0\\). The skew fades as \\(\\lambda\\) grows, and the Poisson PMF approaches a normal curve.`,
+    w2:Q=>`The excess kurtosis \\(\\dfrac{1}{\\lambda}\\) shrinks toward the normal value 0 as \\(\\lambda\\) grows.`},
+  uniform:{g1:'0',g1n:null,g2:'-\\frac{6(m^{2}+1)}{5(m^{2}-1)}, \\quad m = b-a+1',g2n:Q=>{const m=Q.b-Q.a+1;return `-\\frac{6(${m}^{2}+1)}{5(${m}^{2}-1)}`;},
+    w1:Q=>`The PMF is symmetric about its midpoint \\(\\dfrac{a+b}{2}\\), so the cubed deviations cancel exactly.`,
+    w2:Q=>`A flat PMF has no tails at all, so \\(\\gamma_2 < 0\\). It runs from \\(-2\\) with two values toward \\(-\\dfrac{6}{5} = -1.2\\) as the number of values \\(m = ${Q.b-Q.a+1}\\) grows.`},
+  hypergeometric:{g1:Q=>Q.N>2?'\\frac{(N-2K)\\sqrt{N-1}\\,(N-2n)}{\\sqrt{nK(N-K)(N-n)}\\,(N-2)}':null,
+    g1n:Q=>`\\frac{(${Q.N-2*Q.K})\\sqrt{${Q.N-1}}\\,(${Q.N-2*Q.n})}{\\sqrt{${Q.n} \\cdot ${Q.K} \\cdot ${Q.N-Q.K} \\cdot ${Q.N-Q.n}}\\,(${Q.N-2})}`,
+    w1:Q=>`The sign follows \\((N-2K)(N-2n)\\): with fewer successes than failures in the population (\\(K < \\dfrac{N}{2}\\)) and fewer than half the objects drawn, the right tail is longer. The skew is 0 when \\(K = \\dfrac{N}{2}\\) or \\(n = \\dfrac{N}{2}\\).`,
+    w2:Q=>`The fourth moment is added up over the PMF, since its closed form is very long. It behaves much like a binomial count with \\(p = \\dfrac{K}{N} = ${fn(Q.K/Q.N)}\\), with extra shrinkage because the draws are made without replacement.`},
+  zipf:{w1:Q=>`Here \\(E[X^{k}] = \\dfrac{H_{N,s-k}}{H_{N,s}}\\). Most of the probability sits on the top ranks, with a long tail of rare ranks, so \\(\\gamma_1 > 0\\); \\(s = 0\\) gives the uniform case, \\(\\gamma_1 = 0\\).`,
+    w2:Q=>`Here \\(E[X^{k}] = \\dfrac{H_{N,s-k}}{H_{N,s}}\\). A larger \\(s\\) piles probability onto rank 1 and leaves a long, thin tail of rare ranks, which raises \\(\\gamma_2\\); \\(s = 0\\) gives the flat uniform value.`},
+  zipfmandelbrot:{w1:Q=>`Here \\(E[(X+q)^{k}] = \\dfrac{H_{N,q,s-k}}{H_{N,q,s}}\\), and shifting by \\(q\\) does not change skewness. The top ranks dominate, so \\(\\gamma_1 > 0\\); a larger \\(q\\) flattens the PMF toward uniform, and \\(\\gamma_1\\) falls toward 0.`,
+    w2:Q=>`Here \\(E[(X+q)^{k}] = \\dfrac{H_{N,q,s-k}}{H_{N,q,s}}\\). A larger \\(q\\) flattens the PMF toward the uniform shape, so \\(\\gamma_2\\) moves toward the flat uniform value.`},
+  benford:{w1:Q=>`Here \\(E[X^{k}] = \\sum_{x=1}^{b-1} x^{k}\\log_b\\left(1 + \\dfrac{1}{x}\\right)\\). Small leading digits dominate, with a tail of rarer large digits, so \\(\\gamma_1 > 0\\).`,
+    w2:Q=>`Here \\(E[X^{k}] = \\sum_{x=1}^{b-1} x^{k}\\log_b\\left(1 + \\dfrac{1}{x}\\right)\\), added up term by term.`}
+};
+function renderShape(kind){
+  const sh=shape(P),R=D.rv,X=SKX[key],isS=kind==='skew',g=isS?'\\gamma_{1}':'\\gamma_{2}',gv=isS?sh.skew:sh.exk;
+  const r4=x=>Math.round(x*1e4)/1e4, rel=x=>Math.abs(x-r4(x))<1e-12?'=':'\\approx', ok=sh.v>1e-12, sd=Math.sqrt(sh.v);
+  const lines=[isS?`${g} &= E\\left[\\left(\\frac{${R}-\\mu}{\\sigma}\\right)^{3}\\right] = \\frac{E[(${R}-\\mu)^{3}]}{\\sigma^{3}}`
+    :`${g} &= \\operatorname{Kurt}(${R}) - 3 = \\frac{E[(${R}-\\mu)^{4}]}{\\sigma^{4}} - 3`];
+  if(!ok)lines.push(`&\\text{is undefined, since } \\sigma = 0`);
+  else{
+    const cl=val(isS?X.g1:X.g2,P);
+    if(cl){lines.push(`&= ${cl}`);const nf=isS?X.g1n:X.g2n,n=nf&&nf(P);if(n)lines.push(`&= ${n}`);}
+    else if(isS){lines.push(`&= \\frac{E[${R}^{3}] - 3\\mu E[${R}^{2}] + 2\\mu^{3}}{\\sigma^{3}}`);
+      lines.push(`&\\approx \\frac{${fmtM(sh.m3,true)}}{(${fmt(sd,true)})^{3}}`);}
+    else{lines.push(`&= \\frac{E[${R}^{4}] - 4\\mu E[${R}^{3}] + 6\\mu^{2}E[${R}^{2}] - 3\\mu^{4}}{\\sigma^{4}} - 3`);
+      lines.push(`&\\approx \\frac{${fmtM(sh.m4,true)}}{(${fmt(sd,true)})^{4}} - 3`);}
+    lines.push(`${g} &${rel(gv)} ${fmt(gv,true)}`);
+    if(!isS)lines.push(`\\operatorname{Kurt}(${R}) &= \\gamma_{2} + 3 ${rel(gv+3)} ${fmt(gv+3,true)}`);
+  }
+  setMath($(`#${kind}Deriv`),`\\[\\begin{aligned} ${lines.join(' \\\\ ')} \\end{aligned}\\]`);
+  const out=v=>ok?neg(fmt(v)):'undefined';
+  if(isS)$('#skewVal').innerHTML=out(gv); else {$('#kurtVal').innerHTML=out(gv);$('#kurtRaw').innerHTML=out(gv+3);}
+  const tag=!ok?'undefined: <i>σ</i> = 0'
+    :isS?(gv===0?'no skew':gv>0?'right-skewed (or positively skewed)':'left-skewed (or negatively skewed)')
+    :(Math.abs(gv)<0.05?'about as heavy-tailed as normal (or mesokurtic)':gv>0?'heavier tails than normal (or leptokurtic)':'lighter tails than normal (or platykurtic)');
+  $(`#${kind}Tag`).innerHTML=tag;
+  setMath($(`#${kind}Why`),isS
+    ?`<b>Meaning:</b> Skewness measures lopsidedness: if \\(\\gamma_1 > 0\\), the tail to the right of the mean is longer; if \\(\\gamma_1 < 0\\), the left tail is; a symmetric PMF has \\(\\gamma_1 = 0\\). ${WHY.skew[key](P)}`
+    :`<b>Meaning:</b> Kurtosis measures how heavy the tails are, compared with a normal distribution: \\(\\gamma_2 > 0\\) means heavier, \\(\\gamma_2 < 0\\) lighter. ${WHY.kurt[key](P)}`);
+  if(open[kind+'Block'])renderSweep(kind);
+}
+
+/* ---------- moments and the moment-generating function ---------- */
+const MGF={
+  bernoulli:{sum:'\\sum_{x=0}^{1} e^{tx}\\,p^{x}(1-p)^{1-x}',closed:'1 - p + pe^{t}',
+    M:(Q,t)=>1-Q.p+Q.p*Math.exp(t),num:(Q,t)=>`1 - ${fn(Q.p)} + ${fn(Q.p)}\\,e^{${fn(t)}}`},
+  binomial:{sum:'\\sum_{x=0}^{n} e^{tx}\\binom{n}{x}p^{x}(1-p)^{n-x}',closed:'(1 - p + pe^{t})^{n}',
+    M:(Q,t)=>Math.pow(1-Q.p+Q.p*Math.exp(t),Q.n),num:(Q,t)=>`(1 - ${fn(Q.p)} + ${fn(Q.p)}\\,e^{${fn(t)}})^{${Q.n}}`},
+  geometric:{sum:'\\sum_{x=1}^{\\infty} e^{tx}(1-p)^{x-1}p',closed:'\\frac{pe^{t}}{1-(1-p)e^{t}}',dom:'t < -\\ln(1-p)',
+    tmax:Q=>Q.p<1?-Math.log(1-Q.p):Infinity,
+    M:(Q,t)=>{const d=1-(1-Q.p)*Math.exp(t);return d>0?Q.p*Math.exp(t)/d:Infinity;},
+    num:(Q,t)=>`\\frac{${fn(Q.p)}\\,e^{${fn(t)}}}{1 - ${fn(1-Q.p)}\\,e^{${fn(t)}}}`},
+  negbinomial:{sum:'\\sum_{x=r}^{\\infty} e^{tx}\\binom{x-1}{r-1}p^{r}(1-p)^{x-r}',closed:'\\left(\\frac{pe^{t}}{1-(1-p)e^{t}}\\right)^{r}',dom:'t < -\\ln(1-p)',
+    tmax:Q=>Q.p<1?-Math.log(1-Q.p):Infinity,
+    M:(Q,t)=>{const d=1-(1-Q.p)*Math.exp(t);return d>0?Math.pow(Q.p*Math.exp(t)/d,Q.r):Infinity;},
+    num:(Q,t)=>`\\left(\\frac{${fn(Q.p)}\\,e^{${fn(t)}}}{1 - ${fn(1-Q.p)}\\,e^{${fn(t)}}}\\right)^{${Q.r}}`},
+  poisson:{sum:'\\sum_{x=0}^{\\infty} e^{tx}\\frac{e^{-\\lambda}\\lambda^{x}}{x!}',closed:'e^{\\lambda(e^{t}-1)}',
+    M:(Q,t)=>Math.exp(Q.lam*(Math.exp(t)-1)),num:(Q,t)=>`e^{${fn(Q.lam)}(e^{${fn(t)}} - 1)}`},
+  uniform:{sum:'\\sum_{x=a}^{b} \\frac{e^{tx}}{b-a+1}',closed:'\\frac{e^{at} - e^{(b+1)t}}{(b-a+1)(1-e^{t})}',dom:'t \\ne 0',
+    M:(Q,t)=>{if(Math.abs(t)<1e-3){let m=0;for(let x=Q.a;x<=Q.b;x++)m+=Math.exp(t*x);return m/(Q.b-Q.a+1);}
+      return (Math.exp(Q.a*t)-Math.exp((Q.b+1)*t))/((Q.b-Q.a+1)*(1-Math.exp(t)));},
+    num:(Q,t)=>t===0?null:`\\frac{e^{${fn(Q.a*t)}} - e^{${fn((Q.b+1)*t)}}}{${Q.b-Q.a+1}(1 - e^{${fn(t)}})}`},
+  hypergeometric:{sum:'\\sum_{x} e^{tx}\\,\\frac{\\binom{K}{x}\\binom{N-K}{n-x}}{\\binom{N}{n}}'},
+  zipf:{sum:'\\sum_{x=1}^{N} e^{tx}\\,\\frac{x^{-s}}{H_{N,s}}'},
+  zipfmandelbrot:{sum:'\\sum_{x=1}^{N} e^{tx}\\,\\frac{(x+q)^{-s}}{H_{N,q,s}}'},
+  benford:{sum:'\\sum_{x=1}^{b-1} e^{tx}\\log_b\\left(1 + \\frac{1}{x}\\right)'}
+};
+function mgfAt(Q,t){
+  const G=MGF[key];if(G.M)return G.M(Q,t);
+  const s=D.support(Q);let m=0;for(let x=s.lo;x<=s.hi;x++){const q=D.pmf(x,Q);if(q>0)m+=q*Math.exp(t*x);}return m;
+}
+const momState={t:null,win:null};
+// t-window: the widest of a few round half-widths that keeps M_X(t) at most 20 on screen; poles stay in view.
+function mgfWindow(){
+  const G=MGF[key],tmax=G.tmax?G.tmax(P):Infinity,HS=[1,0.5,0.25,0.2,0.1,0.05,0.02,0.01,0.005,0.002,0.001];
+  let h=HS[HS.length-1];
+  for(const c of HS){const hr=Number.isFinite(tmax)?Math.min(c,0.9*tmax):c;
+    if(mgfAt(P,-c)<=20&&mgfAt(P,hr)<=20){h=c;break;}}
+  if(Number.isFinite(tmax))h=Math.min(h,2*tmax);
+  const x0=-h,x1=Number.isFinite(tmax)?Math.min(h,1.25*tmax):h;
+  return {x0,x1,tmax,step:niceStep(x1-x0,100)};
+}
+function fmtMGF(v){return Number.isFinite(v)?fmtM(v):'∞'}
+function renderMom(){
+  if(!open.momBlock)return;
+  const win=mgfWindow(),G=MGF[key],R=D.rv;momState.win=win;
+  let t=momState.t;
+  if(t===null||!(t>=win.x0&&t<=win.x1))t=momState.t=+(Math.round(win.x1/2/win.step)*win.step).toFixed(8);
+  const mt=t<win.tmax?mgfAt(P,t):Infinity;
+  // t controls
+  const rng=$('#tRng'),num=$('#tNum');
+  rng.min=win.x0;rng.max=win.x1;rng.step=win.step;rng.value=t;num.step=win.step;num.min=win.x0;num.max=win.x1;
+  if(document.activeElement!==num)num.value=t;
+  $('#momVal').innerHTML=Number.isFinite(mt)?fmtM(mt):'∞';
+  // derivation
+  const r4=x=>Math.round(x*1e4)/1e4, rel=x=>Math.abs(x-r4(x))<1e-12?'=':'\\approx', Mt=`M_{${R}}(${fn(t)})`;
+  const lines=[`M_{${R}}(t) &= E[e^{t${R}}] = \\sum_{x} e^{tx}P_{${R}}(x)`,`&= ${G.sum}`];
+  if(G.closed)lines.push(`&= ${G.closed}${G.dom?`, \\quad ${G.dom}`:''}`);
+  if(!Number.isFinite(mt))lines.push(`${Mt} &= \\infty \\quad \\text{since } ${fn(t)} \\ge -\\ln(1-p) \\approx ${fmt(win.tmax,true)}`);
+  else{
+    const n=G.num&&G.num(P,t);
+    if(n)lines.push(`${Mt} &= ${n}`);
+    lines.push(`${n?'':Mt} &${rel(mt)} ${fmtM(mt,true)}`);
+  }
+  setMath($('#momDeriv'),`\\[\\begin{aligned} ${lines.join(' \\\\ ')} \\end{aligned}\\]`);
+  // moments table
+  const c=central(P),mu=c.mu,v=c.v,E=[mu,v+mu*mu,c.m3+3*mu*v+mu**3,c.m4+4*mu*c.m3+6*mu*mu*v+mu**4],C=[0,v,c.m3,c.m4];
+  const f=x=>neg(fmtM(Math.abs(x)<1e-12?0:x,true));
+  const sh=shape(P),relv=x=>`${rel(x)} ${f(x)}`,undef='\\text{is undefined, since } \\sigma = 0';
+  const links=[
+    `<b>Expected value:</b> \\(E[${R}] = M_{${R}}'(0) ${relv(mu)}\\)`,
+    `<b>Variance:</b> \\(\\operatorname{Var}(${R}) = M_{${R}}''(0) - (M_{${R}}'(0))^{2} ${relv(v)}\\)`,
+    `<b>Skewness:</b> \\(\\gamma_1 = \\dfrac{E[(${R}-\\mu)^{3}]}{\\sigma^{3}} ${Number.isFinite(sh.skew)?relv(sh.skew):'\\ '+undef}\\)`,
+    `<b>Kurtosis:</b> \\(\\gamma_2 = \\dfrac{E[(${R}-\\mu)^{4}]}{\\sigma^{4}} - 3 ${Number.isFinite(sh.exk)?relv(sh.exk):'\\ '+undef}\\)`];
+  let tb=`<p class="det-head">First four moments</p><table><thead><tr><th>\\(k\\)</th><th>Raw moment \\(E[${R}^{k}] = M_{${R}}^{(k)}(0)\\)</th><th>Central moment \\(E[(${R}-\\mu)^{k}]\\)</th><th>Connects to</th></tr></thead><tbody>`;
+  for(let k=1;k<=4;k++)tb+=`<tr><td>\\(${k}\\)</td><td>\\(${f(E[k-1])}\\)</td><td>\\(${f(C[k-1])}\\)</td><td>${links[k-1]}</td></tr>`;
+  tb+=`</tbody></table>`;
+  setMath($('#momTable'),tb);
+  // notes
+  setMath($('#momNote2'),G.tmax?`Exists only for \\(t < -\\ln(1-p) \\approx ${Number.isFinite(win.tmax)?fmt(win.tmax,true):'\\infty'}\\).`:`Exists for every \\(t\\).`);
+  setMath($('#momWhy'),`<b>Meaning:</b> The MGF packs every moment into one function: its <span class="nowrap">\\(k\\)th</span> derivative at \\(t = 0\\) is \\(E[${R}^{k}]\\), listed in the table. On the plot, the curve passes through \\((0, 1)\\) with slope \\(E[${R}]\\) (the blue dashed line).`);
+  renderMGFPlot(t,mt);
+}
+function renderMGFPlot(t0,m0){
+  const svg=$('#momSweep'),{W,H,M}=SG,{x0,x1,tmax,step}=momState.win,R=D.rv,mu=D.mean(P);
+  const ts=[];for(let i=0;i<=300;i++)ts.push(x0+(x1-x0)*i/300);
+  const ys=ts.map(t=>t<tmax?mgfAt(P,t):NaN),fin=ys.filter(Number.isFinite);
+  let cap=20; if(Number.isFinite(m0)&&m0>cap&&m0<1000)cap=m0*1.15;
+  let ymax=Math.max(1.2,...fin),clipped=false; if(ymax>cap){ymax=cap;clipped=true;}
+  const ystep=niceStep(ymax,5),dec=Math.max(0,-Math.floor(Math.log10(ystep)+1e-9)),y1=clipped?ymax:Math.ceil(ymax/ystep-1e-9)*ystep;
+  const yt=[];for(let i=0;i*ystep<=y1+1e-9;i++)yt.push(+(i*ystep).toFixed(10));
+  const X=lin(x0,x1,M.l,W-M.r),Y=lin(0,y1,H-M.b,M.t),Yc=v=>r2(Math.max(-3000,Math.min(H+3000,Y(v))));
+  let s=clip('cpSw-mom',8,SG)+frame(X,Y,sweepTicks(x0,x1,false),yt,v=>v.toFixed(dec),'t',subT('M',R)+'(t)',SG);
+  s+='<g clip-path="url(#cpSw-mom)">';
+  if(Number.isFinite(tmax)&&tmax<=x1){const xa=r2(X(tmax));
+    s+=`<line class="mgf-asym" x1="${xa}" x2="${xa}" y1="${M.t}" y2="${H-M.b}"/>`;}
+  s+=`<line class="mgf-tan" x1="${r2(X(x0))}" x2="${r2(X(x1))}" y1="${Yc(1+mu*x0)}" y2="${Yc(1+mu*x1)}"/>`;
+  let d='',pen=false;ts.forEach((t,i)=>{if(Number.isFinite(ys[i])){d+=`${pen?'L':'M'}${r2(X(t))} ${Yc(ys[i])}`;pen=true;}else pen=false;});
+  s+=`<path class="sw-line sw-mom" d="${d}"/>`;
+  let hv=sweepHover.mom; if(hv!==null&&(hv<x0||hv>x1))hv=sweepHover.mom=null;
+  if(hv!==null){const hx=r2(X(hv)),hy=hv<tmax?mgfAt(P,hv):Infinity;
+    s+=`<line class="sw-hov" x1="${hx}" x2="${hx}" y1="${H-M.b}" y2="${M.t}"/>`;
+    if(Number.isFinite(hy))s+=`<circle class="sw-ring" cx="${hx}" cy="${Yc(hy)}" r="4.5"/>`;}
+  s+=`<circle class="mgf-one" cx="${r2(X(0))}" cy="${Yc(1)}" r="4.5"/>`;
+  if(Number.isFinite(m0)){const cx=r2(X(t0)),cyp=Yc(m0);
+    s+=`<line class="guide" x1="${cx}" x2="${cx}" y1="${H-M.b}" y2="${cyp}"/><line class="guide" x1="${M.l}" x2="${cx}" y1="${cyp}" y2="${cyp}"/>`;
+    s+=`<circle class="sw-cur sw-mom" cx="${cx}" cy="${cyp}" r="6.5"/>`;}
+  s+='</g>';
+  if(Number.isFinite(tmax)&&tmax<=x1)s+=`<text class="sw-reflab" x="${r2(X(tmax))-5}" y="${M.t+12}" text-anchor="end">sum diverges past here →</text>`;
+  svg.innerHTML=s;
+  svg.setAttribute('aria-label',`Line plot of the moment-generating function against t`);
+  sweepInfo.mom={x0,x1,lo:x0,hi:x1,int:false,step};
+  const Mh=`<i>M<sub>${R}</sub></i>(<i>t</i>)`;
+  $('#momSweepTitle').innerHTML=`${Mh} as a function of <i>t</i>`;
+  $('#momSweepOut').innerHTML=hv===null
+    ?`<i>t</i> = <b>${neg(fn(t0))}</b>, ${Mh} = <b>${fmtMGF(m0)}</b>`
+    :`At <i>t</i> = <b>${neg(fn(hv))}</b>: &nbsp;${Mh} = <b>${fmtMGF(hv<tmax?mgfAt(P,hv):Infinity)}</b>`;
+  let cap2=`Open circle: (0, 1). Blue dashed line: slope <i>E</i>[<i>${R}</i>] = ${neg(fmt(mu))}.`;
+  if(Number.isFinite(tmax)&&tmax<=x1)cap2+=' Red dashed line: the sum diverges to its right.';
+  if(clipped)cap2+=' Axis cut off: the curve continues.';
+  $('#momSweepCap').innerHTML=cap2;
 }
 
 /* ---------- state ---------- */
@@ -496,7 +1148,7 @@ let key, D, P={}, S={lo:0,hi:1};
 const saved={};
 const ev={type:'cc',a:2,b:5};
 let hoverK=null;
-const open={calcBlock:false,evBlock:false};
+const open={calcBlock:false,evBlock:false,varBlock:false,skewBlock:false,kurtBlock:false,momBlock:false};
 const st={};
 let cdfArr=[];
 
@@ -549,7 +1201,7 @@ function selectDist(k){
   P=saved[k]?{...saved[k]}:Object.fromEntries(D.params.map(p=>[p.k,p.val]));
   document.querySelectorAll('#dists button').forEach(b=>{
     const on=b.dataset.d===k; b.setAttribute('aria-checked',on); b.tabIndex=on?0:-1;});
-  buildParams(); S=D.support(P); cdfArr=[]; hoverK=null;
+  buildParams(); S=D.support(P); cdfArr=[]; hoverK=null; Object.keys(sweepHover).forEach(k=>sweepHover[k]=null); momState.t=null;
   resetEvent(); update(true);
 }
 function clampParam(p,v){
@@ -558,33 +1210,47 @@ function clampParam(p,v){
   v=p.int?Math.round(v):Math.round(v/p.step)*p.step;
   return +v.toFixed(6);
 }
+/* The main Parameters panel plus a synced copy inside each analysis card; every copy edits the same P. */
+const PSETS=[{box:'#params',pre:'m'},{box:'#calcParams',pre:'c',compact:true},
+  {box:'#evParams',pre:'e',compact:true,tag:true},{box:'#varParams',pre:'v',compact:true,tag:true},
+  {box:'#skewParams',pre:'s',compact:true,tag:true},{box:'#kurtParams',pre:'k',compact:true,tag:true},
+  {box:'#momParams',pre:'g',compact:true}];
 function buildParams(){
-  const box=$('#params'); box.innerHTML='';
-  D.params.forEach(p=>{
-    const row=document.createElement('div'); row.className='param';
-    if(p.type==='choice'){
-      row.innerHTML=`<label for="pc-${p.k}">${p.label}</label><select id="pc-${p.k}">${p.options.map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}</select>`;
-      const sel=row.querySelector('select'); sel.value=P[p.k];
-      sel.addEventListener('change',()=>{P[p.k]=sel.value;onParam(p.k);});
-    }else{
-      row.innerHTML=`<div class="param-head"><label for="pn-${p.k}">${p.label}</label><input type="number" id="pn-${p.k}" step="${p.step}"></div><input type="range" id="pr-${p.k}" step="${p.step}" aria-label="${p.label.replace(/<[^>]+>/g,'')}">`;
-      const num=row.querySelector('input[type=number]'),rng=row.querySelector('input[type=range]');
-      rng.addEventListener('input',()=>{P[p.k]=+rng.value;onParam(p.k);});
-      num.addEventListener('input',()=>{const v=parseFloat(num.value);
-        if(!isNaN(v)&&v>=val(p.min,P)&&v<=val(p.max,P)){P[p.k]=v;onParam(p.k,true);}});
-      num.addEventListener('change',()=>{const v=parseFloat(num.value);
-        P[p.k]=isNaN(v)?P[p.k]:v;onParam(p.k);});
-    }
-    box.appendChild(row);
+  PSETS.forEach(({box,pre,compact,tag})=>{
+    const el=$(box); el.innerHTML=compact?'<p class="cp-head">Parameters</p>':'';
+    D.params.forEach(p=>{
+      const row=document.createElement('div'); row.className='param';
+      const plain=p.label.replace(/<[^>]+>/g,'');
+      const xtag=tag&&SWEEP[key].k===p.k?' <span class="xtag">x-axis below</span>':'';
+      if(p.type==='choice'){
+        row.innerHTML=`<label for="pc-${pre}-${p.k}">${p.label}</label><select id="pc-${pre}-${p.k}" data-k="${p.k}">${p.options.map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}</select>`;
+        const sel=row.querySelector('select'); sel.value=P[p.k];
+        sel.addEventListener('change',()=>{P[p.k]=sel.value;onParam(p.k);});
+      }else{
+        const num=`<input type="number" id="pn-${pre}-${p.k}" data-k="${p.k}" step="${p.step}">`,
+              rng=`<input type="range" id="pr-${pre}-${p.k}" data-k="${p.k}" step="${p.step}" aria-label="${plain}">`;
+        row.innerHTML=compact
+          ?`<label for="pn-${pre}-${p.k}">${p.label}${xtag}</label><div class="param-ctl">${rng}${num}</div>`
+          :`<div class="param-head"><label for="pn-${pre}-${p.k}">${p.label}</label>${num}</div>${rng}`;
+        const numEl=row.querySelector('input[type=number]'),rngEl=row.querySelector('input[type=range]');
+        rngEl.addEventListener('input',()=>{P[p.k]=+rngEl.value;onParam(p.k);});
+        numEl.addEventListener('input',()=>{const v=parseFloat(numEl.value);
+          if(!isNaN(v)&&v>=val(p.min,P)&&v<=val(p.max,P)){P[p.k]=v;onParam(p.k,true);}});
+        numEl.addEventListener('change',()=>{const v=parseFloat(numEl.value);
+          P[p.k]=isNaN(v)?P[p.k]:v;onParam(p.k);});
+      }
+      el.appendChild(row);
+    });
   });
   syncParams();
 }
 function syncParams(skipFocused){
   D.params.forEach(p=>{
-    if(p.type==='choice')return;
-    const num=$(`#pn-${p.k}`),rng=$(`#pr-${p.k}`),mn=val(p.min,P),mx=val(p.max,P);
-    rng.min=mn;rng.max=mx;rng.value=P[p.k];num.min=mn;num.max=mx;
-    if(!(skipFocused&&document.activeElement===num))num.value=P[p.k];
+    if(p.type==='choice'){document.querySelectorAll(`select[data-k="${p.k}"]`).forEach(s=>s.value=P[p.k]);return;}
+    const mn=val(p.min,P),mx=val(p.max,P);
+    document.querySelectorAll(`input[type=range][data-k="${p.k}"]`).forEach(r=>{r.min=mn;r.max=mx;r.value=P[p.k];});
+    document.querySelectorAll(`input[type=number][data-k="${p.k}"]`).forEach(n=>{n.min=mn;n.max=mx;
+      if(!(skipFocused&&document.activeElement===n))n.value=P[p.k];});
   });
 }
 function onParam(k,typing){
@@ -660,7 +1326,9 @@ function xTicks(x0,x1){
   const step=Math.max(1,Math.round(niceStep(Math.max(x1-x0,1),8)));
   const out=[]; for(let v=Math.ceil(x0/step)*step;v<=x1+1e-9;v+=step)out.push(v); return out;
 }
-function frame(X,Y,xt,yt,yf,xlab,ylab){
+const G0={W,H,M};
+function frame(X,Y,xt,yt,yf,xlab,ylab,g=G0){
+  const {W,H,M}=g;
   let s='';
   yt.forEach(v=>{const y=r2(Y(v));
     s+=`<line class="grid" x1="${M.l}" x2="${W-M.r}" y1="${y}" y2="${y}"/><text class="tick" x="${M.l-8}" y="${y}" text-anchor="end" dominant-baseline="middle">${yf(v)}</text>`;});
@@ -671,7 +1339,7 @@ function frame(X,Y,xt,yt,yf,xlab,ylab){
   s+=`<text class="axlab" transform="translate(16 ${(M.t+H-M.b)/2}) rotate(-90)" text-anchor="middle">${ylab}</text>`;
   return s;
 }
-const clip=(id,ex=6)=>`<defs><clipPath id="${id}"><rect x="${M.l}" y="${M.t-ex}" width="${W-M.l-M.r}" height="${H-M.t-M.b+ex}"/></clipPath></defs>`;
+const clip=(id,ex=6,{W,H,M}=G0)=>`<defs><clipPath id="${id}"><rect x="${M.l}" y="${M.t-ex}" width="${W-M.l-M.r}" height="${H-M.t-M.b+ex}"/></clipPath></defs>`;
 const plotInfo={};
 const zoom={pmf:true,cdf:false};   // PMF opens zoomed in; CDF always shows 0 to 1
 function yAxis(lo,hi){
@@ -694,13 +1362,14 @@ function attachZoom(){
   }));
 }
 
-function renderPMF(){
+// copy=true draws the event-only copy inside the Compute probability card (no EV/Var overlays)
+function renderPMF(copy=false){
   const {xmin,xmax,L,U}=st;
   const pad=Math.max(0.8,(4-(xmax-xmin))/2),x0=xmin-pad,x1=xmax+pad;
   const ps=[];let maxP=0;
   for(let k=xmin;k<=xmax;k++){const v=D.pmf(k,P);ps.push(v);if(v>maxP)maxP=v;}
-  syncZoomButtons('pmf',true);
-  document.querySelector('.zoom[data-plot="pmf"]').hidden=axesMode==='fixed';
+  if(!copy){syncZoomButtons('pmf',true);
+  document.querySelector('.zoom[data-plot="pmf"]').hidden=axesMode==='fixed';}
   let ymax,yt,dec;
   if(zoom.pmf&&axesMode!=='fixed'){
     const top=(maxP||1)*1.1,ys=niceStep(top,5);
@@ -708,21 +1377,31 @@ function renderPMF(){
   }else{ymax=1.06; yt=[0,.2,.4,.6,.8,1]; dec=1;}
   const X=lin(x0,x1,M.l,W-M.r),Y=lin(0,ymax,H-M.b,M.t);
   const unit=X(1)-X(0),rad=Math.max(1.4,Math.min(4.5,unit*0.25));
-  let s=clip('cpPmf');
+  const cid=copy?'cpPmf2':'cpPmf';
+  let s=clip(cid);
   s+=frame(X,Y,xTicks(x0,x1),yt,v=>v.toFixed(dec),D.v,`P<tspan baseline-shift="sub" font-size="11">${D.rv}</tspan>(${D.v})`);
-  s+='<g clip-path="url(#cpPmf)">';
+  s+=`<g clip-path="url(#${cid})">`;
+  let band=null;
+  if(open.varBlock&&!copy){const mu=D.mean(P),sd=Math.sqrt(D.variance(P)),xa=r2(X(mu-sd)),xb=r2(X(mu+sd));
+    if(xb>=M.l&&xa<=W-M.r){band={xa,xb};
+      s+=`<rect class="varband" x="${xa}" y="${M.t}" width="${r2(xb-xa)}" height="${H-M.b-M.t}"/>`+
+        `<line class="varedge" x1="${xa}" x2="${xa}" y1="${M.t}" y2="${H-M.b}"/><line class="varedge" x1="${xb}" x2="${xb}" y1="${M.t}" y2="${H-M.b}"/>`;}}
   ps.forEach((v,i)=>{if(v<=0)return;
     const k=xmin+i,cls=`${k>=L&&k<=U?' on':''}${k===hoverK?' hov':''}`,x=r2(X(k)),y=r2(Y(v));
     s+=`<line class="stem${cls}" x1="${x}" x2="${x}" y1="${r2(Y(0))}" y2="${y}"/><circle class="sdot${cls}" cx="${x}" cy="${y}" r="${rad}"/>`;});
   s+='</g>';
   if(hoverK!==null){const x=r2(X(hoverK)),y=r2(Y(D.pmf(hoverK,P)));
     s+=`<line class="guide" x1="${M.l}" x2="${x}" y1="${y}" y2="${y}"/>`;}
-  if(open.evBlock){const mu=D.mean(P);
+  if(copy&&st.active)
+    s+=`<text class="blabel" x="${W-M.r-6}" y="${M.t+12}" text-anchor="end">${eventStr(false).replace(/<\/?i>/g,'')} = ${fmt(st.prob).replace(/<[^>]+>/g,'')}</text>`;
+  if(open.evBlock&&!copy){const mu=D.mean(P);
     if(mu>=x0&&mu<=x1){const x=r2(X(mu)),end=x>W-M.r-120;
       s+=`<line class="evline" x1="${x}" x2="${x}" y1="${H-M.b}" y2="${M.t}"/><path class="evfulcrum" d="M${x} ${H-M.b+1}L${r2(x-7)} ${H-M.b+11}H${r2(x+7)}Z"/>`;
       s+=`<text class="evlabel" x="${end?x-6:x+6}" y="${M.t+10}" text-anchor="${end?'end':'start'}">E[${D.rv}] = ${fmt(mu)}</text>`;}}
-  $('#pmfSvg').innerHTML=s;
-  plotInfo.pmf={x0,x1,xmin,xmax,round:true};
+  if(band){const lx=Math.min(W-M.r-50,Math.max(M.l,band.xa)+5);
+    s+=`<text class="varlabel" x="${r2(lx)}" y="${open.evBlock?M.t+30:M.t+10}" text-anchor="start">μ ± σ</text>`;}
+  $(copy?'#calcPmf':'#pmfSvg').innerHTML=s;
+  plotInfo[copy?'pmf2':'pmf']={x0,x1,xmin,xmax,round:true};
 }
 
 function renderCDF(){
@@ -792,12 +1471,20 @@ function renderCDF(){
 
 function renderReadout(){
   const r=$('#readout');
-  if(hoverK===null){r.innerHTML='Hover over or tap either plot to read off values.';return;}
+  if(hoverK===null){r.innerHTML='Hover over or tap any plot to read off values.';return;}
   const k=neg(hoverK);
   const R=D.rv;
   r.innerHTML=`At <i>${D.v}</i> = <b>${k}</b>: &nbsp;<i>P<sub>${R}</sub></i>(${k}) = <b>${fmt(D.pmf(hoverK,P))}</b> &nbsp;&nbsp; <i>F<sub>${R}</sub></i>(${k}) = <b>${fmt(F(hoverK))}</b>`;
 }
-function drawPlots(){renderPMF();renderCDF();renderReadout();}
+function renderCalcPlot(){
+  if(!open.calcBlock)return;
+  renderPMF(true);
+  const R=D.rv,o=$('#calcPmfOut');
+  o.innerHTML=hoverK===null?''
+    :`At <i>${D.v}</i> = <b>${neg(hoverK)}</b>: &nbsp;<i>P<sub>${R}</sub></i>(${neg(hoverK)}) = <b>${fmt(D.pmf(hoverK,P))}</b>${hoverK>=st.L&&hoverK<=st.U?' (in the event)':''}`;
+  $('#calcPmfCap').innerHTML=st.active?`Pink: the event's PMF values, which add up to ${fmt(st.prob)}.`:'';
+}
+function drawPlots(){renderPMF();renderCDF();renderReadout();renderCalcPlot();}
 
 function attachHover(id,name){
   const svg=$(id);
@@ -816,20 +1503,16 @@ function attachHover(id,name){
 
 /* ---------- result ---------- */
 function renderCalcWhy(){
-  const base='<b>Meaning:</b> In the frequentist view, a probability is a long-run relative frequency: repeat the experiment independently many times, and the fraction of repetitions in which the event occurs settles near its probability.';
-  if(!st.active){setMath($('#calcWhy'),base);return;}
-  const q=st.prob, ev=eventStr(true);
-  const rel=Math.abs(q-Math.round(q*1e4)/1e4)<1e-12?'=':'\\approx';
-  let tail;
-  if(q===0)tail=`Here \\(${ev} = 0\\), so the event never occurs.`;
-  else if(q===1)tail=`Here \\(${ev} = 1\\), so the event occurs in every repetition.`;
-  else if(q<0.001)tail=`Here \\(${ev} \\approx ${fmt(q,true)}\\), so the event occurs in fewer than 1 of every 1,000 repetitions.`;
-  else tail=`Here \\(${ev} ${rel} ${fmt(q,true)}\\), so the event occurs in about ${(100*q).toFixed(1).replace(/\.0$/,'')}% of repetitions.`;
-  setMath($('#calcWhy'),`${base} ${tail}`);
+  const lead='<b>Meaning:</b> A probability is a long-run frequency: ';
+  if(!st.active){setMath($('#calcWhy'),lead+'the share of many independent repetitions in which the event happens.');$('#probTag').innerHTML='';return;}
+  const q=st.prob;
+  setMath($('#calcWhy'),lead+(q===0?'this event never happens.':q===1?'this event happens in every repetition.'
+    :q<0.001?'this event happens in fewer than 1 of every 1,000 repetitions.':`this event happens in about ${pctOf(q)}% of many repetitions.`));
+  $('#probTag').innerHTML=q===0?'never happens':q===1?'happens every time':q<0.001?'fewer than 1 in 1,000 repetitions':`about ${pctOf(q)}% of repetitions`;
 }
 function renderResult(){
   renderCalcWhy();
-  $('#probLine').hidden=!st.active;
+  $('#probLine').hidden=!st.active; $('#calcDetHead').hidden=!st.active;
   if(!st.active){
     setMath($('#deriv'),'');
     $('#evNote').innerHTML=isPair()?'Enter values for <i>a</i> and <i>b</i> to compute the probability.':'Enter a value for <i>a</i> to compute the probability.';
@@ -922,6 +1605,7 @@ function renderResult(){
 function renderDefinition(){
   setMath($('#story'),val(D.story,P));
   setMath($('#notation'),`\\[${val(D.notation,P)}\\]`);
+  ['#calcDef','#evDef','#varDef','#skewDef','#kurtDef','#momDef'].forEach(s=>setMath($(s),`\\(${val(D.notation,P)}\\)`));
   setMath($('#pmfTex'),`\\[${val(D.pmfTex,P)}\\]`);
   setMath($('#cdfTex'),`\\[${val(D.cdfTex,P)}\\]`);
 }
@@ -957,7 +1641,7 @@ function update(full){
   st.prob=probOf(L,U);
   [st.xmin,st.xmax]=computeRange(L,U);
   if(hoverK!==null&&(hoverK<st.xmin||hoverK>st.xmax))hoverK=null;
-  drawPlots(); renderResult(); renderEV(); renderOffEdge();
+  drawPlots(); renderResult(); renderEV(); renderVar(); renderShape('skew'); renderShape('kurt'); renderMom(); renderOffEdge();
   if(full)renderDefinition();
 }
 
@@ -971,6 +1655,16 @@ $('#evType').addEventListener('change',e=>{ev.type=e.target.value;syncEventUI();
 buildPicker();
 attachHover('#pmfSvg','pmf');
 attachHover('#cdfSvg','cdf');
+attachHover('#calcPmf','pmf2');
+attachPlotHover('mean','#evSweep',()=>renderSweep('mean'));
+attachPlotHover('var','#varSweep',()=>renderSweep('var'));
+attachPlotHover('skew','#skewSweep',()=>renderSweep('skew'));
+attachPlotHover('kurt','#kurtSweep',()=>renderSweep('kurt'));
+attachPlotHover('mom','#momSweep',()=>{const w=momState.win,t=momState.t;renderMGFPlot(t,t<w.tmax?mgfAt(P,t):Infinity);});
+$('#tRng').addEventListener('input',e=>{momState.t=+e.target.value;renderMom();});
+$('#tNum').addEventListener('input',e=>{const v=parseFloat(e.target.value),w=momState.win;
+  if(!isNaN(v)&&w&&v>=w.x0&&v<=w.x1){momState.t=v;renderMom();}});
+$('#tNum').addEventListener('change',()=>renderMom());
 attachZoom();
 function syncAxesUI(){
   document.querySelectorAll('.axesbar button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.a===axesMode));
@@ -989,6 +1683,9 @@ document.querySelectorAll('.toggles button').forEach(b=>b.addEventListener('clic
   update(false);
 }));
 syncEventUI();
+document.querySelectorAll('.det-btn').forEach(b=>b.addEventListener('click',()=>{
+  const o=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',o);
+  document.getElementById(b.getAttribute('aria-controls')).classList.toggle('open',o);}));
 selectDist('bernoulli');
 </script>
 </body>

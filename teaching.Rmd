@@ -36,6 +36,9 @@ icon_link(
 
 * Ordinary Differential Equations
 
+  - [RLC Circuit Simulator](learning-tools/rlc_circuit_simulator.html){target="_blank"}
+  - [Inverted Pendulum Simulator](learning-tools/inverted_pendulum_simulator.html){target="_blank"}
+  - [Vertical Spring-Mass-Damper Simulator](learning-tools/vertical_spring_mass_damper_simulator.html){target="_blank"}
   - [Horizontal Spring-Mass Simulator](learning-tools/horizontal_spring_mass_simulator.html){target="_blank"}
   - [1st-Order ODE Visualizer](learning-tools/1st-order-ode-visualizer.html){target="_blank"}
   - [Phase Portrait Visualizer for 1st-Order Homogeneous Linear System](https://pcnkto-alex0john-quijano.shinyapps.io/ode-visualize/){target="_blank"}
