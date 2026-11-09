@@ -41,7 +41,7 @@ icon_link(
   - [Vertical Spring-Mass-Damper Simulator](learning-tools/vertical_spring_mass_damper_simulator.html){target="_blank"}
   - [Horizontal Spring-Mass Simulator](learning-tools/horizontal_spring_mass_simulator.html){target="_blank"}
   - [1st-Order ODE Visualizer](learning-tools/1st-order-ode-visualizer.html){target="_blank"}
-  - [Phase Portrait Visualizer for 1st-Order Homogeneous Linear System](https://pcnkto-alex0john-quijano.shinyapps.io/ode-visualize/){target="_blank"}
+  - [1st-Order Homogeneous System of ODEs Visualizer](learning-tools/1st-order-homogeneous-system-of-odes-visualizer){target="_blank"}
 
 * Probability and Statistics
 
