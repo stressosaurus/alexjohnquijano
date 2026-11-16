@@ -507,7 +507,7 @@
   <header class="top">
     <div>
       <h1>1st-Order Homogeneous System of ODEs Visualizer</h1>
-      <p class="sub">This tool is for <strong>first-order homogeneous linear systems of two ODEs with constant coefficients</strong>, shown in the boxes below. The state at time <span class="mono">t</span> is the vector of the two unknowns <span class="mono">x<sub>1</sub></span> and <span class="mono">x<sub>2</sub></span>, and the four constant entries <span class="mono">a</span>, <span class="mono">b</span>, <span class="mono">c</span>, <span class="mono">d</span> of the matrix <span class="mono">A</span> are the parameters of the system. Because the system is homogeneous (no forcing term), the origin is always an equilibrium, and because the coefficients are constant, the eigenvalues and eigenvectors of <span class="mono">A</span> decide the shape of every solution.</p>
+      <p class="sub">This tool is for <strong>first-order homogeneous linear systems of two ODEs with constant coefficients</strong>, shown in the boxes below. The state at time <span class="mono">t</span> is the vector of the two unknowns <span class="mono">y<sub>1</sub></span> and <span class="mono">y<sub>2</sub></span>, and the four constant entries <span class="mono">a</span>, <span class="mono">b</span>, <span class="mono">c</span>, <span class="mono">d</span> of the matrix <span class="mono">A</span> are the parameters of the system. Because the system is homogeneous (no forcing term), the origin is always an equilibrium, and because the coefficients are constant, the eigenvalues and eigenvectors of <span class="mono">A</span> decide the shape of every solution.</p>
       <div class="eq-row">
         <div class="eq-derivation">
           <div class="eq-cap">matrix–vector form</div>
@@ -523,7 +523,7 @@
   </header>
 
   <div class="panel anim-panel hero">
-    <div class="panel-head"><h2>System Trajectories</h2><span class="tag km" data-tex="\vec{\mathbf{x}}\,' = A\vec{\mathbf{x}}"></span></div>
+    <div class="panel-head"><h2>System Trajectories</h2><span class="tag km" data-tex="\vec{\mathbf{y}}\,' = A\vec{\mathbf{y}}"></span></div>
 
     <div class="motion-grid">
       <div class="mp-col mp-sim">
@@ -535,9 +535,9 @@
         </div>
         <div class="mp-head view-head"><span id="viewTitle">Phase plane</span>
           <div class="seg view-seg" role="group" aria-label="view">
-            <button data-view="xy" aria-pressed="true">x<sub>1</sub> vs x<sub>2</sub></button>
-            <button data-view="tx" aria-pressed="false">t vs x<sub>1</sub></button>
-            <button data-view="ty" aria-pressed="false">t vs x<sub>2</sub></button>
+            <button data-view="xy" aria-pressed="true">y<sub>1</sub> vs y<sub>2</sub></button>
+            <button data-view="tx" aria-pressed="false">t vs y<sub>1</sub></button>
+            <button data-view="ty" aria-pressed="false">t vs y<sub>2</sub></button>
             <button data-view="3d" aria-pressed="false">3D</button>
           </div>
         </div>
@@ -551,11 +551,11 @@
             <label><input type="checkbox" id="speedMainToggle"><i class="vsw-grad"></i>contour</label>
           </div>
           <div class="view-checks only-t" hidden>
-            <label><input type="checkbox" id="modesToggle"><i class="vsw" style="--c:var(--pink)"></i>the two modes <span class="km" data-tex="c_1\vec{\mathbf{x}}^{(1)}, c_2\vec{\mathbf{x}}^{(2)}"></span></label>
+            <label><input type="checkbox" id="modesToggle"><i class="vsw" style="--c:var(--pink)"></i>the two modes <span class="km" data-tex="c_1\vec{\mathbf{y}}^{(1)}, c_2\vec{\mathbf{y}}^{(2)}"></span></label>
             <span class="tiny-note" id="modesHint" style="margin:0;"></span>
           </div>
           <div class="view-checks only-3d" hidden>
-            <label><input type="checkbox" id="projToggle" checked><i class="vsw" style="--c:var(--ink-soft)"></i>shadows on the walls (x<sub>1</sub> vs x<sub>2</sub>, t vs x<sub>1</sub>, t vs x<sub>2</sub>)</label>
+            <label><input type="checkbox" id="projToggle" checked><i class="vsw" style="--c:var(--ink-soft)"></i>shadows on the walls (y<sub>1</sub> vs y<sub>2</sub>, t vs y<sub>1</sub>, t vs y<sub>2</sub>)</label>
             <span class="tiny-note" style="margin:0;">drag to rotate, double-click to reset</span>
           </div>
         </div>
@@ -577,26 +577,26 @@
         <canvas id="phaseCanvas"></canvas>
         <div class="plot-legend only-xy" style="border-top:1px solid var(--line-soft); padding-top:8px;">
           <span class="lg" data-when="showField"><i class="swatch arrow">→</i>vector field</span>
-          <span class="lg" data-when="showSpeedMain"><i class="swatch-grad"></i>contours of the speed <span class="km" data-tex="\lVert A\vec{\mathbf{x}} \rVert"></span>, light = slow, dark = fast</span>
+          <span class="lg" data-when="showSpeedMain"><i class="swatch-grad"></i>contours of the speed <span class="km" data-tex="\lVert A\vec{\mathbf{y}} \rVert"></span>, light = slow, dark = fast</span>
           <span class="lg"><i class="swatch-eq" id="legendEqMarker"></i><span id="legendEqText">equilibrium</span></span>
           <span class="lg" id="legEig1" data-when="showEig"><i class="swatch pink"></i><span id="legEig1Text">eigenvector line</span></span>
           <span class="lg" id="legEig2" data-when="showEig"><i class="swatch brown"></i><span id="legEig2Text">eigenvector line</span></span>
-          <span class="lg" data-when="showNull"><i class="nc-dash"></i><span class="km" data-tex="x_1' = 0"></span></span>
-          <span class="lg" data-when="showNull"><i class="nc-dot"></i><span class="km" data-tex="x_2' = 0"></span></span>
+          <span class="lg" data-when="showNull"><i class="nc-dash"></i><span class="km" data-tex="y_1' = 0"></span></span>
+          <span class="lg" data-when="showNull"><i class="nc-dot"></i><span class="km" data-tex="y_2' = 0"></span></span>
           <span class="lg" data-when="showSpecific"><i class="swatch grass-light"></i>full solution</span>
           <span class="lg" data-when="showSpecific"><i class="swatch grass"></i>traced so far</span>
           <span class="lg" data-when="extras"><i class="swatch blue"></i>added solutions</span>
         </div>
         <div class="plot-legend only-t" style="border-top:1px solid var(--line-soft); padding-top:8px;" hidden>
           <span class="lg"><i class="swatch dashdot" style="border-color:var(--ink-soft)"></i>zero</span>
-          <span class="lg legMode" data-when="showModes" hidden><i class="swatch pink"></i><span class="km" data-tex="c_1\vec{\mathbf{x}}^{(1)}"></span></span>
-          <span class="lg legMode" data-when="showModes" hidden><i class="swatch dash brown"></i><span class="km" data-tex="c_2\vec{\mathbf{x}}^{(2)}"></span></span>
+          <span class="lg legMode" data-when="showModes" hidden><i class="swatch pink"></i><span class="km" data-tex="c_1\vec{\mathbf{y}}^{(1)}"></span></span>
+          <span class="lg legMode" data-when="showModes" hidden><i class="swatch dash brown"></i><span class="km" data-tex="c_2\vec{\mathbf{y}}^{(2)}"></span></span>
           <span class="lg"><i class="swatch grass-light"></i>full solution</span>
           <span class="lg"><i class="swatch grass"></i>traced so far</span>
           <span class="lg" data-when="extras"><i class="swatch blue"></i>added solutions</span>
         </div>
         <div class="plot-legend only-3d" style="border-top:1px solid var(--line-soft); padding-top:8px;" hidden>
-          <span class="lg"><i class="swatch dash red"></i>equilibrium solution <span class="km" data-tex="x_1 = x_2 = 0"></span></span>
+          <span class="lg"><i class="swatch dash red"></i>equilibrium solution <span class="km" data-tex="y_1 = y_2 = 0"></span></span>
           <span class="lg" data-when="showProj"><i class="swatch" style="border-color:var(--ink-soft)"></i>shadows on the walls</span>
           <span class="lg"><i class="swatch grass-light"></i>full solution</span>
           <span class="lg"><i class="swatch grass"></i>traced so far</span>
@@ -652,22 +652,22 @@
           </div>
         </div>
         <div class="mp-col mp-ic">
-          <div class="mp-head">Initial condition <span class="tag">x<sub>1</sub>(0), x<sub>2</sub>(0)</span></div>
+          <div class="mp-head">Initial condition <span class="tag">y<sub>1</sub>(0), y<sub>2</sub>(0)</span></div>
           <div class="hrow cols-2">
             <div class="field">
-              <label for="x0Input"><span>x<sub>1</sub>(0)</span></label>
+              <label for="x0Input"><span>y<sub>1</sub>(0)</span></label>
               <input type="number" id="x0Input" value="3" step="0.1">
             </div>
             <div class="field">
-              <label for="y0Input"><span>x<sub>2</sub>(0)</span></label>
+              <label for="y0Input"><span>y<sub>2</sub>(0)</span></label>
               <input type="number" id="y0Input" value="2" step="0.1">
             </div>
           </div>
         <div class="field" id="clickField" style="border-top:1px solid var(--line-soft);">
-          <span class="lbl plain">clicking or dragging on the phase plane (x<sub>1</sub> vs x<sub>2</sub> view)</span>
+          <span class="lbl plain">clicking or dragging on the phase plane (y<sub>1</sub> vs y<sub>2</sub> view)</span>
           <div class="click-row">
             <div class="seg" role="group" aria-label="click mode">
-              <button id="modeSet" aria-pressed="true">sets <span class="km" data-tex="\vec{\mathbf{x}}(0)"></span></button>
+              <button id="modeSet" aria-pressed="true">sets <span class="km" data-tex="\vec{\mathbf{y}}(0)"></span></button>
               <button id="modeAdd" aria-pressed="false">adds a solution</button>
             </div>
             <button class="secondary" id="clearExtras">Clear added</button>
@@ -675,7 +675,7 @@
         </div>
         </div>
         <div class="mp-col mp-sol">
-          <div class="mp-head">Solution <span class="tag">the specific solution through <span class="km" data-tex="\vec{\mathbf{x}}(0)"></span></span></div>
+          <div class="mp-head">Solution <span class="tag">the specific solution through <span class="km" data-tex="\vec{\mathbf{y}}(0)"></span></span></div>
           <div class="form-stack">
             <div><div class="form-cap">vector form</div><div class="spec-eq mat-tex" id="solVec"></div></div>
             <div><div class="form-cap">componentwise</div><div class="spec-eq mat-tex" id="solCmp"></div></div>
@@ -763,7 +763,7 @@
     </div>
 
     <div class="plot-panel" id="miniPanel">
-      <div class="mp-head">Phase portrait <span class="tag">x<sub>1</sub> vs x<sub>2</sub></span></div>
+      <div class="mp-head">Phase portrait <span class="tag">y<sub>1</sub> vs y<sub>2</sub></span></div>
       <div class="toolbar">
         <label class="chk"><input type="checkbox" id="miniEigToggle"><span>eigenvectors</span></label>
         <label class="chk"><input type="checkbox" id="miniNullToggle"><span>nullclines</span></label>
@@ -775,9 +775,9 @@
       <div class="plot-legend">
         <span class="lg"><i class="swatch-eq" id="miniEqMarker"></i><span id="miniEqText">equilibrium</span></span>
         <span class="lg" id="miniEig" data-when="showMiniEig"><i class="swatch pink"></i><i class="swatch brown" id="miniEig2"></i><span id="miniEigText">eigenvector lines</span></span>
-        <span class="lg mini-null" data-when="showMiniNull" hidden><i class="nc-dash"></i><span class="km" data-tex="x_1' = 0"></span></span>
-        <span class="lg mini-null" data-when="showMiniNull" hidden><i class="nc-dot"></i><span class="km" data-tex="x_2' = 0"></span></span>
-        <span class="lg" data-when="showSpeedBg"><i class="swatch-grad"></i>contours of the speed <span class="km" data-tex="\lVert A\vec{\mathbf{x}} \rVert"></span>, light = slow, dark = fast</span>
+        <span class="lg mini-null" data-when="showMiniNull" hidden><i class="nc-dash"></i><span class="km" data-tex="y_1' = 0"></span></span>
+        <span class="lg mini-null" data-when="showMiniNull" hidden><i class="nc-dot"></i><span class="km" data-tex="y_2' = 0"></span></span>
+        <span class="lg" data-when="showSpeedBg"><i class="swatch-grad"></i>contours of the speed <span class="km" data-tex="\lVert A\vec{\mathbf{y}} \rVert"></span>, light = slow, dark = fast</span>
         <span class="lg mini-samp" data-when="!showFlow"><i class="swatch" style="border-color:var(--grass-dark); opacity:0.75;"></i>sample solutions</span>
         <span class="lg mini-flow" data-when="showFlow" hidden><i class="swatch-dot" style="background:var(--grass-dark); width:6px; height:6px;"></i>flow particles: many solutions carried along by the flow</span>
       </div>
@@ -798,23 +798,23 @@
       <details class="sec" open>
         <summary><span class="sec-title">The system</span> <span class="sec-tag">the initial value problem, equilibria, and nullclines</span></summary>
         <div class="sec-body">
-      <p>The unknowns are two functions <span class="km" data-tex="x_1(t)"></span> and <span class="km" data-tex="x_2(t)"></span>, collected in the state vector <span class="km" data-tex="\vec{\mathbf{x}}(t)"></span>. With constant parameters <span class="km" data-tex="a"></span>, <span class="km" data-tex="b"></span>, <span class="km" data-tex="c"></span>, <span class="km" data-tex="d"></span>, the system is</p>
-      <div class="eq-derivation"><div class="kmd" data-tex="\vec{\mathbf{x}}\,' = A\vec{\mathbf{x}}, \qquad \vec{\mathbf{x}} = \begin{bmatrix} x_1 \\ x_2 \end{bmatrix}, \qquad A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}"></div></div>
+      <p>The unknowns are two functions <span class="km" data-tex="y_1(t)"></span> and <span class="km" data-tex="y_2(t)"></span>, collected in the state vector <span class="km" data-tex="\vec{\mathbf{y}}(t)"></span>. With constant parameters <span class="km" data-tex="a"></span>, <span class="km" data-tex="b"></span>, <span class="km" data-tex="c"></span>, <span class="km" data-tex="d"></span>, the system is</p>
+      <div class="eq-derivation"><div class="kmd" data-tex="\vec{\mathbf{y}}\,' = A\vec{\mathbf{y}}, \qquad \vec{\mathbf{y}} = \begin{bmatrix} y_1 \\ y_2 \end{bmatrix}, \qquad A = \begin{bmatrix} a & b \\ c & d \end{bmatrix}"></div></div>
       <p>or, written out componentwise,</p>
-      <div class="eq-derivation"><div class="kmd" data-tex="\begin{aligned} x_1' &= a x_1 + b x_2 \\ x_2' &= c x_1 + d x_2 \end{aligned}"></div></div>
-      <p>It is first-order (only first derivatives appear), linear (the right-hand side is a linear function of <span class="km" data-tex="\vec{\mathbf{x}}"></span>), homogeneous (there is no forcing term), and has constant coefficients (<span class="km" data-tex="A"></span> does not depend on <span class="km" data-tex="t"></span>). Vectors are written in bold with an arrow, and their components are plain letters with subscripts. In terms of the standard basis vectors,</p>
-      <div class="eq-derivation"><div class="kmd" data-tex="\vec{\mathbf{x}} = x_1\vec{\mathbf{e}}_1 + x_2\vec{\mathbf{e}}_2, \qquad \vec{\mathbf{e}}_1 = \begin{bmatrix} 1 \\ 0 \end{bmatrix}, \quad \vec{\mathbf{e}}_2 = \begin{bmatrix} 0 \\ 1 \end{bmatrix}"></div></div>
+      <div class="eq-derivation"><div class="kmd" data-tex="\begin{aligned} y_1' &= a y_1 + b y_2 \\ y_2' &= c y_1 + d y_2 \end{aligned}"></div></div>
+      <p>It is first-order (only first derivatives appear), linear (the right-hand side is a linear function of <span class="km" data-tex="\vec{\mathbf{y}}"></span>), homogeneous (there is no forcing term), and has constant coefficients (<span class="km" data-tex="A"></span> does not depend on <span class="km" data-tex="t"></span>). Vectors are written in bold with an arrow, and their components are plain letters with subscripts. In terms of the standard basis vectors,</p>
+      <div class="eq-derivation"><div class="kmd" data-tex="\vec{\mathbf{y}} = y_1\vec{\mathbf{e}}_1 + y_2\vec{\mathbf{e}}_2, \qquad \vec{\mathbf{e}}_1 = \begin{bmatrix} 1 \\ 0 \end{bmatrix}, \quad \vec{\mathbf{e}}_2 = \begin{bmatrix} 0 \\ 1 \end{bmatrix}"></div></div>
       <h4>The initial value problem</h4>
-      <p>Together with an initial condition <span class="km" data-tex="\vec{\mathbf{x}}(0) = \vec{\mathbf{x}}_0"></span>, the system is an initial value problem. By the existence and uniqueness theorem for linear systems with constant coefficients, it has exactly one solution for each <span class="km" data-tex="\vec{\mathbf{x}}_0"></span>, and that solution is defined for all <span class="km" data-tex="t"></span>. Two consequences are used throughout this page: a solution is determined by its initial condition, and two different trajectories in the phase plane never cross or touch. Because <span class="km" data-tex="A"></span> does not depend on <span class="km" data-tex="t"></span>, the system is also autonomous: the velocity <span class="km" data-tex="A\vec{\mathbf{x}}"></span> depends only on where the state is, not on when it gets there.</p>
+      <p>Together with an initial condition <span class="km" data-tex="\vec{\mathbf{y}}(0) = \vec{\mathbf{y}}_0"></span>, the system is an initial value problem. By the existence and uniqueness theorem for linear systems with constant coefficients, it has exactly one solution for each <span class="km" data-tex="\vec{\mathbf{y}}_0"></span>, and that solution is defined for all <span class="km" data-tex="t"></span>. Two consequences are used throughout this page: a solution is determined by its initial condition, and two different trajectories in the phase plane never cross or touch. Because <span class="km" data-tex="A"></span> does not depend on <span class="km" data-tex="t"></span>, the system is also autonomous: the velocity <span class="km" data-tex="A\vec{\mathbf{y}}"></span> depends only on where the state is, not on when it gets there.</p>
       <h4>Trace and determinant</h4>
       <p>Two numbers built from the parameters appear throughout, the trace and the determinant of <span class="km" data-tex="A"></span>:</p>
       <div class="eq-derivation"><div class="kmd" data-tex="\operatorname{tr}(A) = a + d, \qquad \det(A) = ad - bc"></div></div>
       <h4>Equilibria</h4>
-      <p>An equilibrium is a point <span class="km" data-tex="\vec{\mathbf{x}}^*"></span> with <span class="km" data-tex="A\vec{\mathbf{x}}^* = \vec{\mathbf{0}}"></span>; the constant function <span class="km" data-tex="\vec{\mathbf{x}}(t) = \vec{\mathbf{x}}^*"></span> is then a solution. The origin is always an equilibrium. If <span class="km" data-tex="\det(A) \neq 0"></span> it is the only one, an isolated equilibrium. If <span class="km" data-tex="\det(A) = 0"></span>, every point of the null space of <span class="km" data-tex="A"></span> is an equilibrium: a whole line of equilibria, or the whole plane when <span class="km" data-tex="A = 0"></span>.</p>
+      <p>An equilibrium is a point <span class="km" data-tex="\vec{\mathbf{y}}^*"></span> with <span class="km" data-tex="A\vec{\mathbf{y}}^* = \vec{\mathbf{0}}"></span>; the constant function <span class="km" data-tex="\vec{\mathbf{y}}(t) = \vec{\mathbf{y}}^*"></span> is then a solution. The origin is always an equilibrium. If <span class="km" data-tex="\det(A) \neq 0"></span> it is the only one, an isolated equilibrium. If <span class="km" data-tex="\det(A) = 0"></span>, every point of the null space of <span class="km" data-tex="A"></span> is an equilibrium: a whole line of equilibria, or the whole plane when <span class="km" data-tex="A = 0"></span>.</p>
       <h4>Nullclines</h4>
       <p>The nullclines are the sets where one component of the velocity vanishes:</p>
-      <div class="eq-derivation"><div class="kmd" data-tex="\begin{aligned} x_1' = 0: &\quad a x_1 + b x_2 = 0 && \text{vectors are vertical} \\ x_2' = 0: &\quad c x_1 + d x_2 = 0 && \text{vectors are horizontal} \end{aligned}"></div></div>
-      <p>For a linear system both nullclines are lines through the origin (as long as the row is not zero). They meet only at the origin unless <span class="km" data-tex="\det(A) = 0"></span>, in which case they coincide with the line of equilibria. A nullcline depends only on the ratio of the entries in its row: multiplying the row <span class="km" data-tex="(a, b)"></span> by a nonzero number <span class="km" data-tex="k"></span> leaves the line <span class="km" data-tex="a x_1 + b x_2 = 0"></span> where it is, but multiplies every value of <span class="km" data-tex="x_1'"></span> by <span class="km" data-tex="k"></span>. The flow changes, and when <span class="km" data-tex="k < 0"></span> the vectors reverse their horizontal component on both sides of the line. The same holds for the row <span class="km" data-tex="(c, d)"></span>, <span class="km" data-tex="x_2'"></span>, and the vertical component.</p>
+      <div class="eq-derivation"><div class="kmd" data-tex="\begin{aligned} y_1' = 0: &\quad a y_1 + b y_2 = 0 && \text{vectors are vertical} \\ y_2' = 0: &\quad c y_1 + d y_2 = 0 && \text{vectors are horizontal} \end{aligned}"></div></div>
+      <p>For a linear system both nullclines are lines through the origin (as long as the row is not zero). They meet only at the origin unless <span class="km" data-tex="\det(A) = 0"></span>, in which case they coincide with the line of equilibria. A nullcline depends only on the ratio of the entries in its row: multiplying the row <span class="km" data-tex="(a, b)"></span> by a nonzero number <span class="km" data-tex="k"></span> leaves the line <span class="km" data-tex="a y_1 + b y_2 = 0"></span> where it is, but multiplies every value of <span class="km" data-tex="y_1'"></span> by <span class="km" data-tex="k"></span>. The flow changes, and when <span class="km" data-tex="k < 0"></span> the vectors reverse their horizontal component on both sides of the line. The same holds for the row <span class="km" data-tex="(c, d)"></span>, <span class="km" data-tex="y_2'"></span>, and the vertical component.</p>
         </div>
       </details>
 
@@ -822,32 +822,32 @@
         <summary><span class="sec-title">Vector field, phase plane, and phase portrait</span> <span class="sec-tag">three related pictures, and how they differ</span></summary>
         <div class="sec-body">
       <h4>Phase plane</h4>
-      <p>The phase plane is the <span class="km" data-tex="x_1x_2"></span>-plane used as the space of states: each point <span class="km" data-tex="(x_1, x_2)"></span> is one possible state, the vector <span class="km" data-tex="\vec{\mathbf{x}} = \begin{bmatrix} x_1 \\ x_2 \end{bmatrix}"></span>. Time is not an axis of the phase plane. A solution shows up there as a moving point, and the curve it traces is its trajectory (also called its orbit).</p>
+      <p>The phase plane is the <span class="km" data-tex="y_1y_2"></span>-plane used as the space of states: each point <span class="km" data-tex="(y_1, y_2)"></span> is one possible state, the vector <span class="km" data-tex="\vec{\mathbf{y}} = \begin{bmatrix} y_1 \\ y_2 \end{bmatrix}"></span>. Time is not an axis of the phase plane. A solution shows up there as a moving point, and the curve it traces is its trajectory (also called its orbit).</p>
       <h4>Vector field</h4>
       <p>The vector field assigns to every point of the phase plane the velocity a solution has when it passes through that point:</p>
-      <div class="eq-derivation"><div class="kmd" data-tex="\vec{\mathbf{F}}(\vec{\mathbf{x}}) = A\vec{\mathbf{x}} = \begin{bmatrix} a x_1 + b x_2 \\ c x_1 + d x_2 \end{bmatrix}"></div></div>
-      <p>It is drawn as arrows on a grid. With "scaled" on, each arrow's length reflects the speed <span class="km" data-tex="\lVert A\vec{\mathbf{x}} \rVert"></span>. With "scaled" off, every arrow has the same length and only the direction is shown, which is usually called a direction field. Every trajectory is tangent to the vector field at each of its points.</p>
+      <div class="eq-derivation"><div class="kmd" data-tex="\vec{\mathbf{F}}(\vec{\mathbf{y}}) = A\vec{\mathbf{y}} = \begin{bmatrix} a y_1 + b y_2 \\ c y_1 + d y_2 \end{bmatrix}"></div></div>
+      <p>It is drawn as arrows on a grid. With "scaled" on, each arrow's length reflects the speed <span class="km" data-tex="\lVert A\vec{\mathbf{y}} \rVert"></span>. With "scaled" off, every arrow has the same length and only the direction is shown, which is usually called a direction field. Every trajectory is tangent to the vector field at each of its points.</p>
       <h4>Phase portrait</h4>
-      <p>A phase portrait is a picture in the phase plane of the equilibria together with a representative set of trajectories, with arrows showing the direction of motion. It shows the qualitative behavior of all solutions at once, without solving for any single one. The plot in the Phase Portraits panel is a phase portrait: sample trajectories spread evenly over the window, the equilibrium, and, optionally, the eigenvectors and nullclines. Its flow-particles option replaces the sample trajectories with many short-lived solutions carried along by the flow. The x<sub>1</sub> vs x<sub>2</sub> view in System Trajectories shows the vector field and one specific solution in the same plane.</p>
+      <p>A phase portrait is a picture in the phase plane of the equilibria together with a representative set of trajectories, with arrows showing the direction of motion. It shows the qualitative behavior of all solutions at once, without solving for any single one. The plot in the Phase Portraits panel is a phase portrait: sample trajectories spread evenly over the window, the equilibrium, and, optionally, the eigenvectors and nullclines. Its flow-particles option replaces the sample trajectories with many short-lived solutions carried along by the flow. The y<sub>1</sub> vs y<sub>2</sub> view in System Trajectories shows the vector field and one specific solution in the same plane.</p>
       <h4>How they differ</h4>
       <div class="case-wrap">
         <table class="case-table">
           <thead><tr><th>Object</th><th>What it is</th><th>What it answers</th></tr></thead>
           <tbody>
-            <tr><td>Phase plane</td><td class="motion">The space of states <span class="km" data-tex="(x_1, x_2)"></span>; no time axis.</td><td class="motion">Where can the system be?</td></tr>
-            <tr><td>Vector field</td><td class="motion">A vector <span class="km" data-tex="A\vec{\mathbf{x}}"></span> attached to each point of the phase plane.</td><td class="motion">Which way, and how fast, does a solution move from here?</td></tr>
+            <tr><td>Phase plane</td><td class="motion">The space of states <span class="km" data-tex="(y_1, y_2)"></span>; no time axis.</td><td class="motion">Where can the system be?</td></tr>
+            <tr><td>Vector field</td><td class="motion">A vector <span class="km" data-tex="A\vec{\mathbf{y}}"></span> attached to each point of the phase plane.</td><td class="motion">Which way, and how fast, does a solution move from here?</td></tr>
             <tr><td>Phase portrait</td><td class="motion">Equilibria and representative trajectories drawn in the phase plane.</td><td class="motion">What do all solutions do over time?</td></tr>
           </tbody>
         </table>
       </div>
-      <p>The graph of a solution is the curve <span class="km" data-tex="(t, x_1(t), x_2(t))"></span> in three dimensions, which the 3D view shows. Projecting it along the <span class="km" data-tex="t"></span>-axis gives its trajectory, as in the x<sub>1</sub> vs x<sub>2</sub> view. Projecting it onto the other two walls gives the component graphs in the t vs x<sub>1</sub> and t vs x<sub>2</sub> views. The trajectory loses the timing (how long each part takes), while each component graph keeps the timing but shows only one coordinate. By uniqueness, trajectories in the phase plane never cross, while the component graphs of different solutions can cross freely.</p>
+      <p>The graph of a solution is the curve <span class="km" data-tex="(t, y_1(t), y_2(t))"></span> in three dimensions, which the 3D view shows. Projecting it along the <span class="km" data-tex="t"></span>-axis gives its trajectory, as in the y<sub>1</sub> vs y<sub>2</sub> view. Projecting it onto the other two walls gives the component graphs in the t vs y<sub>1</sub> and t vs y<sub>2</sub> views. The trajectory loses the timing (how long each part takes), while each component graph keeps the timing but shows only one coordinate. By uniqueness, trajectories in the phase plane never cross, while the component graphs of different solutions can cross freely.</p>
         </div>
       </details>
 
       <details class="sec">
         <summary><span class="sec-title">Straight-line solutions</span> <span class="sec-tag">eigenvalues, eigenvectors, and eigenvalues in the complex plane</span></summary>
         <div class="sec-body">
-      <p>Look for solutions whose trajectories are straight lines through the origin, that is, solutions of the form <span class="km" data-tex="\vec{\mathbf{x}}(t) = e^{\lambda t}\vec{\mathbf{v}}"></span> with a constant vector <span class="km" data-tex="\vec{\mathbf{v}} \neq \vec{\mathbf{0}}"></span>. Substituting gives <span class="km" data-tex="\lambda e^{\lambda t}\vec{\mathbf{v}} = e^{\lambda t}A\vec{\mathbf{v}}"></span>, so <span class="km" data-tex="\vec{\mathbf{v}}"></span> must be an eigenvector of <span class="km" data-tex="A"></span> with eigenvalue <span class="km" data-tex="\lambda"></span>:</p>
+      <p>Look for solutions whose trajectories are straight lines through the origin, that is, solutions of the form <span class="km" data-tex="\vec{\mathbf{y}}(t) = e^{\lambda t}\vec{\mathbf{v}}"></span> with a constant vector <span class="km" data-tex="\vec{\mathbf{v}} \neq \vec{\mathbf{0}}"></span>. Substituting gives <span class="km" data-tex="\lambda e^{\lambda t}\vec{\mathbf{v}} = e^{\lambda t}A\vec{\mathbf{v}}"></span>, so <span class="km" data-tex="\vec{\mathbf{v}}"></span> must be an eigenvector of <span class="km" data-tex="A"></span> with eigenvalue <span class="km" data-tex="\lambda"></span>:</p>
       <div class="eq-derivation"><div class="kmd" data-tex="A\vec{\mathbf{v}} = \lambda\vec{\mathbf{v}} \iff (A - \lambda I)\vec{\mathbf{v}} = \vec{\mathbf{0}}"></div></div>
       <h4>Eigenvalues: the characteristic equation</h4>
       <p>A nonzero solution <span class="km" data-tex="\vec{\mathbf{v}}"></span> exists exactly when <span class="km" data-tex="A - \lambda I"></span> is singular, that is, when <span class="km" data-tex="\det(A - \lambda I) = 0"></span>. Expanding the determinant gives the characteristic equation:</p>
@@ -889,9 +889,9 @@
         </table>
       </div>
       <h4>What the eigenvectors mean</h4>
-      <p>Geometrically, an eigenvector marks a direction in which the vector field points along the position itself. On the line spanned by an eigenvector <span class="km" data-tex="\vec{\mathbf{v}}"></span> with real eigenvalue <span class="km" data-tex="\lambda"></span>, every point <span class="km" data-tex="\vec{\mathbf{x}} = s\vec{\mathbf{v}}"></span> has velocity</p>
-      <div class="eq-derivation"><div class="kmd" data-tex="A\vec{\mathbf{x}} = s\,A\vec{\mathbf{v}} = \lambda\,(s\vec{\mathbf{v}}) = \lambda\vec{\mathbf{x}}"></div></div>
-      <p>The velocity is parallel to the position, so a solution that starts on the line stays on it, moving as <span class="km" data-tex="\vec{\mathbf{x}}(t) = e^{\lambda t}\vec{\mathbf{x}}(0)"></span>: toward the origin when <span class="km" data-tex="\lambda < 0"></span>, away from it when <span class="km" data-tex="\lambda > 0"></span>, and not at all when <span class="km" data-tex="\lambda = 0"></span>. These straight-line solutions <span class="km" data-tex="e^{\lambda t}\vec{\mathbf{v}}"></span> are also called eigensolutions. The size <span class="km" data-tex="|\lambda|"></span> is how fast they move: <span class="km" data-tex="e^{\lambda t}"></span> changes by a factor of <span class="km" data-tex="e"></span> every <span class="km" data-tex="1/|\lambda|"></span> time units. What the eigenvectors say about the other solutions depends on the case:</p>
+      <p>Geometrically, an eigenvector marks a direction in which the vector field points along the position itself. On the line spanned by an eigenvector <span class="km" data-tex="\vec{\mathbf{v}}"></span> with real eigenvalue <span class="km" data-tex="\lambda"></span>, every point <span class="km" data-tex="\vec{\mathbf{y}} = s\vec{\mathbf{v}}"></span> has velocity</p>
+      <div class="eq-derivation"><div class="kmd" data-tex="A\vec{\mathbf{y}} = s\,A\vec{\mathbf{v}} = \lambda\,(s\vec{\mathbf{v}}) = \lambda\vec{\mathbf{y}}"></div></div>
+      <p>The velocity is parallel to the position, so a solution that starts on the line stays on it, moving as <span class="km" data-tex="\vec{\mathbf{y}}(t) = e^{\lambda t}\vec{\mathbf{y}}(0)"></span>: toward the origin when <span class="km" data-tex="\lambda < 0"></span>, away from it when <span class="km" data-tex="\lambda > 0"></span>, and not at all when <span class="km" data-tex="\lambda = 0"></span>. These straight-line solutions <span class="km" data-tex="e^{\lambda t}\vec{\mathbf{v}}"></span> are also called eigensolutions. The size <span class="km" data-tex="|\lambda|"></span> is how fast they move: <span class="km" data-tex="e^{\lambda t}"></span> changes by a factor of <span class="km" data-tex="e"></span> every <span class="km" data-tex="1/|\lambda|"></span> time units. What the eigenvectors say about the other solutions depends on the case:</p>
       <div class="case-wrap">
         <table class="case-table">
           <thead><tr><th>Case</th><th>Eigenvectors</th><th>Straight-line solutions</th><th>Every other solution</th></tr></thead>
@@ -900,9 +900,9 @@
             <tr><td>Saddle<br><span class="km" data-tex="\lambda_2 < 0 < \lambda_1"></span></td><td class="motion">Two, <span class="km" data-tex="\vec{\mathbf{v}}_1"></span> and <span class="km" data-tex="\vec{\mathbf{v}}_2"></span>.</td><td class="motion">The line of <span class="km" data-tex="\vec{\mathbf{v}}_2"></span> is the stable line: solutions on it approach the origin. The line of <span class="km" data-tex="\vec{\mathbf{v}}_1"></span> is the unstable line: solutions on it move away.</td><td class="motion">They come in alongside the stable line and leave alongside the unstable line, never reaching the origin. The two lines are the separatrices that divide the plane into four regions.</td></tr>
             <tr><td>Line of equilibria<br><span class="km" data-tex="0"></span> and <span class="km" data-tex="\lambda \neq 0"></span></td><td class="motion">Two: <span class="km" data-tex="\vec{\mathbf{v}}_0"></span> for the eigenvalue 0 and <span class="km" data-tex="\vec{\mathbf{v}}"></span> for <span class="km" data-tex="\lambda = \operatorname{tr}(A)"></span>.</td><td class="motion">Every point on the line of <span class="km" data-tex="\vec{\mathbf{v}}_0"></span> is an equilibrium. The line of <span class="km" data-tex="\vec{\mathbf{v}}"></span> moves toward or away from the origin.</td><td class="motion">Each is <span class="km" data-tex="c_1\vec{\mathbf{v}}_0 + c_2e^{\lambda t}\vec{\mathbf{v}}"></span>, which moves on a line parallel to <span class="km" data-tex="\vec{\mathbf{v}}"></span>, toward the line of equilibria when <span class="km" data-tex="\lambda < 0"></span> and away from it when <span class="km" data-tex="\lambda > 0"></span>.</td></tr>
             <tr><td>Degenerate node<br><span class="km" data-tex="\lambda"></span> repeated, <span class="km" data-tex="A \neq \lambda I"></span></td><td class="motion">One, <span class="km" data-tex="\vec{\mathbf{v}}"></span>. The generalized eigenvector <span class="km" data-tex="\vec{\mathbf{w}}"></span> is not an eigenvector.</td><td class="motion">Only the line of <span class="km" data-tex="\vec{\mathbf{v}}"></span>.</td><td class="motion">In <span class="km" data-tex="e^{\lambda t}(c_1\vec{\mathbf{v}} + c_2(t\vec{\mathbf{v}} + \vec{\mathbf{w}}))"></span> the term <span class="km" data-tex="t\vec{\mathbf{v}}"></span> dominates as <span class="km" data-tex="|t| \to \infty"></span>, so every solution becomes tangent to the line of <span class="km" data-tex="\vec{\mathbf{v}}"></span> as it approaches or leaves the origin.</td></tr>
-            <tr><td>Star<br><span class="km" data-tex="A = \lambda I"></span>, <span class="km" data-tex="\lambda \neq 0"></span></td><td class="motion">Every nonzero vector.</td><td class="motion">Every line through the origin.</td><td class="motion">There are none: every solution is a ray <span class="km" data-tex="e^{\lambda t}\vec{\mathbf{x}}(0)"></span>, toward or away from the origin.</td></tr>
-            <tr><td>Uniform motion<br><span class="km" data-tex="\lambda_1 = \lambda_2 = 0"></span>, <span class="km" data-tex="A \neq 0"></span></td><td class="motion">One, <span class="km" data-tex="\vec{\mathbf{v}}"></span>.</td><td class="motion">The line of <span class="km" data-tex="\vec{\mathbf{v}}"></span> is a line of equilibria.</td><td class="motion">Since <span class="km" data-tex="A^2 = 0"></span>, each is <span class="km" data-tex="\vec{\mathbf{x}}(0) + t\,A\vec{\mathbf{x}}(0)"></span>. The vector <span class="km" data-tex="A\vec{\mathbf{x}}(0)"></span> lies along <span class="km" data-tex="\vec{\mathbf{v}}"></span>, so the solution moves at constant velocity on a line parallel to <span class="km" data-tex="\vec{\mathbf{v}}"></span>.</td></tr>
-            <tr><td>Spiral or center<br><span class="km" data-tex="\alpha \pm i\beta"></span>, <span class="km" data-tex="\beta > 0"></span></td><td class="motion">No real eigenvectors. The complex eigenvector <span class="km" data-tex="\vec{\mathbf{v}} = \vec{\mathbf{p}} + i\vec{\mathbf{q}}"></span> gives two real vectors <span class="km" data-tex="\vec{\mathbf{p}}"></span> and <span class="km" data-tex="\vec{\mathbf{q}}"></span>.</td><td class="motion">None: <span class="km" data-tex="A\vec{\mathbf{x}}"></span> is never parallel to a nonzero <span class="km" data-tex="\vec{\mathbf{x}}"></span>, so every solution keeps turning.</td><td class="motion">The solution with <span class="km" data-tex="\vec{\mathbf{x}}(0) = \vec{\mathbf{p}}"></span> is <span class="km" data-tex="e^{\alpha t}(\vec{\mathbf{p}}\cos\beta t - \vec{\mathbf{q}}\sin\beta t)"></span>. For a center <span class="km" data-tex="(\alpha = 0)"></span> it traces the ellipse with conjugate semi-diameters <span class="km" data-tex="\vec{\mathbf{p}}"></span> and <span class="km" data-tex="\vec{\mathbf{q}}"></span>, and every other orbit is a scaled copy of that ellipse. For a spiral the same picture shrinks <span class="km" data-tex="(\alpha < 0)"></span> or grows <span class="km" data-tex="(\alpha > 0)"></span> by the factor <span class="km" data-tex="e^{\alpha t}"></span>.</td></tr>
+            <tr><td>Star<br><span class="km" data-tex="A = \lambda I"></span>, <span class="km" data-tex="\lambda \neq 0"></span></td><td class="motion">Every nonzero vector.</td><td class="motion">Every line through the origin.</td><td class="motion">There are none: every solution is a ray <span class="km" data-tex="e^{\lambda t}\vec{\mathbf{y}}(0)"></span>, toward or away from the origin.</td></tr>
+            <tr><td>Uniform motion<br><span class="km" data-tex="\lambda_1 = \lambda_2 = 0"></span>, <span class="km" data-tex="A \neq 0"></span></td><td class="motion">One, <span class="km" data-tex="\vec{\mathbf{v}}"></span>.</td><td class="motion">The line of <span class="km" data-tex="\vec{\mathbf{v}}"></span> is a line of equilibria.</td><td class="motion">Since <span class="km" data-tex="A^2 = 0"></span>, each is <span class="km" data-tex="\vec{\mathbf{y}}(0) + t\,A\vec{\mathbf{y}}(0)"></span>. The vector <span class="km" data-tex="A\vec{\mathbf{y}}(0)"></span> lies along <span class="km" data-tex="\vec{\mathbf{v}}"></span>, so the solution moves at constant velocity on a line parallel to <span class="km" data-tex="\vec{\mathbf{v}}"></span>.</td></tr>
+            <tr><td>Spiral or center<br><span class="km" data-tex="\alpha \pm i\beta"></span>, <span class="km" data-tex="\beta > 0"></span></td><td class="motion">No real eigenvectors. The complex eigenvector <span class="km" data-tex="\vec{\mathbf{v}} = \vec{\mathbf{p}} + i\vec{\mathbf{q}}"></span> gives two real vectors <span class="km" data-tex="\vec{\mathbf{p}}"></span> and <span class="km" data-tex="\vec{\mathbf{q}}"></span>.</td><td class="motion">None: <span class="km" data-tex="A\vec{\mathbf{y}}"></span> is never parallel to a nonzero <span class="km" data-tex="\vec{\mathbf{y}}"></span>, so every solution keeps turning.</td><td class="motion">The solution with <span class="km" data-tex="\vec{\mathbf{y}}(0) = \vec{\mathbf{p}}"></span> is <span class="km" data-tex="e^{\alpha t}(\vec{\mathbf{p}}\cos\beta t - \vec{\mathbf{q}}\sin\beta t)"></span>. For a center <span class="km" data-tex="(\alpha = 0)"></span> it traces the ellipse with conjugate semi-diameters <span class="km" data-tex="\vec{\mathbf{p}}"></span> and <span class="km" data-tex="\vec{\mathbf{q}}"></span>, and every other orbit is a scaled copy of that ellipse. For a spiral the same picture shrinks <span class="km" data-tex="(\alpha < 0)"></span> or grows <span class="km" data-tex="(\alpha > 0)"></span> by the factor <span class="km" data-tex="e^{\alpha t}"></span>.</td></tr>
           </tbody>
         </table>
       </div>
@@ -918,17 +918,17 @@
         <summary><span class="sec-title">The general solution</span> <span class="sec-tag">superposition, fundamental solutions, and each case</span></summary>
         <div class="sec-body">
       <h4>Superposition</h4>
-      <p>The system is linear and homogeneous, so the superposition principle holds: if <span class="km" data-tex="\vec{\mathbf{x}}^{(1)}"></span> and <span class="km" data-tex="\vec{\mathbf{x}}^{(2)}"></span> are solutions, then so is every linear combination of them, because differentiation and multiplication by <span class="km" data-tex="A"></span> are both linear:</p>
-      <div class="eq-derivation"><div class="kmd" data-tex="\frac{d}{dt}\left[c_1\vec{\mathbf{x}}^{(1)} + c_2\vec{\mathbf{x}}^{(2)}\right] = c_1A\vec{\mathbf{x}}^{(1)} + c_2A\vec{\mathbf{x}}^{(2)} = A\left[c_1\vec{\mathbf{x}}^{(1)} + c_2\vec{\mathbf{x}}^{(2)}\right]"></div></div>
+      <p>The system is linear and homogeneous, so the superposition principle holds: if <span class="km" data-tex="\vec{\mathbf{y}}^{(1)}"></span> and <span class="km" data-tex="\vec{\mathbf{y}}^{(2)}"></span> are solutions, then so is every linear combination of them, because differentiation and multiplication by <span class="km" data-tex="A"></span> are both linear:</p>
+      <div class="eq-derivation"><div class="kmd" data-tex="\frac{d}{dt}\left[c_1\vec{\mathbf{y}}^{(1)} + c_2\vec{\mathbf{y}}^{(2)}\right] = c_1A\vec{\mathbf{y}}^{(1)} + c_2A\vec{\mathbf{y}}^{(2)} = A\left[c_1\vec{\mathbf{y}}^{(1)} + c_2\vec{\mathbf{y}}^{(2)}\right]"></div></div>
       <h4>Fundamental solutions</h4>
       <p>Two solutions form a fundamental set when the matrix with those solutions as its columns is invertible:</p>
-      <div class="eq-derivation"><div class="kmd" data-tex="\Phi(t) = \begin{bmatrix} \vec{\mathbf{x}}^{(1)}(t) & \vec{\mathbf{x}}^{(2)}(t) \end{bmatrix}, \qquad W(t) = \det\Phi(t) = W(0)\,e^{\operatorname{tr}(A)\,t}"></div></div>
-      <p>The determinant <span class="km" data-tex="W(t)"></span> is the Wronskian. By Abel's formula above it is either never zero or identically zero, so it is enough to check <span class="km" data-tex="t = 0"></span>. For a fundamental set, the coefficients solving <span class="km" data-tex="c_1\vec{\mathbf{x}}^{(1)}(0) + c_2\vec{\mathbf{x}}^{(2)}(0) = \vec{\mathbf{x}}_0"></span> exist and are unique because <span class="km" data-tex="\Phi(0)"></span> is invertible. By uniqueness, <span class="km" data-tex="c_1\vec{\mathbf{x}}^{(1)} + c_2\vec{\mathbf{x}}^{(2)}"></span> is then the solution with that initial condition. So every solution is a combination of the two, and the solutions form a two-dimensional vector space:</p>
-      <div class="eq-derivation"><div class="kmd" data-tex="\vec{\mathbf{x}}(t) = c_1\vec{\mathbf{x}}^{(1)}(t) + c_2\vec{\mathbf{x}}^{(2)}(t) = \Phi(t)\begin{bmatrix} c_1 \\ c_2 \end{bmatrix}"></div></div>
+      <div class="eq-derivation"><div class="kmd" data-tex="\Phi(t) = \begin{bmatrix} \vec{\mathbf{y}}^{(1)}(t) & \vec{\mathbf{y}}^{(2)}(t) \end{bmatrix}, \qquad W(t) = \det\Phi(t) = W(0)\,e^{\operatorname{tr}(A)\,t}"></div></div>
+      <p>The determinant <span class="km" data-tex="W(t)"></span> is the Wronskian. By Abel's formula above it is either never zero or identically zero, so it is enough to check <span class="km" data-tex="t = 0"></span>. For a fundamental set, the coefficients solving <span class="km" data-tex="c_1\vec{\mathbf{y}}^{(1)}(0) + c_2\vec{\mathbf{y}}^{(2)}(0) = \vec{\mathbf{y}}_0"></span> exist and are unique because <span class="km" data-tex="\Phi(0)"></span> is invertible. By uniqueness, <span class="km" data-tex="c_1\vec{\mathbf{y}}^{(1)} + c_2\vec{\mathbf{y}}^{(2)}"></span> is then the solution with that initial condition. So every solution is a combination of the two, and the solutions form a two-dimensional vector space:</p>
+      <div class="eq-derivation"><div class="kmd" data-tex="\vec{\mathbf{y}}(t) = c_1\vec{\mathbf{y}}^{(1)}(t) + c_2\vec{\mathbf{y}}^{(2)}(t) = \Phi(t)\begin{bmatrix} c_1 \\ c_2 \end{bmatrix}"></div></div>
       <p>On this page the two fundamental solutions are called the two modes.</p>
       <h4>Combining the eigensolutions</h4>
       <p>When <span class="km" data-tex="A"></span> has two independent eigenvectors <span class="km" data-tex="\vec{\mathbf{v}}_1"></span> and <span class="km" data-tex="\vec{\mathbf{v}}_2"></span>, the eigensolutions <span class="km" data-tex="e^{\lambda_1 t}\vec{\mathbf{v}}_1"></span> and <span class="km" data-tex="e^{\lambda_2 t}\vec{\mathbf{v}}_2"></span> form a fundamental set, since <span class="km" data-tex="W(0) = \det\begin{bmatrix} \vec{\mathbf{v}}_1 & \vec{\mathbf{v}}_2 \end{bmatrix} \neq 0"></span>:</p>
-      <div class="eq-derivation"><div class="kmd" data-tex="\vec{\mathbf{x}}(0) = c_1\vec{\mathbf{v}}_1 + c_2\vec{\mathbf{v}}_2 \quad\Longrightarrow\quad \vec{\mathbf{x}}(t) = c_1e^{\lambda_1 t}\vec{\mathbf{v}}_1 + c_2e^{\lambda_2 t}\vec{\mathbf{v}}_2"></div></div>
+      <div class="eq-derivation"><div class="kmd" data-tex="\vec{\mathbf{y}}(0) = c_1\vec{\mathbf{v}}_1 + c_2\vec{\mathbf{v}}_2 \quad\Longrightarrow\quad \vec{\mathbf{y}}(t) = c_1e^{\lambda_1 t}\vec{\mathbf{v}}_1 + c_2e^{\lambda_2 t}\vec{\mathbf{v}}_2"></div></div>
       <p>Geometrically, <span class="km" data-tex="c_1"></span> and <span class="km" data-tex="c_2"></span> are the coordinates of the initial point in the eigenvector basis. Each piece stays on its own eigenvector line and is scaled by its own factor <span class="km" data-tex="e^{\lambda_k t}"></span>, and the solution is their vector sum, the corner of the parallelogram they span. This explains the portraits: in a node the faster piece decays (or grows) first, so the solution ends up along the slow eigenvector; in a saddle one piece shrinks while the other grows, so the solution comes in along one line and leaves along the other. Taking <span class="km" data-tex="c_2 = 0"></span> or <span class="km" data-tex="c_1 = 0"></span> recovers a single straight-line solution.</p>
       <h4>The general solution in each case</h4>
       <div class="case-wrap">
@@ -937,14 +937,14 @@
           <tbody>
             <tr><td>Distinct real</td><td><span class="km" data-tex="\operatorname{tr}(A)^2 - 4\det(A) > 0"></span></td><td><span class="km" data-tex="\lambda_1 \neq \lambda_2"></span></td><td><span class="km" data-tex="c_1e^{\lambda_1 t}\vec{\mathbf{v}}_1 + c_2e^{\lambda_2 t}\vec{\mathbf{v}}_2"></span></td></tr>
             <tr><td>Complex</td><td><span class="km" data-tex="\operatorname{tr}(A)^2 - 4\det(A) < 0"></span></td><td><span class="km" data-tex="\alpha \pm i\beta"></span>, <span class="km" data-tex="\vec{\mathbf{v}} = \vec{\mathbf{p}} + i\vec{\mathbf{q}}"></span></td><td><span class="km" data-tex="e^{\alpha t}[c_1(\vec{\mathbf{p}}\cos\beta t - \vec{\mathbf{q}}\sin\beta t) + c_2(\vec{\mathbf{p}}\sin\beta t + \vec{\mathbf{q}}\cos\beta t)]"></span></td></tr>
-            <tr><td>Repeated, two eigenvectors</td><td><span class="km" data-tex="A = \lambda I"></span></td><td><span class="km" data-tex="\lambda"></span> (double)</td><td><span class="km" data-tex="e^{\lambda t}(c_1\vec{\mathbf{e}}_1 + c_2\vec{\mathbf{e}}_2) = e^{\lambda t}\vec{\mathbf{x}}(0)"></span></td></tr>
+            <tr><td>Repeated, two eigenvectors</td><td><span class="km" data-tex="A = \lambda I"></span></td><td><span class="km" data-tex="\lambda"></span> (double)</td><td><span class="km" data-tex="e^{\lambda t}(c_1\vec{\mathbf{e}}_1 + c_2\vec{\mathbf{e}}_2) = e^{\lambda t}\vec{\mathbf{y}}(0)"></span></td></tr>
             <tr><td>Repeated, one eigenvector</td><td><span class="km" data-tex="\operatorname{tr}(A)^2 = 4\det(A),\ A \neq \lambda I"></span></td><td><span class="km" data-tex="\lambda = \operatorname{tr}(A)/2"></span> (double)</td><td><span class="km" data-tex="c_1e^{\lambda t}\vec{\mathbf{v}} + c_2e^{\lambda t}(t\vec{\mathbf{v}} + \vec{\mathbf{w}})"></span></td></tr>
           </tbody>
         </table>
       </div>
       <p><strong>Complex case.</strong> The complex eigensolution <span class="km" data-tex="e^{(\alpha + i\beta)t}(\vec{\mathbf{p}} + i\vec{\mathbf{q}})"></span> solves the system. Because <span class="km" data-tex="A"></span> is real, its real and imaginary parts are real solutions. Expanding with Euler's formula <span class="km" data-tex="e^{i\beta t} = \cos\beta t + i\sin\beta t"></span> gives the two real modes in the table, and their Wronskian at <span class="km" data-tex="t = 0"></span> is <span class="km" data-tex="\det\begin{bmatrix} \vec{\mathbf{p}} & \vec{\mathbf{q}} \end{bmatrix} \neq 0"></span>.</p>
-      <p><strong>Defective repeated case.</strong> There is only one eigensolution <span class="km" data-tex="e^{\lambda t}\vec{\mathbf{v}}"></span>. The second mode uses a generalized eigenvector <span class="km" data-tex="\vec{\mathbf{w}}"></span>, a solution of <span class="km" data-tex="(A - \lambda I)\vec{\mathbf{w}} = \vec{\mathbf{v}}"></span>. Substituting <span class="km" data-tex="\vec{\mathbf{x}} = e^{\lambda t}(t\vec{\mathbf{v}} + \vec{\mathbf{w}})"></span> checks it: both <span class="km" data-tex="\vec{\mathbf{x}}\,'"></span> and <span class="km" data-tex="A\vec{\mathbf{x}}"></span> equal <span class="km" data-tex="\lambda\vec{\mathbf{x}} + e^{\lambda t}\vec{\mathbf{v}}"></span>, using <span class="km" data-tex="A\vec{\mathbf{v}} = \lambda\vec{\mathbf{v}}"></span> and <span class="km" data-tex="A\vec{\mathbf{w}} = \lambda\vec{\mathbf{w}} + \vec{\mathbf{v}}"></span>.</p>
-      <p>In the t vs x<sub>1</sub> and t vs x<sub>2</sub> views, the option "the two modes" overlays <span class="km" data-tex="c_1\vec{\mathbf{x}}^{(1)}"></span> and <span class="km" data-tex="c_2\vec{\mathbf{x}}^{(2)}"></span>, which add up to <span class="km" data-tex="\vec{\mathbf{x}}"></span> at every moment.</p>
+      <p><strong>Defective repeated case.</strong> There is only one eigensolution <span class="km" data-tex="e^{\lambda t}\vec{\mathbf{v}}"></span>. The second mode uses a generalized eigenvector <span class="km" data-tex="\vec{\mathbf{w}}"></span>, a solution of <span class="km" data-tex="(A - \lambda I)\vec{\mathbf{w}} = \vec{\mathbf{v}}"></span>. Substituting <span class="km" data-tex="\vec{\mathbf{y}} = e^{\lambda t}(t\vec{\mathbf{v}} + \vec{\mathbf{w}})"></span> checks it: both <span class="km" data-tex="\vec{\mathbf{y}}\,'"></span> and <span class="km" data-tex="A\vec{\mathbf{y}}"></span> equal <span class="km" data-tex="\lambda\vec{\mathbf{y}} + e^{\lambda t}\vec{\mathbf{v}}"></span>, using <span class="km" data-tex="A\vec{\mathbf{v}} = \lambda\vec{\mathbf{v}}"></span> and <span class="km" data-tex="A\vec{\mathbf{w}} = \lambda\vec{\mathbf{w}} + \vec{\mathbf{v}}"></span>.</p>
+      <p>In the t vs y<sub>1</sub> and t vs y<sub>2</sub> views, the option "the two modes" overlays <span class="km" data-tex="c_1\vec{\mathbf{y}}^{(1)}"></span> and <span class="km" data-tex="c_2\vec{\mathbf{y}}^{(2)}"></span>, which add up to <span class="km" data-tex="\vec{\mathbf{y}}"></span> at every moment.</p>
         </div>
       </details>
 
@@ -974,7 +974,7 @@
         </table>
       </div>
       <h4>Direction of rotation</h4>
-      <p>For a spiral or a center, the direction of rotation can be read from a single vector. On the positive <span class="km" data-tex="x_1"></span>-axis, in the direction of <span class="km" data-tex="\vec{\mathbf{e}}_1"></span>, the velocity is the first column of <span class="km" data-tex="A"></span>, <span class="km" data-tex="A\vec{\mathbf{e}}_1 = \begin{bmatrix} a \\ c \end{bmatrix}"></span>. Its vertical component is <span class="km" data-tex="c"></span>, so the rotation is counterclockwise when <span class="km" data-tex="c > 0"></span> and clockwise when <span class="km" data-tex="c < 0"></span>. For complex eigenvalues <span class="km" data-tex="c"></span> is never 0, since <span class="km" data-tex="c = 0"></span> would make the eigenvalues <span class="km" data-tex="a"></span> and <span class="km" data-tex="d"></span> real.</p>
+      <p>For a spiral or a center, the direction of rotation can be read from a single vector. On the positive <span class="km" data-tex="y_1"></span>-axis, in the direction of <span class="km" data-tex="\vec{\mathbf{e}}_1"></span>, the velocity is the first column of <span class="km" data-tex="A"></span>, <span class="km" data-tex="A\vec{\mathbf{e}}_1 = \begin{bmatrix} a \\ c \end{bmatrix}"></span>. Its vertical component is <span class="km" data-tex="c"></span>, so the rotation is counterclockwise when <span class="km" data-tex="c > 0"></span> and clockwise when <span class="km" data-tex="c < 0"></span>. For complex eigenvalues <span class="km" data-tex="c"></span> is never 0, since <span class="km" data-tex="c = 0"></span> would make the eigenvalues <span class="km" data-tex="a"></span> and <span class="km" data-tex="d"></span> real.</p>
       <h4>The trace–determinant plane</h4>
       <p>The trace–determinant plane in Phase Portraits puts the whole classification in one picture. The parabola <span class="km" data-tex="\det(A) = \operatorname{tr}(A)^2/4"></span> separates nodes (below it) from spirals (above it) and holds the stars and degenerate nodes. The positive <span class="km" data-tex="\det(A)"></span>-axis holds the centers, the <span class="km" data-tex="\operatorname{tr}(A)"></span>-axis holds the lines of equilibria, and the whole lower half-plane holds the saddles. Replacing <span class="km" data-tex="A"></span> by <span class="km" data-tex="-A"></span> reverses time: every vector flips, the point moves to <span class="km" data-tex="(-\operatorname{tr}(A), \det(A))"></span>, and stable and unstable trade places.</p>
         </div>
@@ -1431,7 +1431,7 @@
   // ---------- the specific solution through x(0), with numbers ----------
   function updateSolution(){
     const R = an, c = sample.c;
-    const X = '\\vec{\\mathbf{x}}';
+    const X = '\\vec{\\mathbf{y}}';
     const vn = (l)=> '\\vec{\\mathbf{' + l + '}}';
     const zero = (v)=> Math.abs(v[0]) < 5e-4 && Math.abs(v[1]) < 5e-4;
     const lin = (a, u, b, w)=> [a*u[0] + b*w[0], a*u[1] + b*w[1]];
@@ -1445,12 +1445,12 @@
     let gen = '', comps = '', how = '';
     if (R.zero){
       gen = X + '(t) = ' + vecTex(x0);
-      comps = 'x_1(t) &= ' + tn(x0[0]) + ' \\\\ x_2(t) &= ' + tn(x0[1]);
+      comps = 'y_1(t) &= ' + tn(x0[0]) + ' \\\\ y_2(t) &= ' + tn(x0[1]);
       how = 'With $A = 0$ nothing moves: the solution is the constant $' + X + '(0)$.';
     } else if (R.kind === 'real'){
       const E1 = texExp(R.l1), E2 = texExp(R.l2);
       gen = X + '(t) = ' + vsum([[sc(c[0], R.v1), E1], [sc(c[1], R.v2), E2]]);
-      comps = 'x_1(t) &= ' + tsum([[c[0]*R.v1[0], E1], [c[1]*R.v2[0], E2]]).s + ' \\\\ x_2(t) &= ' + tsum([[c[0]*R.v1[1], E1], [c[1]*R.v2[1], E2]]).s;
+      comps = 'y_1(t) &= ' + tsum([[c[0]*R.v1[0], E1], [c[1]*R.v2[0], E2]]).s + ' \\\\ y_2(t) &= ' + tsum([[c[0]*R.v1[1], E1], [c[1]*R.v2[1], E2]]).s;
       how = 'From $\\lambda_1 = ' + tn(R.l1) + '$ and $\\lambda_2 = ' + tn(R.l2) + '$, with the initial condition written in the eigenvector basis: $' + X + '(0) = ' + tsum([[c[0], vn('v') + '_1'], [c[1], vn('v') + '_2']]).s + '$.';
     } else if (R.kind === 'complex'){
       const E = texExp(R.alpha), co = texTrig('cos', R.beta), si = texTrig('sin', R.beta);
@@ -1458,12 +1458,12 @@
       const inner = vsum([[Cv, co], [Sv, si]]);
       gen = X + '(t) = ' + (E ? E + '\\left(' + inner + '\\right)' : inner);
       const K = (i)=> tsum([[Cv[i], co], [Sv[i], si]]);
-      comps = 'x_1(t) &= ' + withExp(E, K(0)) + ' \\\\ x_2(t) &= ' + withExp(E, K(1));
+      comps = 'y_1(t) &= ' + withExp(E, K(0)) + ' \\\\ y_2(t) &= ' + withExp(E, K(1));
       how = 'From $\\lambda = ' + tn(R.alpha) + ' \\pm ' + tn(R.beta) + 'i$ with eigenvector $' + vn('p') + ' + i' + vn('q') + '$, and $' + X + '(0) = ' + tsum([[c[0], vn('p')], [c[1], vn('q')]]).s + '$.';
     } else if (R.star){
       const E = texExp(R.lam);
       gen = X + '(t) = ' + (E ? E + '\\,' : '') + vecTex(x0);
-      comps = 'x_1(t) &= ' + withExp(E, tsum([[x0[0], '']])) + ' \\\\ x_2(t) &= ' + withExp(E, tsum([[x0[1], '']]));
+      comps = 'y_1(t) &= ' + withExp(E, tsum([[x0[0], '']])) + ' \\\\ y_2(t) &= ' + withExp(E, tsum([[x0[1], '']]));
       how = 'Here $A = \\lambda I$, so every solution is $e^{\\lambda t}' + X + '(0)$.';
     } else {
       const E = texExp(R.lam);
@@ -1471,7 +1471,7 @@
       const inner = vsum([[C0, ''], [C1, 't']]);
       gen = X + '(t) = ' + (E ? E + '\\left(' + inner + '\\right)' : inner);
       const K = (i)=> tsum([[C0[i], ''], [C1[i], 't']]);
-      comps = 'x_1(t) &= ' + withExp(E, K(0)) + ' \\\\ x_2(t) &= ' + withExp(E, K(1));
+      comps = 'y_1(t) &= ' + withExp(E, K(0)) + ' \\\\ y_2(t) &= ' + withExp(E, K(1));
       how = 'From the repeated eigenvalue $\\lambda = ' + tn(R.lam) + '$, its eigenvector $' + vn('v') + '$, and a generalized eigenvector $' + vn('w') + '$ with $(A - \\lambda I)' + vn('w') + ' = ' + vn('v') + '$; here $' + X + '(0) = ' + tsum([[c[0], vn('v')], [c[1], vn('w')]]).s + '$.';
     }
     tex($('solVec'), gen, true);
@@ -1531,8 +1531,8 @@
   // ---------- text panels ----------
   function updateEqDisplay(){
     const {a,b,c,d} = state.A;
-    tex($('eqVec'), '\\begin{bmatrix} x_1\' \\\\ x_2\' \\end{bmatrix} = \\begin{bmatrix} ' + tn(a) + ' & ' + tn(b) + ' \\\\ ' + tn(c) + ' & ' + tn(d) + ' \\end{bmatrix}\\begin{bmatrix} x_1 \\\\ x_2 \\end{bmatrix}', true);
-    tex($('eqCmp'), '\\begin{aligned} x_1\' &= ' + tsum([[a,'x_1'],[b,'x_2']]).s + ' \\\\ x_2\' &= ' + tsum([[c,'x_1'],[d,'x_2']]).s + ' \\end{aligned}', true);
+    tex($('eqVec'), '\\begin{bmatrix} y_1\' \\\\ y_2\' \\end{bmatrix} = \\begin{bmatrix} ' + tn(a) + ' & ' + tn(b) + ' \\\\ ' + tn(c) + ' & ' + tn(d) + ' \\end{bmatrix}\\begin{bmatrix} y_1 \\\\ y_2 \\end{bmatrix}', true);
+    tex($('eqCmp'), '\\begin{aligned} y_1\' &= ' + tsum([[a,'y_1'],[b,'y_2']]).s + ' \\\\ y_2\' &= ' + tsum([[c,'y_1'],[d,'y_2']]).s + ' \\end{aligned}', true);
   }
 
   function updateReadouts(){
@@ -1570,7 +1570,7 @@
       case 'degenerate': note = 'There is only one eigenvector line. Solutions turn to become tangent to it as they ' + (R.lam < 0 ? 'approach' : 'leave') + ' the origin.'; break;
       case 'line': note = 'Every point on the line spanned by ' + vecTxt(nullDir()) + ' (eigenvalue 0) is an equilibrium. The other solutions move along straight lines parallel to the second eigenvector, ' + (R.tr < 0 ? 'toward' : 'away from') + ' that line.'; break;
       case 'shear': note = 'Both eigenvalues are 0 but $A \\neq 0$. The line spanned by ' + vecTxt(nullDir()) + ' is made of equilibria, and every other solution moves at constant velocity along a line parallel to it.'; break;
-      case 'zero': note = '$A = 0$, so $\\vec{\\mathbf{x}}\\,\' = \\vec{\\mathbf{0}}$ and every solution stays where it starts.'; break;
+      case 'zero': note = '$A = 0$, so $\\vec{\\mathbf{y}}\\,\' = \\vec{\\mathbf{0}}$ and every solution stays where it starts.'; break;
     }
     const nl = $('noteLine');
     nl.hidden = !note; setHTML(nl, mathify(note));
@@ -1606,8 +1606,8 @@
     const h = $('modesHint');
     if (!state.showModes){ setText(h, ''); return; }
     let msg;
-    if (an.kind === 'real') msg = 'mode 1 grows or decays like $e^{\\lambda_1 t}$, mode 2 like $e^{\\lambda_2 t}$; they add up to $\\vec{\\mathbf{x}}(t)$.';
-    else if (an.kind === 'complex') msg = 'the real and imaginary parts of the complex solution, scaled by $c_1$ and $c_2$; they add up to $\\vec{\\mathbf{x}}(t)$.';
+    if (an.kind === 'real') msg = 'mode 1 grows or decays like $e^{\\lambda_1 t}$, mode 2 like $e^{\\lambda_2 t}$; they add up to $\\vec{\\mathbf{y}}(t)$.';
+    else if (an.kind === 'complex') msg = 'the real and imaginary parts of the complex solution, scaled by $c_1$ and $c_2$; they add up to $\\vec{\\mathbf{y}}(t)$.';
     else if (an.star) msg = 'for $A = \\lambda I$ the modes are $e^{\\lambda t}$ times each coordinate axis.';
     else msg = 'mode 2 carries the extra factor of $t$ from the repeated eigenvalue.';
     setHTML(h, mathify(msg));
@@ -1726,7 +1726,7 @@
     document.querySelectorAll('.only-xy').forEach(el=> el.hidden = v !== 'xy');
     document.querySelectorAll('.only-t').forEach(el=> el.hidden = !t);
     document.querySelectorAll('.only-3d').forEach(el=> el.hidden = v !== '3d');
-    // the click mode only applies to the x1 vs x2 view; "Clear added" works in every view
+    // the click mode only applies to the y1 vs y2 view; "Clear added" works in every view
     $('clickField').querySelectorAll('.lbl, .seg').forEach(el=> el.classList.toggle('muted', v !== 'xy'));
     document.querySelectorAll('.xy-mute').forEach(el=> el.classList.toggle('muted', v !== 'xy'));
     phaseCanvas.style.cursor = v === '3d' ? 'grab' : (v === 'xy' ? 'crosshair' : 'default');
@@ -2125,7 +2125,7 @@
     else fillRich(ctx, ylabel, map.px - (plain ? 14 : 42), map.py + map.ph/2);
     ctx.restore();
   }
-  // canvas text where "_d" means a subscript digit, e.g. "x_1' = 0"; honours ctx.textAlign
+  // canvas text where "_d" means a subscript digit, e.g. "y_1' = 0"; honours ctx.textAlign
   function richParts(ctx, str){
     const base = ctx.font, small = base.replace(/(\d+(?:\.\d+)?)px/, (m, n)=> (0.72*parseFloat(n)).toFixed(1) + 'px');
     const parts = [];
@@ -2511,7 +2511,7 @@
       nullHandlePoints().forEach((h, k)=>{
         const X = map.X(h[0]), Y = map.Y(h[1]), u = h[2];
         handleDot(ctx, X, Y, blue);
-        textLabel(ctx, map, X, Y, u[1], u[0], k === 0 ? "x_1′ = 0" : "x_2′ = 0", blue);
+        textLabel(ctx, map, X, Y, u[1], u[0], k === 0 ? "y_1′ = 0" : "y_2′ = 0", blue);
       });
     }
     ctx.restore();
@@ -2711,7 +2711,7 @@
     beginLabels(map, state.showEig, state.showNull);
     const contour = state.showSpeedMain && !an.zero;
     if (contour) drawSpeedBackground(ctx, map);
-    drawAxes(ctx, map, 'x_1', 'x_2', false, false, contour);              // no grid lines over the contours
+    drawAxes(ctx, map, 'y_1', 'y_2', false, false, contour);              // no grid lines over the contours
     clipTo(ctx, map);
 
     // direction field
@@ -2800,7 +2800,7 @@
     ctx.font = '11px "JetBrains Mono", monospace';
     ctx.textAlign = 'left'; ctx.textBaseline = 'top';
     const lines = [];
-    if (hover) lines.push(['pointer: x_1 = ' + fmt(hover[0]) + ',  x_2 = ' + fmt(hover[1]), cssVar('--ink-soft')]);
+    if (hover) lines.push(['pointer: y_1 = ' + fmt(hover[0]) + ',  y_2 = ' + fmt(hover[1]), cssVar('--ink-soft')]);
     lines.forEach((ln, i)=>{
       const tw = measureRich(ctx, ln[0]);
       ctx.fillStyle = 'rgba(251,252,248,0.85)'; ctx.fillRect(map.px + 4, map.py + 4 + i*16, tw + 8, 16);
@@ -2909,7 +2909,7 @@
     const marginL = 58, marginR = 16, marginT = 14, marginB = 44;
     const lim = seriesLimit(comp);
     const map = makeMapper(marginL, marginT, w-marginL-marginR, h-marginT-marginB, 0, state.duration, -lim, lim);
-    drawAxes(ctx, map, 't', comp === 0 ? 'x_1' : 'x_2');
+    drawAxes(ctx, map, 't', comp === 0 ? 'y_1' : 'y_2');
     clipTo(ctx, map);
     ctx.strokeStyle = cssVar('--ink-soft'); ctx.lineWidth = 1.2; ctx.setLineDash([2,4]);
     ctx.beginPath(); ctx.moveTo(map.px, map.Y(0)); ctx.lineTo(map.px + map.pw, map.Y(0)); ctx.stroke();
@@ -2959,8 +2959,8 @@
     };
     const main = [];
     if (state.view === 'xy'){
-      if (state.clickMode === 'add') main.push('Click to add a solution' + (state.showSpecific ? '; drag the green dot to move ' + M('\\vec{\\mathbf{x}}(0)') + '.' : '.'));
-      else main.push((state.showSpecific ? 'Drag the green dot or click' : 'Click') + ' to set ' + M('\\vec{\\mathbf{x}}(0)') + '.');
+      if (state.clickMode === 'add') main.push('Click to add a solution' + (state.showSpecific ? '; drag the green dot to move ' + M('\\vec{\\mathbf{y}}(0)') + '.' : '.'));
+      else main.push((state.showSpecific ? 'Drag the green dot or click' : 'Click') + ' to set ' + M('\\vec{\\mathbf{y}}(0)') + '.');
       main.push(handleTxt(state.showEig, state.showNull));
     } else if (state.view === '3d') main.push('Drag to rotate the view; double-click to reset it.');
     const mainTxt = main.filter(Boolean).join(' ');
@@ -3026,7 +3026,7 @@
   function drawMiniStatic(lc, map, tNow){
     beginLabels(map, state.showMiniEig, state.showMiniNull);
     if (state.showSpeedBg && !an.zero) drawSpeedBackground(lc, map);
-    drawAxes(lc, map, 'x_1', 'x_2', false, true);
+    drawAxes(lc, map, 'y_1', 'y_2', false, true);
     clipTo(lc, map);
     if (an.singular && !an.zero){
       lc.strokeStyle = cssVar('--red'); lc.lineWidth = 3; lc.setLineDash([2,5]); lc.lineCap = 'round';
@@ -3121,7 +3121,7 @@
     txt('−' + (+L.toFixed(1)), P(-1, -1, -1), -16, 0); txt('+' + (+L.toFixed(1)), P(-1, 1, -1), -16, 0);
     txt('+' + (+L.toFixed(1)), P(-1, -1, 1), -16, 0);
     ctx.font = 'bold 14px "Space Grotesk", sans-serif'; ctx.fillStyle = ink;
-    txt('t', P(0, -1, -1), 0, 16); txt('x_1', P(-1, 0, -1), -14, 8); txt('x_2', P(-1, -1, 0), -14, 0);
+    txt('t', P(0, -1, -1), 0, 16); txt('y_1', P(-1, 0, -1), -14, 8); txt('y_2', P(-1, -1, 0), -14, 0);
 
     const tsOf = (N)=> (i)=> T*i/N;
     // shadows on the walls: x vs y on the t = 0 wall, t vs x on the floor, t vs y on the x = -L wall
@@ -3133,7 +3133,7 @@
       line(Array.from({length: N+1}, (_, i)=> P(U(tt(i)), -1, Z(sample.ys[i]))), col, 1.2);
       ctx.restore();
       ctx.font = '10.5px "Space Grotesk", sans-serif'; ctx.fillStyle = inkSoft;
-      txt('x_1 vs x_2', P(-1, 0.75, 1.1)); txt('t vs x_1', P(0.75, 1.12, -1)); txt('t vs x_2', P(0.75, -1, 1.12));
+      txt('y_1 vs y_2', P(-1, 0.75, 1.1)); txt('t vs y_1', P(0.75, 1.12, -1)); txt('t vs y_2', P(0.75, -1, 1.12));
     }
     // the equilibrium solution x = y = 0 is the t-axis
     if (!an.zero) line([P(-1, 0, 0), P(1, 0, 0)], cssVar('--red'), 1.6, [6,4]);
@@ -3160,8 +3160,8 @@
   }
 
   // ---------- static math ----------
-  tex($('eqQuick'), "\\vec{\\mathbf{x}}' = A\\vec{\\mathbf{x}}, \\qquad A = \\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}", true);
-  tex($('eqComp'), "\\begin{aligned} x_1' &= a x_1 + b x_2 \\\\ x_2' &= c x_1 + d x_2 \\end{aligned}", true);
+  tex($('eqQuick'), "\\vec{\\mathbf{y}}' = A\\vec{\\mathbf{y}}, \\qquad A = \\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}", true);
+  tex($('eqComp'), "\\begin{aligned} y_1' &= a y_1 + b y_2 \\\\ y_2' &= c y_1 + d y_2 \\end{aligned}", true);
   const inPanel = (el)=> !!el.closest('#explainPanel');
   document.querySelectorAll('.km').forEach(el=> tex(el, inPanel(el) ? lr(el.dataset.tex) : el.dataset.tex, false));
   document.querySelectorAll('.kmd').forEach(el=> tex(el, inPanel(el) ? rows(lr(el.dataset.tex)) : el.dataset.tex, true));
