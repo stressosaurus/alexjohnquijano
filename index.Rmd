@@ -12,7 +12,9 @@ links:
     url: https://scholar.google.com/citations?user=IPlFTXgAAAAJ&hl=en
 site: distill::distill_website
 output:
-  postcards::trestles
+  postcards::trestles:
+    includes:
+      in_header: _adsense.html
 ---
 
 ```{r setup, include=FALSE}

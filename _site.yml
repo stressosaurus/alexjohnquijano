@@ -31,6 +31,8 @@ output:
   distill::distill_article:
     toc: true
     link-citations: true
+    includes:
+      in_header: _adsense.html
 bibliography: references.bib
 csl: apa.csl
 creative_commons: CC BY
